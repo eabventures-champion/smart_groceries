@@ -3,7 +3,7 @@
 @endphp
 
 @if ($slider)
-    <section class="home-slider position-relative mb-30 d-none d-lg-block">
+    <section class="home-slider position-relative mb-30">
         <div class="container">
             <div class="home-slide-cover mt-1">
                 <div class="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1">
