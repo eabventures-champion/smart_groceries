@@ -242,6 +242,10 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
 
             // For Product Stock
             Route::get('product/stock', 'product_stock')->name('product.stock');
+
+            // For Product Image Download
+            Route::get('download-product-image/{id}', 'download_product_image')->name('download.product.image');
+            Route::get('download-all-product-images', 'download_all_product_images')->name('download.all.product.images');
         });
 
         Route::controller(SliderController::class)->group(function () {

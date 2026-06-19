@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\MultiImage;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
+use ZipArchive;
 use App\Models\ProductAttribute;
 use App\Http\Controllers\Controller;
 
@@ -368,5 +369,82 @@ class ProductController extends Controller
             );
 
             return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Download a single product's thumbnail image.
+     */
+    public function download_product_image($id){
+        $product = Product::findOrFail($id);
+        $filePath = public_path($product->product_thumbnail);
+
+        if (!file_exists($filePath)) {
+            $notification = array(
+                'message' => 'Image file not found on server. The product image may have been lost.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $fileName = str_replace(' ', '_', $product->product_name) . '_' . basename($product->product_thumbnail);
+        return response()->download($filePath, $fileName);
+    }
+
+    /**
+     * Download all product images (thumbnails + multi-images) as a ZIP file.
+     */
+    public function download_all_product_images(){
+        $products = Product::all();
+
+        $zipFileName = 'product_images_backup_' . date('Y-m-d_His') . '.zip';
+        $zipPath = public_path($zipFileName);
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            $notification = array(
+                'message' => 'Could not create ZIP file. Check server permissions.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $filesAdded = 0;
+
+        foreach ($products as $product) {
+            // Add thumbnail
+            $thumbPath = public_path($product->product_thumbnail);
+            if (file_exists($thumbPath)) {
+                $safeName = str_replace(' ', '_', $product->product_name);
+                $zip->addFile($thumbPath, 'thumbnails/' . $safeName . '_' . basename($product->product_thumbnail));
+                $filesAdded++;
+            }
+
+            // Add multi-images
+            $multiImages = MultiImage::where('product_id', $product->id)->get();
+            foreach ($multiImages as $index => $img) {
+                $imgPath = public_path($img->photo_name);
+                if (file_exists($imgPath)) {
+                    $safeName = str_replace(' ', '_', $product->product_name);
+                    $zip->addFile($imgPath, 'multi-images/' . $safeName . '_' . ($index + 1) . '_' . basename($img->photo_name));
+                    $filesAdded++;
+                }
+            }
+        }
+
+        $zip->close();
+
+        if ($filesAdded === 0) {
+            // Clean up the empty zip
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
+            }
+            $notification = array(
+                'message' => 'No image files found on the server to download.',
+                'alert-type' => 'warning'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 }

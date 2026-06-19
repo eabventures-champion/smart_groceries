@@ -15,8 +15,9 @@
       </div> --}}
       <div class="ms-auto">
          <div class="btn-group">
-            <a href="{{ route('add.product') }}" class="btn btn-primary">Add Product</a> 				 
-         </div>
+             <a href="{{ route('download.all.product.images') }}" class="btn btn-success" title="Download all product images as ZIP"><i class="fa fa-download"></i> Backup Images</a>
+             <a href="{{ route('add.product') }}" class="btn btn-primary">Add Product</a> 				 
+          </div>
       </div>
    </div>
    <!--end breadcrumb-->
@@ -88,9 +89,10 @@
                         @endif
                      </td>
                      <td>
-                        <a href="{{ route('add.product.attribute',$item->id) }}" class="btn btn-sm btn-info" title="Add product attributes"> <i class="fa fa-plus"></i> </a>
-                        <a href="{{ route('edit.product',$item->id) }}" class="btn btn-sm btn-info" title="Edit Data"> <i class="fa fa-pencil"></i> </a>
-                        <a href="{{ route('delete.product',$item->id) }}" class="btn btn-sm btn-danger" id="delete" title="Delete Data" ><i class="fa fa-trash"></i></a>
+                         <a href="{{ route('add.product.attribute',$item->id) }}" class="btn btn-sm btn-info" title="Add product attributes"> <i class="fa fa-plus"></i> </a>
+                         <a href="{{ route('edit.product',$item->id) }}" class="btn btn-sm btn-info" title="Edit Data"> <i class="fa fa-pencil"></i> </a>
+                         <a href="{{ route('download.product.image',$item->id) }}" class="btn btn-sm btn-success" title="Download Image"> <i class="fa fa-download"></i> </a>
+                         <a href="{{ route('delete.product',$item->id) }}" class="btn btn-sm btn-danger" id="delete" title="Delete Data" ><i class="fa fa-trash"></i></a>
                         {{-- <a href="{{ route('edit.category',$item->id) }}" class="btn btn-sm btn-warning" title="Details Page"> <i class="fa fa-eye"></i> </a> --}}
 
                         {{-- @if($item->status == 1)

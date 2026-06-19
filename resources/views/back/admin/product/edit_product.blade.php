@@ -172,9 +172,10 @@
                <input name="product_thumbnail" class="form-control" type="file" id="formFile">
             </div>
             <div class="mb-3">
-               <img src="{{ asset($products->product_thumbnail) }}" alt="" style="width: 100px; height:100px">
-            </div>
-            <input type="submit" class="btn btn-primary px-4" value="Save Changes" />
+                <img src="{{ asset($products->product_thumbnail) }}" alt="" style="width: 100px; height:100px">
+                <a href="{{ route('download.product.image', $products->id) }}" class="btn btn-sm btn-success ms-2" title="Download this image"><i class="fa fa-download"></i> Download</a>
+             </div>
+             <input type="submit" class="btn btn-primary px-4" value="Save Changes" />
          </div>
       </form>
    </div>
