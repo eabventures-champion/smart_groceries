@@ -176,7 +176,9 @@ class ProductController extends Controller
 
         foreach($imgs as $id => $img ){
             $imgDel = MultiImage::findOrFail($id);
-            unlink($imgDel->photo_name);
+            if ($imgDel->photo_name && file_exists($imgDel->photo_name)) {
+                unlink($imgDel->photo_name);
+            }
 
             $make_name = hexdec(uniqid()).'.'.$img->getClientOriginalExtension();
             Image::make($img)->resize(800,800)->save('back/assets/images/products/multi-image/'.$make_name);
@@ -198,7 +200,9 @@ class ProductController extends Controller
 
     public function delete_multi_image($id){
         $oldImg = MultiImage::findOrFail($id);
-        unlink($oldImg->photo_name);
+        if ($oldImg->photo_name && file_exists($oldImg->photo_name)) {
+            unlink($oldImg->photo_name);
+        }
 
         MultiImage::findOrFail($id)->delete();
 
@@ -206,6 +210,40 @@ class ProductController extends Controller
             'message' => 'Product Multi Image Deleted Successfully',
             'alert-type' => 'success'
         );
+
+        return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Store new additional multi images for an existing product.
+     */
+    public function store_new_multi_image(Request $request){
+        $product_id = $request->id;
+        $images = $request->file('multi_img');
+
+        if($images){
+            foreach($images as $img){
+                $make_name = hexdec(uniqid()).'.'.$img->getClientOriginalExtension();
+                Image::make($img)->resize(800,800)->save('back/assets/images/products/multi-image/'.$make_name);
+                $uploadPath = 'back/assets/images/products/multi-image/'.$make_name;
+
+                MultiImage::insert([
+                    'product_id' => $product_id,
+                    'photo_name' => $uploadPath,
+                    'created_at' => Carbon::now(), 
+                ]); 
+            }
+            
+            $notification = array(
+                'message' => 'New Multi Images Added Successfully',
+                'alert-type' => 'success'
+            );
+        } else {
+            $notification = array(
+                'message' => 'Please select at least one image to upload.',
+                'alert-type' => 'warning'
+            );
+        }
 
         return redirect()->back()->with($notification);
     }
@@ -232,12 +270,16 @@ class ProductController extends Controller
 
     public function delete_product($id){
         $product = Product::findOrFail($id);
-        unlink($product->product_thumbnail);
+        if ($product->product_thumbnail && file_exists($product->product_thumbnail)) {
+            unlink($product->product_thumbnail);
+        }
         Product::findOrFail($id)->delete();
 
         $imges = MultiImage::where('product_id', $id)->get();
         foreach($imges as $img){
-            unlink($img->photo_name);
+            if ($img->photo_name && file_exists($img->photo_name)) {
+                unlink($img->photo_name);
+            }
             MultiImage::where('product_id', $id)->delete();
         }
 

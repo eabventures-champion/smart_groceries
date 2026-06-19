@@ -228,6 +228,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::post('/update-product/thumbnail', 'update_product_thumbnail')->name('update.product.thumbnail');
             Route::post('update-product/multi-image', 'update_multi_image')->name('update.product.multi_image');
             Route::get('delete-product/multi-img/{id}', 'delete_multi_image')->name('delete.multi_image');
+            Route::post('store-product/new-multi-image', 'store_new_multi_image')->name('store.new.multi_image');
             Route::get('product-inactive/{id}', 'product_inactive')->name('product.inactive');
             Route::get('product-active/{id}', 'product_active')->name('product.active');
             Route::get('delete-product/{id}', 'delete_product')->name('delete.product');

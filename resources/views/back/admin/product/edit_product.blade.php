@@ -215,6 +215,25 @@
       </div>
    </div>
 </div>
+
+<div class="page-content" style="margin-top: -30px;">
+   <h6 class="mb-0 text-uppercase">Add New Multi Image </h6>
+   <hr>
+   <div class="card">
+      <form method="post" action="{{ route('store.new.multi_image') }}" enctype="multipart/form-data" >
+         @csrf
+         <input type="hidden" name="id" value="{{ $products->id }}">
+         <div class="card-body">
+            <div class="mb-3">
+               <label for="formFileMultiple" class="form-label">Choose Additional Images (You can select multiple)</label>
+               <input name="multi_img[]" class="form-control" type="file" id="formFileMultiple" multiple>
+            </div>
+            <input type="submit" class="btn btn-primary px-4" value="Add Images" />
+         </div>
+      </form>
+   </div>
+</div>
+
 <script type="text/javascript">
    $(document).ready(function (){
        $('#myForm').validate({
