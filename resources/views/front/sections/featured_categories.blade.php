@@ -1,29 +1,22 @@
 @php
-    $banner = App\Models\Banner::orderBy('banner_title','DESC')->limit(1)->get();
+    $banner = App\Models\Banner::latest()->get();
 @endphp
-<section class="banners d-block d-lg-none">
-{{-- <section class="banners d-block d-lg-none"> --}}
-    <div class="container">
-       <div class="row">
-         @foreach($banner as $item)
-          <div class="col-lg-4 col-md-6">
-             <div class="wow animate__animated animate__fadeInUp" data-wow-delay="0">
-             {{-- <div class="banner-img wow animate__animated animate__fadeInUp" data-wow-delay="0"> --}}
-                <img src="{{ asset($item->banner_image) }}" alt="" />
-                <div class="banner-text d-none d-lg-none">
-                   <h4>
-                      {{$item->banner_title}}
-                   </h4>
-                   <a href="{{ route('shop.page') }}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a>
-                   {{-- <a href="{{ $item->banner_url }}" class="btn btn-xs">Shop Now <i class="fi-rs-arrow-small-right"></i></a> --}}
-                </div>
-             </div>
-          </div>
-         @endforeach
 
+@if($banner->isNotEmpty())
+<section class="banners d-block d-lg-none mb-15">
+    <div class="container">
+       <div class="mobile-banner-slick">
+         @foreach($banner as $item)
+           <div>
+              <a href="{{ route('shop.page') }}">
+                 <img src="{{ asset($item->banner_image) }}" alt="{{ $item->banner_title }}" style="width: 100%; border-radius: 15px; height: auto;" />
+              </a>
+           </div>
+         @endforeach
        </div>
     </div>
- </section>
+</section>
+@endif
 
 @php
 $categories = App\Models\Category::orderBy('category_name','DESC')->get();

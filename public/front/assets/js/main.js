@@ -723,6 +723,20 @@
         });
     });
 
+    /*--- Mobile Banner Slider ---*/
+    if ($(".mobile-banner-slick").length > 0) {
+        $(".mobile-banner-slick").slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 3000,
+            dots: false,
+            arrows: false,
+            fade: false,
+            infinite: true
+        });
+    }
+
     /*--- VSticker ----*/
     $("#news-flash").vTicker({
         speed: 500,
@@ -731,7 +745,6 @@
         mousePause: false,
         showItems: 1
     });
-
 
 })(jQuery);
 
