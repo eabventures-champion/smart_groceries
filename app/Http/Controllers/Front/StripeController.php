@@ -71,6 +71,38 @@ class StripeController extends Controller
             ]);
 
             $invoice = Order::findOrFail($order_id);
+
+            // Process affiliate referral commission if set to percentage
+            $setting = \App\Models\SiteSetting::find(1);
+            if ($setting && $setting->referral_commission_type === 'percentage') {
+                $userId = Auth::id();
+                if ($userId) {
+                    $orderUser = User::find($userId);
+                    if ($orderUser && $orderUser->referred_by) {
+                        // Check if they already have any logged referral commission
+                        $alreadyEarned = \App\Models\AffiliateReferral::where('referred_id', $orderUser->id)->exists();
+                        if (!$alreadyEarned) {
+                            $percentage = $setting->referral_percentage ?? 10.00;
+                            $commission = ($total_amount * $percentage) / 100;
+
+                            // Create the referral commission record
+                            \App\Models\AffiliateReferral::create([
+                                'referrer_id' => $orderUser->referred_by,
+                                'referred_id' => $orderUser->id,
+                                'commission_earned' => $commission
+                            ]);
+
+                            // Add commission to referrer's balance
+                            $referrer = User::find($orderUser->referred_by);
+                            if ($referrer) {
+                                $referrer->referral_balance += $commission;
+                                $referrer->save();
+                            }
+                        }
+                    }
+                }
+            }
+
             $user_email = $paymentDetails['data']['metadata']['email'];
 
             $data = [

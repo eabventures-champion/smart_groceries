@@ -38,6 +38,9 @@ class SiteSettingController extends Controller
             'youtube' => $request->youtube,
             'copyright' => $request->copyright, 
             'logo' => $save_url, 
+            'referral_commission_type' => $request->referral_commission_type,
+            'referral_flat_amount' => $request->referral_flat_amount,
+            'referral_percentage' => $request->referral_percentage,
         ]);
 
        $notification = array(
@@ -58,6 +61,9 @@ class SiteSettingController extends Controller
             'twitter' => $request->twitter,
             'youtube' => $request->youtube,
             'copyright' => $request->copyright, 
+            'referral_commission_type' => $request->referral_commission_type,
+            'referral_flat_amount' => $request->referral_flat_amount,
+            'referral_percentage' => $request->referral_percentage,
         ]);
 
        $notification = array(

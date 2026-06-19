@@ -130,7 +130,7 @@ class AdminController extends Controller
     
 
     public function all_admin(){
-        $alladminuser = User::where('role', 'admin')->latest()->get();
+        $alladminuser = User::whereIn('role', ['admin', 'expert'])->latest()->get();
         return view('back.admin.admin.all_admin', compact('alladminuser'));
     }
 
@@ -147,7 +147,11 @@ class AdminController extends Controller
         $user->phone = $request->phone;
         $user->address = $request->address;
         $user->password = Hash::make($request->password);
-        $user->role = 'admin';
+        if ($request->roles === 'expert') {
+            $user->role = 'expert';
+        } else {
+            $user->role = 'admin';
+        }
         $user->status = 'active';
         $user->save();
 
@@ -178,7 +182,11 @@ class AdminController extends Controller
         $user->email = $request->email;
         $user->phone = $request->phone;
         $user->address = $request->address; 
-        $user->role = 'admin';
+        if ($request->roles === 'expert') {
+            $user->role = 'expert';
+        } else {
+            $user->role = 'admin';
+        }
         $user->status = 'active';
         $user->save();
 

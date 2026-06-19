@@ -11,6 +11,9 @@ $route = Route::current()->getName();
             <a class="nav-link {{ ($route ==  'user.order.page')? 'active':  '' }}" href="{{ route('user.order.page') }}" ><i class="fi fi-rs-order-history mr-10"></i>Orders</a>
          </li>
          <li class="nav-item">
+            <a class="nav-link {{ ($route ==  'user.bookings')? 'active':  '' }}" href="{{ route('user.bookings') }}" ><i class="fi fi-rs-calendar mr-10"></i>Expert Bookings</a>
+         </li>
+         <li class="nav-item">
             <a class="nav-link {{ ($route ==  'return.order.page')? 'active':  '' }}" href="{{ route('return.order.page') }}" ><i class="fi fi-rr-truck-arrow-left mr-10"></i>Return Orders</a>
          </li>
          <li class="nav-item">

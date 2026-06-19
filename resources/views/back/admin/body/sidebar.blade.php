@@ -10,6 +10,37 @@
       </div>
    </div>
    <ul class="metismenu" id="menu">
+      @if(Auth::user()->role === 'expert')
+      <li>
+         <a href="{{ route('expert.dashboard') }}">
+            <div class="parent-icon"><i class='bx bx-cookie'></i>
+            </div>
+            <div class="menu-title">Dashboard</div>
+         </a>
+      </li>
+      <li class="menu-label font-weight-bold text-uppercase text-primary" style="font-size: 11px; letter-spacing: 0.5px;">Expert Workspace</li>
+      <li>
+         <a href="{{ route('expert.dashboard') }}">
+            <div class="parent-icon"><i class='bx bx-user'></i>
+            </div>
+            <div class="menu-title">My Profile</div>
+         </a>
+      </li>
+      <li>
+         <a href="{{ route('expert.availability') }}">
+            <div class="parent-icon"><i class='bx bx-time'></i>
+            </div>
+            <div class="menu-title">Set Availability</div>
+         </a>
+      </li>
+      <li>
+         <a href="{{ route('expert.bookings') }}">
+            <div class="parent-icon"><i class='bx bx-calendar'></i>
+            </div>
+            <div class="menu-title">See Bookings</div>
+         </a>
+      </li>
+      @else
       <li>
          <a href="{{ route('admin.dashboard') }}">
             <div class="parent-icon"><i class='bx bx-cookie'></i>
@@ -286,6 +317,25 @@
          </ul>
       </li>
       {{-- @endif --}}
+      
+      <li class="menu-label">Campus & Lifestyle Hub</li>
+      <li>
+         <a href="javascript:;" class="has-arrow">
+            <div class="parent-icon"><i class="lni lni-pulse"></i>
+            </div>
+            <div class="menu-title">Lifestyle Hub</div>
+         </a>
+         <ul>
+            <li> <a href="{{ route('admin.lifestyle.categories') }}"><i class="bx bx-right-arrow-alt"></i>Expert Categories</a></li>
+            <li> <a href="{{ route('admin.lifestyle.experts') }}"><i class="bx bx-right-arrow-alt"></i>Expert Profiles</a></li>
+            <li> <a href="{{ route('admin.lifestyle.tips') }}"><i class="bx bx-right-arrow-alt"></i>Educational Health Tips</a></li>
+            <li> <a href="{{ route('admin.lifestyle.bookings') }}"><i class="bx bx-right-arrow-alt"></i>Expert Bookings</a></li>
+            <li> <a href="{{ route('admin.lifestyle.requests') }}"><i class="bx bx-right-arrow-alt"></i>Custom Item Requests</a></li>
+            <li> <a href="{{ route('admin.lifestyle.blog_categories') }}"><i class="bx bx-right-arrow-alt"></i>Blog Categories</a></li>
+            <li> <a href="{{ route('admin.lifestyle.blogs') }}"><i class="bx bx-right-arrow-alt"></i>Blog Posts</a></li>
+         </ul>
+      </li>
+
       {{--
       <li>
          <a href="javascript:;" class="has-arrow">
@@ -609,5 +659,6 @@
          </a>
       </li>
       --}}
+      @endif
    </ul>
 </div>

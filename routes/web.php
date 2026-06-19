@@ -6,18 +6,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\RedirectIfAuthenticated;
 
 
+
 // Route::get('/', function () {
 //     return view('welcome');
-// });
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
 
 Route::namespace('App\Http\Controllers\Front')->group(function(){
@@ -143,6 +134,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
             Route::get('logout', 'user_logout')->name('user.logout');
 
             Route::get('user/order/page' , 'user_order_page')->name('user.order.page');
+            Route::get('user/bookings', 'user_bookings')->name('user.bookings');
             Route::get('return/order/page' , 'return_order_page')->name('return.order.page');
             Route::get('user/track/order' , 'user_track_order')->name('user.track.order');
             Route::get('user/account/page' , 'user_account')->name('user.account.page');
@@ -160,6 +152,17 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
         });
 
     }); // end group middleware
+
+    Route::controller(FloatingFeatureController::class)->group(function() {
+        Route::get('floating-panel/blogs', 'getBlogPosts');
+        Route::get('floating-panel/expert-data', 'getExpertsData');
+        Route::post('floating-panel/book-expert', 'bookExpert');
+        Route::post('floating-panel/request-item', 'submitItemRequest');
+        Route::get('floating-panel/item-requests', 'getItemRequests');
+        Route::get('floating-panel/track-bookings', 'trackBookings');
+        Route::get('floating-panel/affiliate-stats', 'getAffiliateStats');
+        Route::post('floating-panel/affiliate-payout', 'requestAffiliatePayout');
+    });
 
 });
 
@@ -328,6 +331,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
 
         Route::controller(ActiveUserController::class)->group(function(){
             Route::get('/all/clients' , 'all_user')->name('all.users');
+            Route::get('/client/detail/{id}', 'client_detail')->name('admin.client.detail');
             // Route::get('/all/vendor' , 'all_vendor')->name('all-vendor');
         });
 
@@ -368,16 +372,84 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('delete/roles/permission/{id}', 'admin_roles_delete')->name('admin.delete.roles.permission');
         });
 
+        Route::controller(ExpertManagementController::class)->group(function () {
+            // Categories
+            Route::get('lifestyle/categories', 'categoriesList')->name('admin.lifestyle.categories');
+            Route::get('lifestyle/categories/add', 'categoryAdd')->name('admin.lifestyle.categories.add');
+            Route::post('lifestyle/categories/store', 'categoryStore')->name('admin.lifestyle.categories.store');
+            Route::get('lifestyle/categories/edit/{id}', 'categoryEdit')->name('admin.lifestyle.categories.edit');
+            Route::post('lifestyle/categories/update', 'categoryUpdate')->name('admin.lifestyle.categories.update');
+            Route::get('lifestyle/categories/delete/{id}', 'categoryDelete')->name('admin.lifestyle.categories.delete');
+            
+            // Experts
+            Route::get('lifestyle/experts', 'expertsList')->name('admin.lifestyle.experts');
+            Route::get('lifestyle/experts/add', 'expertAdd')->name('admin.lifestyle.experts.add');
+            Route::post('lifestyle/experts/store', 'expertStore')->name('admin.lifestyle.experts.store');
+            Route::get('lifestyle/experts/edit/{id}', 'expertEdit')->name('admin.lifestyle.experts.edit');
+            Route::post('lifestyle/experts/update', 'expertUpdate')->name('admin.lifestyle.experts.update');
+            Route::get('lifestyle/experts/delete/{id}', 'expertDelete')->name('admin.lifestyle.experts.delete');
+
+            // Health Tips
+            Route::get('lifestyle/tips', 'tipsList')->name('admin.lifestyle.tips');
+            Route::get('lifestyle/tips/add', 'tipAdd')->name('admin.lifestyle.tips.add');
+            Route::post('lifestyle/tips/store', 'tipStore')->name('admin.lifestyle.tips.store');
+            Route::get('lifestyle/tips/edit/{id}', 'tipEdit')->name('admin.lifestyle.tips.edit');
+            Route::post('lifestyle/tips/update', 'tipUpdate')->name('admin.lifestyle.tips.update');
+            Route::get('lifestyle/tips/delete/{id}', 'tipDelete')->name('admin.lifestyle.tips.delete');
+
+            // Bookings
+            Route::get('lifestyle/bookings', 'bookingsList')->name('admin.lifestyle.bookings');
+            Route::post('lifestyle/bookings/status', 'bookingUpdateStatus')->name('admin.lifestyle.bookings.status');
+
+            // Custom Item Requests
+            Route::get('lifestyle/requests', 'itemRequestsList')->name('admin.lifestyle.requests');
+            Route::post('lifestyle/requests/respond', 'itemRequestRespond')->name('admin.lifestyle.requests.respond');
+
+            // Blog Posts
+            Route::get('lifestyle/blogs', 'blogsList')->name('admin.lifestyle.blogs');
+            Route::get('lifestyle/blogs/add', 'blogAdd')->name('admin.lifestyle.blogs.add');
+            Route::post('lifestyle/blogs/store', 'blogStore')->name('admin.lifestyle.blogs.store');
+            Route::get('lifestyle/blogs/edit/{id}', 'blogEdit')->name('admin.lifestyle.blogs.edit');
+            Route::post('lifestyle/blogs/update', 'blogUpdate')->name('admin.lifestyle.blogs.update');
+            Route::get('lifestyle/blogs/delete/{id}', 'blogDelete')->name('admin.lifestyle.blogs.delete');
+
+            // Blog Categories
+            Route::get('lifestyle/blog-categories', 'blogCategoriesList')->name('admin.lifestyle.blog_categories');
+            Route::get('lifestyle/blog-categories/add', 'blogCategoryAdd')->name('admin.lifestyle.blog_categories.add');
+            Route::post('lifestyle/blog-categories/store', 'blogCategoryStore')->name('admin.lifestyle.blog_categories.store');
+            Route::get('lifestyle/blog-categories/edit/{id}', 'blogCategoryEdit')->name('admin.lifestyle.blog_categories.edit');
+            Route::post('lifestyle/blog-categories/update', 'blogCategoryUpdate')->name('admin.lifestyle.blog_categories.update');
+            Route::get('lifestyle/blog-categories/delete/{id}', 'blogCategoryDelete')->name('admin.lifestyle.blog_categories.delete');
+        });
+
     });
 
 
 });
 
-// Route::prefix('/vendor')->namespace('App\Http\Controllers\Back')->group(function(){
-//     Route::middleware(['auth', 'role:vendor'])->group(function () {
-//         Route::get('dashboard', 'VendorController@dashboard')->name('vendor.dashboard');
-
-//     });
-// });
+Route::prefix('/expert')->namespace('App\Http\Controllers\Back')->group(function(){
+    Route::middleware(['auth', 'role:expert'])->group(function () {
+        Route::controller(ExpertDashboardController::class)->group(function(){
+            Route::get('dashboard', 'dashboard')->name('expert.dashboard');
+            Route::post('profile/update', 'updateProfile')->name('expert.profile.update');
+            Route::get('bookings', 'bookings')->name('expert.bookings');
+            Route::post('bookings/status', 'updateBookingStatus')->name('expert.bookings.status');
+            Route::get('availability', 'availability')->name('expert.availability');
+            Route::post('availability/update', 'updateAvailability')->name('expert.availability.update');
+            Route::get('logout', 'logout')->name('expert.logout');
+        });
+    });
+});
 
 require __DIR__.'/auth.php';
+
+if (config('app.env') === 'local') {
+    Route::get('back/assets/images/{any}', function ($any) {
+        return redirect('https://smartgroceries.org/back/assets/images/' . $any);
+    })->where('any', '.*');
+
+    Route::get('front/assets/imgs/{any}', function ($any) {
+        return redirect('https://smartgroceries.org/front/assets/imgs/' . $any);
+    })->where('any', '.*');
+}
+

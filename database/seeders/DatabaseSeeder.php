@@ -17,6 +17,12 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
         // \App\Models\User::factory(10)->create();
 
-        $this->call(ProductAttributesTableSeeder::class);
+        $this->call([
+            ProductAttributesTableSeeder::class,
+            SeoSeeder::class,
+            SiteSettingSeeder::class,
+            FloatingFeatureSeeder::class,
+            ExpertManagementSeeder::class,
+        ]);
     }
 }

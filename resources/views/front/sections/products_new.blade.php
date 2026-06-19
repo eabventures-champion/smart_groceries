@@ -1,5 +1,5 @@
 @php
-$products = App\Models\Product::where('status', 1)->orderBy('id','DESC')->limit(10)->get();
+$products = App\Models\Product::where('status', 1)->orderBy('id','DESC')->limit(15)->get();
 $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->get();
 @endphp
 
@@ -240,7 +240,7 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
          @endforeach
 
          <div class="container text-center mt-10 mb-10">
-            <a href="{{ route('shop.page') }}" class="btn btn-xs">View more items <i class="fi-rs-arrow-small-right"></i></a>
+            <a href="{{ route('shop.page') }}" class="btn btn-xs">Shop for more items <i class="fi-rs-arrow-small-right"></i></a>
          </div>
 
       </div>

@@ -23,7 +23,7 @@
  
     {{-- Large screen - Header 1 --}}
     @php
-    $setting = App\Models\SiteSetting::find(1);
+    $setting = App\Models\SiteSetting::find(1) ?? new App\Models\SiteSetting();
     @endphp
     <div class="header-top header-top-ptb-1 d-none d-lg-block">
        <div class="container">

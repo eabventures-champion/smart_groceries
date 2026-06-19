@@ -32,7 +32,7 @@
                      <th>Email </th>
                      <th>Phone </th>
                      <th>Last seen </th>
-                     {{-- <th>Action</th> --}}
+                     <th>Action</th>
                   </tr>
                </thead>
                <tbody>
@@ -40,7 +40,11 @@
                   <tr>
                      <td> {{ $key+1 }} </td>
                      <td> <img src="{{ (!empty($item->photo)) ? url('front/assets/imgs/users/'.$item->photo):url('front/assets/imgs/users/no_image.jpg') }}" alt="Admin" class="rounded-circle p-1 bg-primary" width="60" height="60"></td>
-                     <td> {{ $item->name }}  </td>
+                     <td> 
+                        <a href="{{ route('admin.client.detail', $item->id) }}" style="font-weight: 600; color: #212529; text-decoration: none;" class="hover-primary">
+                           {{ $item->name }} 
+                        </a> 
+                     </td>
                      <td> {{ $item->email }}  </td>
                      <td> {{ $item->phone }}  </td>
                      <td>
@@ -50,10 +54,11 @@
                         <span class="badge badge-pill bg-danger"> {{ Carbon\Carbon::parse($item->last_seen)->diffForHumans() }} </span>
                         @endif
                      </td>
-                     {{-- <td>
-                        <a href="{{ route('edit.subcategory',$item->id) }}" class="btn btn-sm btn-info">Edit</a>
-                        <a href="{{ route('delete.subcategory',$item->id) }}" class="btn btn-sm btn-danger" id="delete" >Delete</a>
-                     </td> --}}
+                     <td>
+                        <a href="{{ route('admin.client.detail', $item->id) }}" class="btn btn-sm btn-primary" style="background-color: #3bb77e; border-color: #3bb77e; color: white;">
+                           <i class="fa fa-eye"></i> View Detail
+                        </a>
+                     </td>
                   </tr>
                   @endforeach
                </tbody>

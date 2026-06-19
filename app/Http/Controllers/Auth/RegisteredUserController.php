@@ -15,6 +15,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\RegisterUserNotification;
 use Illuminate\Support\Facades\Mail;
+use App\Models\DeliveryDistrict;
 
 class RegisteredUserController extends Controller
 {
@@ -23,7 +24,11 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        if (request()->has('ref')) {
+            session(['referrer_code' => request()->query('ref')]);
+        }
+        $institutions = DeliveryDistrict::where('district_name', '!=', '.select institution')->orderBy('district_name', 'ASC')->get();
+        return view('auth.register', compact('institutions'));
     }
 
     /**
@@ -38,15 +43,60 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'status_identity' => ['required', 'string', 'in:student,non-student'],
+            'institution' => ['required_if:status_identity,student', 'nullable', 'string', 'max:255'],
+            'year_of_admission' => ['required_if:status_identity,student', 'nullable', 'integer', 'min:2000', 'max:' . (date('Y') + 1)],
+            'year_of_completion' => ['required_if:status_identity,student', 'nullable', 'integer', 'min:2000', 'max:' . (date('Y') + 15), 'gte:year_of_admission'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        // Check for referral code
+        $referredBy = null;
+        $referrer = null;
+        $refCode = $request->input('ref') ?: session('referrer_code');
+        if ($refCode) {
+            $referrer = User::where('referral_code', $refCode)->first();
+            if ($referrer) {
+                $referredBy = $referrer->id;
+            }
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'status' => "inactive",
+            'referred_by' => $referredBy,
+            'referral_code' => User::generateReferralCode($request->username ?? $request->name),
+            'year_of_admission' => $request->status_identity === 'student' ? $request->year_of_admission : null,
+            'year_of_completion' => $request->status_identity === 'student' ? $request->year_of_completion : null,
+            'institution' => $request->status_identity === 'student' ? $request->institution : null,
+            'status_identity' => $request->status_identity,
+            'student_id' => $request->status_identity === 'student' ? User::generateStudentId($request->year_of_admission, $request->year_of_completion) : null,
         ]);
+
+        if ($referrer) {
+            $setting = \App\Models\SiteSetting::find(1);
+            $commissionType = $setting->referral_commission_type ?? 'flat';
+
+            if ($commissionType === 'flat') {
+                $flatAmount = $setting->referral_flat_amount ?? 15.00;
+
+                // Log the referral
+                \App\Models\AffiliateReferral::create([
+                    'referrer_id' => $referrer->id,
+                    'referred_id' => $user->id,
+                    'commission_earned' => $flatAmount
+                ]);
+
+                // Add referral fee to referrer's balance
+                $referrer->referral_balance += $flatAmount;
+                $referrer->save();
+            }
+
+            // Clear session key
+            session()->forget('referrer_code');
+        }
 
         // Activate User after confirming email
         $email = $request->email;

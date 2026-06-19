@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ExpertBooking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,16 @@ class UserController extends Controller
     public function dashboard(){
         $id = Auth::user()->id;
         $user = User::find($id);
-        return view('index', compact('user'));
+
+        // Auto-refresh student ID prefix if status changed (STU ↔ ALM)
+        $user->refreshStudentId();
+
+        // Get order stats for dashboard
+        $totalOrders = Order::where('user_id', $id)->count();
+        $pendingOrders = Order::where('user_id', $id)->where('status', 'pending')->count();
+        $completedOrders = Order::where('user_id', $id)->where('status', 'deliverd')->count();
+
+        return view('index', compact('user', 'totalOrders', 'pendingOrders', 'completedOrders'));
     }
 
     public function user_profile_update(Request $request){
@@ -93,6 +103,13 @@ class UserController extends Controller
         $orders = Order::where('user_id', $id)->orderBy('id','DESC')->get();
 
         return view('front.user.user_order_page', compact('orders'));
+    }
+
+    public function user_bookings(){
+        $email = Auth::user()->email;
+        $bookings = ExpertBooking::where('user_email', $email)->orderBy('id', 'DESC')->get();
+
+        return view('front.user.expert_bookings', compact('bookings'));
     }
 
     public function return_order_page(){

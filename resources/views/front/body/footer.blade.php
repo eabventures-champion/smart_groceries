@@ -1,5 +1,5 @@
 @php
-$setting = App\Models\SiteSetting::find(1);
+$setting = App\Models\SiteSetting::find(1) ?? new App\Models\SiteSetting();
 @endphp
 
 <footer class="main">
@@ -175,7 +175,8 @@ $setting = App\Models\SiteSetting::find(1);
                 <div class="footer-bottom"></div>
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6">
-                <p class="font-sm mb-0">&copy; 2025, <strong class="text-brand">Smart Groceries & Delivery</strong> -  {{ $setting->copyright }}</p>
+                <p class="font-sm mb-0">&copy; 2025, <strong class="text-brand">Smart Groceries & Delivery</strong> -  {{ $setting->copyright }} | <a href="{{ route('admin.login') }}" class="text-brand" style="font-weight: 600;">Admin Login</a></p>
+                
                 {{-- <p class="font-sm mb-0">&copy; 2022, <strong class="text-brand">Nest</strong> - HTML Ecommerce Template <br />All rights reserved</p> --}}
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6 text-center d-none d-xl-block">
@@ -201,7 +202,7 @@ $setting = App\Models\SiteSetting::find(1);
                     <a href="{{ $setting->twitter }}"><img src="{{ asset('front/assets/imgs/theme/icons/whatsapp_icon.png') }}" alt="" /></a>
                     {{-- <a href="{{ $setting->youtube }}"><img src="{{ asset('front/assets/imgs/theme/icons/icon-youtube-white.svg') }}" alt="" /></a> --}}
                 </div>
-                {{-- <p class="font-sm">The reasonably priced grocery delivery service</p> --}}
+                <!-- <p class="font-sm">Your Trusted Campus Grocery Partner! | <a href="{{ route('admin.login') }}" class="text-brand" style="font-weight: 600;">Admin Login</a></p> -->
             </div>
         </div>
     </div>

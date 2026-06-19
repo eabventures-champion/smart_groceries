@@ -2,11 +2,11 @@
 <html class="no-js" lang="en">
    <head>
       <meta charset="utf-8" />
-      <title>Smart Groceries & Delivery</title>
+      <title>Smart Groceries &amp; Delivery - Login</title>
       <meta http-equiv="x-ua-compatible" content="ie=edge" />
-      <meta name="description" content="" />
+      <meta name="description" content="Login to your Smart Groceries student account" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta property="og:title" content="" />
+      <meta property="og:title" content="Login - Smart Groceries" />
       <meta property="og:type" content="" />
       <meta property="og:url" content="" />
       <meta property="og:image" content="" />
@@ -16,22 +16,38 @@
       <link rel="stylesheet" href="{{ asset('front/assets/css/plugins/animate.min.css') }}" />
       <link rel="stylesheet" href="{{ asset('front/assets/css/main.css?v=5.3') }}" />
       <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" >
-      {{-- <style>
-         *{
-             zoom: 99.6%;
+
+      <style>
+         /* ── Password Toggle ── */
+         .password-wrapper {
+            position: relative;
          }
-      </style> --}}
+         .password-wrapper input {
+            padding-right: 45px !important;
+         }
+         .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 16px;
+            padding: 4px;
+            z-index: 5;
+            transition: color 0.2s ease;
+            line-height: 1;
+         }
+         .password-toggle-btn:hover {
+            color: #3BB77E;
+         }
+      </style>
    </head>
    <body>
       @include('front.body.header')
       <main class="main pages">
-         {{-- <div class="page-header breadcrumb-wrap">
-            <div class="container">
-               <div class="breadcrumb">
-                  <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-               </div>
-            </div>
-         </div> --}}
          <div class="page-content pt-100 pb-20 login-register-mobile-padding">
             <div class="container">
                <div class="row">
@@ -58,29 +74,18 @@
                                        @enderror
                                     </div>
                                     <div class="form-group">
-                                       <input required="" type="password" id="password" name="password" placeholder="Your password *" class="form-control @error('password') is-invalid @enderror" />
+                                       <div class="password-wrapper">
+                                          <input required="" type="password" id="password" name="password" placeholder="Your password *" class="form-control @error('password') is-invalid @enderror" />
+                                          <button type="button" class="password-toggle-btn" onclick="togglePassword('password', this)" title="Show password">
+                                             <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                             <svg class="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                                          </button>
+                                       </div>
                                        @error('password')
                                        <span class="text-danger">{{ $message }}</span>
                                        @enderror
                                     </div>
-                                    {{-- <div class="login_footer form-group">
-                                       <div class="chek-form">
-                                          <input type="text" required="" name="email" placeholder="Security code *" />
-                                       </div>
-                                       <span class="security-code">
-                                       <b class="text-new">8</b>
-                                       <b class="text-hot">6</b>
-                                       <b class="text-sale">7</b>
-                                       <b class="text-best">5</b>
-                                       </span>
-                                    </div> --}}
                                     <div class="login_footer form-group mb-15">
-                                       {{-- <div class="chek-form">
-                                          <div class="custome-checkbox">
-                                             <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />
-                                             <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
-                                          </div>
-                                       </div> --}}
                                        <a class="text-muted" href="{{ route('password.request') }}">Forgot password?</a>
                                     </div>
                                     <div class="form-group">
@@ -158,6 +163,23 @@
 <script src="{{ asset('front/assets/js/validate.js') }}"></script>
 
 <script type="text/javascript">
+   // ── Password Toggle ──
+   function togglePassword(inputId, btn) {
+      var input = document.getElementById(inputId);
+      var eyeOpen = btn.querySelector('.eye-open');
+      var eyeClosed = btn.querySelector('.eye-closed');
+
+      if (input.type === 'password') {
+         input.type = 'text';
+         eyeOpen.style.display = 'none';
+         eyeClosed.style.display = 'inline';
+      } else {
+         input.type = 'password';
+         eyeOpen.style.display = 'inline';
+         eyeClosed.style.display = 'none';
+      }
+   }
+
    $(document).ready(function (){
        $('#myForm_type').validate({
            rules: {

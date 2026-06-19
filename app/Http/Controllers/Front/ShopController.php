@@ -15,16 +15,16 @@ class ShopController extends Controller
         if(!empty($_GET['category'])){
             $slugs = explode(',', $_GET['category']);
             $catIds = Category::select('id')->whereIn('category_slug', $slugs)->pluck('id')->toArray();
-            $products = Product::whereIn('category_id', $catIds)->paginate(10);
+            $products = Product::whereIn('category_id', $catIds)->paginate(20);
         }
         elseif(!empty($_GET['brand'])){
             $slugs = explode(',', $_GET['brand']);
             $brandIds = Brand::select('id')->whereIn('brand_slug', $slugs)->pluck('id')->toArray();
-            $products = Product::whereIn('brand_id', $brandIds)->paginate(10);
+            $products = Product::whereIn('brand_id', $brandIds)->paginate(20);
         }
         else{
             // $all_products = Product::where('status', 1)->orderBy('id', 'DESC')->get();
-            $products = Product::where('status', 1)->orderBy('id', 'DESC')->paginate(10);
+            $products = Product::where('status', 1)->orderBy('id', 'DESC')->paginate(20);
         }
 
         // Price Range

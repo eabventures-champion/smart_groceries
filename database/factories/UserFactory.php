@@ -32,6 +32,19 @@ class UserFactory extends Factory
     }
 
     /**
+     * Create a user with the 'user' role and active status.
+     *
+     * @return static
+     */
+    public function user()
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'user',
+            'status' => 'active',
+        ]);
+    }
+
+    /**
      * Indicate that the model's email address should be unverified.
      *
      * @return static

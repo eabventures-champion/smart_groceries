@@ -107,6 +107,39 @@
                               <img id="showImage" src="{{ asset($setting->logo)   }}" alt="Logo" style="width:100px; height: 100px;"  >
                            </div>
                         </div>
+                        <hr>
+                        <h5 class="mb-3 text-success">Affiliate Referral Settings</h5>
+                        
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Commission Type</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <select name="referral_commission_type" class="form-select">
+                                 <option value="flat" {{ ($setting->referral_commission_type ?? 'flat') == 'flat' ? 'selected' : '' }}>Flat sign-up bonus</option>
+                                 <option value="percentage" {{ ($setting->referral_commission_type ?? 'flat') == 'percentage' ? 'selected' : '' }}>Percentage of first order</option>
+                              </select>
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Flat Amount (GH¢)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="referral_flat_amount" value="{{ $setting->referral_flat_amount ?? '15.00' }}" />
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Percentage (%)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="referral_percentage" value="{{ $setting->referral_percentage ?? '10.00' }}" />
+                           </div>
+                        </div>
+
                         <div class="row">
                            <div class="col-sm-3"></div>
                            <div class="col-sm-9 text-secondary">

@@ -32,6 +32,8 @@ class RedirectIfAuthenticated
 
                 }if(Auth::check() && Auth::user()->role == 'admin'){
                     return redirect('/admin/dashboard');
+                }if(Auth::check() && Auth::user()->role == 'expert'){
+                    return redirect('/expert/dashboard');
                 }
             }
         }

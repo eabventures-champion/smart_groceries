@@ -10,90 +10,66 @@ class ProfileTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_profile_page_is_displayed(): void
+    public function test_user_account_page_is_displayed(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->user()->create();
 
         $response = $this
             ->actingAs($user)
-            ->get('/profile');
+            ->get('/user/account/page');
 
         $response->assertOk();
     }
 
-    public function test_profile_information_can_be_updated(): void
+    public function test_user_account_page_requires_authentication(): void
     {
-        $user = User::factory()->create();
+        $response = $this->get('/user/account/page');
+
+        $response->assertRedirect('/login');
+    }
+
+    public function test_user_profile_can_be_updated(): void
+    {
+        $user = User::factory()->user()->create();
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
+            ->post('/profile/update', [
+                'username' => 'testuser',
                 'name' => 'Test User',
                 'email' => 'test@example.com',
+                'phone' => '0123456789',
+                'address' => '123 Test Street',
             ]);
 
-        $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+        $response->assertRedirect();
 
         $user->refresh();
 
         $this->assertSame('Test User', $user->name);
         $this->assertSame('test@example.com', $user->email);
-        $this->assertNull($user->email_verified_at);
+        $this->assertSame('testuser', $user->username);
     }
 
-    public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
+    public function test_user_dashboard_is_displayed(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->user()->create();
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
-                'name' => 'Test User',
-                'email' => $user->email,
-            ]);
+            ->get('/dashboard');
 
-        $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
-
-        $this->assertNotNull($user->refresh()->email_verified_at);
+        $response->assertOk();
     }
 
-    public function test_user_can_delete_their_account(): void
+    public function test_user_change_password_page_is_displayed(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->user()->create();
 
         $response = $this
             ->actingAs($user)
-            ->delete('/profile', [
-                'password' => 'password',
-            ]);
+            ->get('/user/change/password');
 
-        $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect('/');
-
-        $this->assertGuest();
-        $this->assertNull($user->fresh());
-    }
-
-    public function test_correct_password_must_be_provided_to_delete_account(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this
-            ->actingAs($user)
-            ->from('/profile')
-            ->delete('/profile', [
-                'password' => 'wrong-password',
-            ]);
-
-        $response
-            ->assertSessionHasErrorsIn('userDeletion', 'password')
-            ->assertRedirect('/profile');
-
-        $this->assertNotNull($user->fresh());
+        $response->assertOk();
     }
 }

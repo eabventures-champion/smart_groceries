@@ -18,6 +18,11 @@
       <link href="{{ asset('back/assets/css/app.css') }}" rel="stylesheet">
       <link href="{{ asset('back/assets/css/icons.css') }}" rel="stylesheet">
       <title>Admin login</title>
+      <style>
+         .back-home-link:hover {
+            color: #0d6efd !important;
+         }
+      </style>
    </head>
    <body class="bg-login">
       <!--wrapper-->
@@ -34,9 +39,11 @@
                      <div class="card">
                         <div class="card-body">
                            <div class="border p-4 rounded">
-                              <div class="text-center">
-                                 <h3 class="">Admin Sign in</h3>
-                                 {{-- <p>Don't have an account yet? <a href="authentication-signup.html">Sign up here</a></p> --}}
+                              <div class="text-center position-relative mb-4">
+                                 <a href="/" class="position-absolute start-0 top-50 translate-middle-y text-secondary back-home-link" title="Back to Homepage" style="font-size: 24px; transition: color 0.2s; padding-left: 5px;">
+                                    <i class="bx bx-home-alt"></i>
+                                 </a>
+                                 <h3 class="mb-0">Admin Sign in</h3>
                               </div>
                               {{-- <div class="d-grid">
                                  <a class="btn my-4 shadow-sm btn-white" href="javascript:;"> <span class="d-flex justify-content-center align-items-center">

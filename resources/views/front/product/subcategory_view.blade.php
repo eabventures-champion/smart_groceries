@@ -4,22 +4,11 @@
     {{ $breadsubcat->category->category_name }} >  {{ $breadsubcat->subcategory_name }} Subcategory
 @endsection
 
-<div class="page-header mt-30 mb-50">
+<div class="page-header breadcrumb-wrap">
    <div class="container">
-      <div class="archive-header">
-         <div class="row align-items-center">
-            <div class="col-xl-3">
-               <h5 class="mb-15">{{ $breadsubcat->subcategory_name }}</h5>
-               <div class="breadcrumb">
-                  <a href="{{ url('/') }}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                  {{-- <span></span>{{ $breadsubcat->category->category_name }}  --}}
-                  {{-- <span></span>  {{ $breadsubcat->subcategory_name }} --}}
-               </div>
-               <p class="d-block d-lg-none">
-                  We found <strong class="text-brand">{{ count($products) }}</strong> items for you! 
-               </p>
-            </div>
-         </div>
+      <div class="breadcrumb">
+         <a href="{{ url('/') }}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+         <span></span> {{ $breadsubcat->category->category_name }} <span></span> {{ $breadsubcat->subcategory_name }}
       </div>
    </div>
 </div>
@@ -76,7 +65,7 @@
    <div class="row flex-row-reverse">
       <div class="col-lg-4-5">
          <div class="shop-product-fillter">
-            <div class="totall-product d-none d-lg-block">
+            <div class="totall-product">
                <p>We found <strong class="text-brand">{{ count($products) }}</strong> items for you!</p>
             </div>
             {{-- <div class="sort-by-product-area">

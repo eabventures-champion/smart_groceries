@@ -3,17 +3,11 @@
 @section('title')
 Searching for {{ $item }} ...
 @endsection
-<div class="page-header mt-30 mb-50">
+<div class="page-header breadcrumb-wrap">
    <div class="container">
-      <div class="archive-header">
-         <div class="row align-items-center">
-            <div class="col-xl-3">
-               <div class="breadcrumb">
-                  <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                  <span></span> {{ $item }} 
-               </div>
-            </div>
-         </div>
+      <div class="breadcrumb">
+         <a href="{{ url('/') }}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+         <span></span> Search: "{{ $item }}"
       </div>
    </div>
 </div>
