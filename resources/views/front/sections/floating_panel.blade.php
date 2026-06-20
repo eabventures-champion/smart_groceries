@@ -13,7 +13,7 @@
         background: rgba(255, 255, 255, 0.92) !important;
         backdrop-filter: blur(16px) saturate(180%) !important;
         -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-        border: 1px solid rgba(229, 231, 235, 0.6) !important;
+        border: 2px solid #bbf7d0 !important;
         border-right: none !important;
         padding: 20px 8px !important;
         border-radius: 20px 0 0 20px !important;
@@ -415,19 +415,20 @@
         #sg-floating-dock {
             bottom: 20px !important;
             top: auto !important;
-            transform: none !important;
-            right: 20px !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
             flex-direction: row !important;
             border-radius: 9999px !important;
             padding: 8px 16px !important;
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.18) !important;
-            border: 1px solid rgba(229, 231, 235, 0.8) !important;
+            border: 2px solid #bbf7d0 !important;
         }
         #sg-floating-dock.sg-dock-shifted {
-            transform: none !important;
+            transform: translateX(-50%) !important;
         }
         #sg-floating-dock.sg-dock-hidden {
-            transform: translateY(150%) !important;
+            transform: translateX(-50%) translateY(150%) !important;
             pointer-events: none !important;
         }
 
@@ -453,16 +454,17 @@
         #sg-restore-handle {
             top: auto !important;
             bottom: 20px !important;
-            right: 20px !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
             padding: 12px 18px !important;
             border-radius: 9999px !important;
             flex-direction: row !important;
             gap: 8px !important;
-            transform: none !important;
             box-shadow: 0 4px 18px rgba(59, 183, 126, 0.4) !important;
         }
         #sg-restore-handle.sg-restore-hidden {
-            transform: translateY(150%) !important;
+            transform: translateX(-50%) translateY(150%) !important;
         }
     }
 
