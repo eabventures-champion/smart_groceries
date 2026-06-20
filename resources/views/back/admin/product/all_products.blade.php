@@ -46,7 +46,7 @@
                      <td> <img src="{{ asset($item->product_thumbnail) }}" style="width: 70px; height:40px;" >  </td>
                      <td>
                         {{ $item->product_name }} <br> 
-                        <span class="badge rounded-pill bg-primary">{{ $item->category->category_name }}</span>
+                        <span class="badge rounded-pill bg-primary">{{ $item->category?->category_name ?? 'N/A' }}</span>
                      </td>
                      {{-- <td>{{ $item->category->category_name }}</td> --}}
                      <td>

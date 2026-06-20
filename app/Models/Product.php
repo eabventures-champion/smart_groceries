@@ -53,4 +53,12 @@ class Product extends Model
 
         return array('product_stock' => $product_attribute_stock, 'selling_price' => $product_attribute['price'], 'final_price' => $final_price, 'discount' => $discount, 'discount_percent' => $discount_percent);
     }
+
+    public function getProductThumbnailAttribute($value)
+    {
+        if (empty($value) || !file_exists(public_path($value))) {
+            return 'back/assets/images/products/sliders/no_image.jpg';
+        }
+        return $value;
+    }
 }

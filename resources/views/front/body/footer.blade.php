@@ -1,7 +1,3 @@
-@php
-$setting = App\Models\SiteSetting::find(1) ?? new App\Models\SiteSetting();
-@endphp
-
 <footer class="main">
     <section class="newsletter mb-15 wow animate__animated animate__fadeIn section-padding">
         <div class="container">

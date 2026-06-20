@@ -36,7 +36,7 @@
                 @foreach ($subcategories as $key => $subcategory )
                     <tr>
                         <td>{{ $key+1 }}</td>
-                        <td>{{ $subcategory->category->category_name }}</td>
+                        <td>{{ $subcategory->category?->category_name ?? 'N/A' }}</td>
                         <td>{{ $subcategory->subcategory_name }}</td>
                         <td>
                             <a href="{{ route('edit.subcategory', $subcategory->id) }}" class="btn btn-info">Edit</a>

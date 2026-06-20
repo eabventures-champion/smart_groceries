@@ -35,7 +35,7 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
                         <div class="product-img product-img-zoom">
                            {{-- <a href="javascript:;"> --}}
                            <a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">
-                              <img class="default-img" src="{{ asset($product->product_thumbnail) }}" alt="" />
+                              <img class="default-img" src="{{ asset($product->product_thumbnail) }}" alt="" loading="lazy" />
                            </a>
                         </div>
 
@@ -136,7 +136,7 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
             <div class="row product-grid-4">
 
                @php
-               $catwiseProduct = App\Models\Product::where('category_id', $category->id)->orderBy('id', 'DESC')->get();
+               $catwiseProduct = App\Models\Product::where('category_id', $category->id)->where('status', 1)->orderBy('id', 'DESC')->limit(15)->get();
                @endphp
 
                @forelse ( $catwiseProduct as $product )
@@ -146,7 +146,7 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
                            <div class="product-img product-img-zoom">
                               {{-- <a href="javascript:;"> --}}
                               <a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">
-                              <img class="default-img" src="{{ asset($product->product_thumbnail) }}" alt="" />
+                              <img class="default-img" src="{{ asset($product->product_thumbnail) }}" alt="" loading="lazy" />
                               </a>
                            </div>
                            <div class="product-action-1">

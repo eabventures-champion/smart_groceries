@@ -1,4 +1,5 @@
 @extends('front.master')
+@section('needs_stripe', true)
 @section('content')
 @section('title')
    Checkout Page

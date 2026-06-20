@@ -11,9 +11,9 @@
     $year = date('Y');
     $year = App\Models\Order::where('order_year', $year)->sum('amount');
 
-    $pending = App\Models\Order::where('status', 'pending')->get();
-    $vendor = App\Models\User::where('status', 'active')->where('role','vendor')->get();
-    $customer = App\Models\User::where('status', 'active')->where('role','user')->get();
+    $pending_count = App\Models\Order::where('status', 'pending')->count();
+    $vendor_count = App\Models\User::where('status', 'active')->where('role','vendor')->count();
+    $customer_count = App\Models\User::where('status', 'active')->where('role','user')->count();
 @endphp
 
 <!--start page wrapper -->
@@ -80,7 +80,7 @@
          <div class="card radius-10 bg-gradient-ibiza">
             <div class="card-body">
                <div class="d-flex align-items-center">
-                  <h5 class="mb-0 text-white">{{ count($pending) }}</h5>
+                  <h5 class="mb-0 text-white">{{ $pending_count }}</h5>
                   <div class="ms-auto">
                      <i class='bx bx-envelope fs-3 text-white'></i>
                   </div>
@@ -118,7 +118,7 @@
          <div class="card radius-10 bg-gradient-ibiza">
             <div class="card-body">
                <div class="d-flex align-items-center">
-                  <h5 class="mb-0 text-white">{{ count($customer) }}</h5>
+                  <h5 class="mb-0 text-white">{{ $customer_count }}</h5>
                   <div class="ms-auto">
                      <i class='bx bx-envelope fs-3 text-white'></i>
                   </div>

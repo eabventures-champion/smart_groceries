@@ -16,6 +16,13 @@
       <link href="{{ asset('back/assets/plugins/metismenu/css/metisMenu.min.css') }}" rel="stylesheet" />
       <!-- loader-->
       <link href="{{ asset('back/assets/css/pace.min.css') }}" rel="stylesheet" />
+      <script>
+         window.paceOptions = {
+            ajax: false,
+            restartOnRequestAfter: false,
+            eventLag: false
+         };
+      </script>
       <script src="{{ asset('back/assets/js/pace.min.js') }}"></script>
       <!-- Bootstrap CSS -->
       <link href="{{ asset('back/assets/css/bootstrap.min.css') }}" rel="stylesheet">

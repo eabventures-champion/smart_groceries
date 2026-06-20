@@ -40,6 +40,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Share common data across all frontend views (queried only once per request)
+        view()->composer(['front.*'], function ($view) {
+            static $setting = null;
+            static $seo = null;
+
+            if ($setting === null) {
+                $setting = \App\Models\SiteSetting::find(1) ?? new \App\Models\SiteSetting();
+            }
+            if ($seo === null) {
+                $seo = \App\Models\Seo::find(1);
+            }
+
+            $view->with('setting', $setting)->with('seo', $seo);
+        });
     }
 }

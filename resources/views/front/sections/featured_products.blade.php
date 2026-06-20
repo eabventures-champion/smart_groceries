@@ -32,7 +32,7 @@
                                                 <div class="product-img product-img-zoom">
                                                     <a href="javascript:;">
                                                         {{-- <a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}"> --}}
-                                                        <img class="default-img" src="{{ asset($product->product_thumbnail) }}" alt="" />
+                                                        <img class="default-img" src="{{ asset($product->product_thumbnail) }}" alt="" loading="lazy" />
                                                     </a>
                                                 </div>
                                                 <div class="product-action-1 d-none d-lg-none">

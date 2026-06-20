@@ -19,7 +19,9 @@
 @endif
 
 @php
-$categories = App\Models\Category::orderBy('category_name','DESC')->get();
+$categories = App\Models\Category::withCount(['products' => function($q) {
+    $q->where('status', 1);
+}])->orderBy('category_name','DESC')->get();
 @endphp
 
 
@@ -38,13 +40,10 @@ $categories = App\Models\Category::orderBy('category_name','DESC')->get();
             @foreach($categories as $category)
             <div style="max-width: 120px !important;" class="card-2 bg-{{ $category['id'] + 1 }} wow animate__animated animate__fadeInUp" data-wow-delay=".{{ $category['id'] }}s">
                <figure class="img-hover-scale overflow-hidden">
-                  <a href="{{ url('product/category/'.$category->id.'/'.$category->category_slug) }}"><img src="{{ asset($category->category_photo) }}" alt="" /></a>
+                  <a href="{{ url('product/category/'.$category->id.'/'.$category->category_slug) }}"><img src="{{ asset($category->category_photo) }}" alt="" loading="lazy" /></a>
                </figure>
                <h6><a href="{{ url('product/category/'.$category->id.'/'.$category->category_slug) }}">{{ $category->category_name }}</a></h6>
-               @php
-               $products = App\Models\Product::where('category_id',$category->id)->get();
-               @endphp
-               <span>{{ count($products) }} items</span>
+               <span>{{ $category->products_count }} items</span>
             </div>
             @endforeach
          </div>

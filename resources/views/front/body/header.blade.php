@@ -13,9 +13,6 @@
 
        {{-- Information at the top --}}
        {{-- Large screen - Header 1 --}}
-       @php
-           $setting = App\Models\SiteSetting::find(1) ?? new App\Models\SiteSetting();
-       @endphp
        <div class="header-top header-top-ptb-1 d-none d-lg-block" style="background-color: white;">
            <div class="container">
                <div class="row align-items-center">
@@ -323,7 +320,6 @@
                                           <li><a href="shop-invoice-3.html">Shop Invoice 3</a></li>
                                           <li><a href="shop-invoice-4.html">Shop Invoice 4</a></li>
                                           <li><a href="shop-invoice-5.html">Shop Invoice 5</a></li>
-                                          <li><a href="shop-invoice-6.html">Shop Invoice 6</a></li>
                                        </ul>
                                     </li>
                                  </ul>
@@ -331,28 +327,19 @@
                               --}}
 
                                    @php
-                                       $categories = App\Models\Category::orderBy('category_name', 'ASC')
+                                       $categories_nav = App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')
                                            ->limit(5)
                                            ->get();
                                    @endphp
 
-                                   @foreach ($categories as $category)
+                                   @foreach ($categories_nav as $category)
                                        <li>
                                            <a
                                                href="{{ url('product/category/' . $category->id . '/' . $category->category_slug) }}">{{ $category->category_name }}
                                                <i class="fi-rs-angle-down"></i></a>
 
-                                           @php
-                                               $subcategories = App\Models\SubCategory::where(
-                                                   'category_id',
-                                                   $category->id,
-                                               )
-                                                   ->orderBy('subcategory_name', 'ASC')
-                                                   ->get();
-                                           @endphp
-
                                            <ul class="sub-menu">
-                                               @foreach ($subcategories as $subcategory)
+                                               @foreach ($category->subcategories as $subcategory)
                                                    <li><a
                                                            href="{{ url('product/subcategory/' . $subcategory->id . '/' . $subcategory->subcategory_slug) }}">{{ $subcategory->subcategory_name }}</a>
                                                    </li>
@@ -714,7 +701,7 @@
                      </li>
                      --}}
                            @php
-                               $all_categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
+                               $all_categories = App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')->get();
                            @endphp
                            <li class="menu-item-has-children">
                                <a href="#">Categories</a>
@@ -723,16 +710,8 @@
                                        <li class="menu-item-has-children">
                                            <a
                                                href="{{ url('product/category/' . $category->id . '/' . $category->category_slug) }}">{{ $category->category_name }}</a>
-                                           @php
-                                               $subcategories = App\Models\SubCategory::where(
-                                                   'category_id',
-                                                   $category->id,
-                                               )
-                                                   ->orderBy('subcategory_name', 'ASC')
-                                                   ->get();
-                                           @endphp
                                            <ul class="dropdown">
-                                               @foreach ($subcategories as $subcategory)
+                                               @foreach ($category->subcategories as $subcategory)
                                                    <li><a
                                                            href="{{ url('product/subcategory/' . $subcategory->id . '/' . $subcategory->subcategory_slug) }}">{{ $subcategory->subcategory_name }}</a>
                                                    </li>

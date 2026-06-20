@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
-   @php
-    $seo = App\Models\Seo::find(1);
-   @endphp
    <head>
       <meta charset="utf-8" />
       <title>@yield('title')</title>
@@ -20,7 +17,15 @@
       <meta property="og:type" content="" />
       <meta property="og:url" content="" />
       <meta property="og:image" content="" />
-      
+
+      <!-- DNS Prefetch & Preconnect for faster CDN loading -->
+      <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+      <link rel="preconnect" href="https://cdn-uicons.flaticon.com" crossorigin />
+      <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+      <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+      <link rel="dns-prefetch" href="https://cdn-uicons.flaticon.com" />
+      <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
       <!-- Favicon -->
       <link rel="icon" type="image/png" href="{{ asset('front/assets/imgs/theme/_favicon/favicon-96x96.png') }}" sizes="96x96" />
       <link rel="icon" type="image/svg+xml" href="{{ asset('front/assets/imgs/theme/_favicon/favicon.svg') }}" />
@@ -29,26 +34,23 @@
       <meta name="apple-mobile-web-app-title" content="smartgroceries.org" />
       <link rel="manifest" href="{{ asset('front/assets/imgs/theme/_favicon/site.webmanifest') }}" />
 
-      {{-- <link rel="shortcut icon" type="image/x-icon" href="{{ asset('front/assets/imgs/theme/favicon.svg') }}" /> --}}
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type="text/css" media="all" />
-      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
-      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
-      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
-
-      <!-- Template CSS -->
-      <link rel="stylesheet" href="{{ asset('front/assets/css/plugins/animate.min.css') }}" />
+      <!-- Critical CSS (render-blocking - keep minimal) -->
       <link rel="stylesheet" href="{{ asset('front/assets/css/main.css?v=5.3') }}" />
-      <link href="{{ asset('back/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
 
-      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" >
+      <!-- Non-critical CSS (load async via media trick) -->
+      <link rel="stylesheet" href="{{ asset('front/assets/css/plugins/animate.min.css') }}" media="print" onload="this.media='all'" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" media="print" onload="this.media='all'" />
+      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css' media="print" onload="this.media='all'" />
+      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css' media="print" onload="this.media='all'" />
+      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css' media="print" onload="this.media='all'" />
+      <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css' media="print" onload="this.media='all'" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" media="print" onload="this.media='all'" />
+      <link href="{{ asset('back/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" media="print" onload="this.media='all'" />
+
+      <!-- Stripe JS: only loaded on checkout pages -->
+      @hasSection('needs_stripe')
       <script src="https://js.stripe.com/v3/"></script>
-
-      {{-- <style>
-        *{
-            zoom: 98.7%;
-        }
-      </style> --}}
+      @endif
 
    </head>
    <body>
@@ -60,41 +62,43 @@
       </main>
       @include('front.body.footer')
       @include('front.body.pre_loader')
-      <!-- Vendor JS-->
-      <script src="{{ asset('front/assets/js/vendor/modernizr-3.6.0.min.js') }}"></script>
+      <!-- Core JS (must load first - not deferred) -->
       <script src="{{ asset('front/assets/js/vendor/jquery-3.6.0.min.js') }}"></script>
-      {{-- <script src="{{ asset('front/assets/js/jquery.min.js') }}"></script> --}}
-      <script src="{{ asset('front/assets/js/vendor/jquery-migrate-3.3.0.min.js') }}"></script>
       <script src="{{ asset('front/assets/js/vendor/bootstrap.bundle.min.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/slick.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.syotimer.min.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/waypoints.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/wow.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/perfect-scrollbar.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/magnific-popup.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/select2.min.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/counterup.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.countdown.min.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/images-loaded.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/isotope.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/scrollup.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.vticker-min.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.theia.sticky.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}"></script>
-      <!-- Template  JS -->
-      <script src="{{ asset('front/assets/js/main.js?v=5.4') }}"></script>
-      <script src="{{ asset('front/assets/js/shop.js?v=5.3') }}"></script>
-      <script src="{{ asset('front/assets/js/script.js') }}"></script>
-      <script src="{{ asset('back/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+
+      <!-- Deferred Vendor JS (non-blocking) -->
+      <script src="{{ asset('front/assets/js/vendor/modernizr-3.6.0.min.js') }}" defer></script>
+      {{-- <script src="{{ asset('front/assets/js/jquery.min.js') }}"></script> --}}
+      <script src="{{ asset('front/assets/js/vendor/jquery-migrate-3.3.0.min.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/slick.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/jquery.syotimer.min.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/waypoints.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/wow.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/perfect-scrollbar.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/magnific-popup.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/select2.min.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/counterup.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/jquery.countdown.min.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/images-loaded.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/isotope.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/scrollup.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/jquery.vticker-min.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/jquery.theia.sticky.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}" defer></script>
+      <!-- Template JS -->
+      <script src="{{ asset('front/assets/js/main.js?v=5.4') }}" defer></script>
+      <script src="{{ asset('front/assets/js/shop.js?v=5.3') }}" defer></script>
+      <script src="{{ asset('front/assets/js/script.js') }}" defer></script>
+      <script src="{{ asset('back/assets/plugins/datatable/js/jquery.dataTables.min.js') }}" defer></script>
       <script>
          $(document).ready(function() {
-            $('#example').DataTable();
+            if ($('#example').length) { $('#example').DataTable(); }
            } );
       </script>
-      <script src="{{ asset('front/assets/js/code.js') }}"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
-      <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      <script src="{{ asset('front/assets/js/code.js') }}" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" defer></script>
+      <script src="//cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" defer></script>
       <script>
          @if(Session::has('message'))
          var type = "{{ Session::get('alert-type','info') }}"
@@ -298,7 +302,8 @@
                }
             })
          }
-         miniCart();
+         // Delay miniCart load until after page renders
+         setTimeout(function(){ miniCart(); }, 800);
 
          /// Mini Cart Remove Start
          function miniCartRemove(rowId){
@@ -466,7 +471,8 @@
                }
                })
             }
-            wishlist();
+            // Delay wishlist load until after page renders
+            setTimeout(function(){ wishlist(); }, 1200);
 
             // / End Load Wishlist Data -->
 
@@ -610,7 +616,8 @@
                  }
              })
          }
-         compare();
+         // Delay compare load until after page renders
+         setTimeout(function(){ compare(); }, 1600);
          // / End Load Compare Data -->
          // Compare Remove Start
          function compareRemove(id){
@@ -707,7 +714,8 @@
             }
          })
          }
-         cart();
+         // Delay cart load until after page renders
+         setTimeout(function(){ cart(); }, 1000);
 
          // Cart Remove Start
          function cartRemove(id){
