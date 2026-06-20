@@ -82,7 +82,7 @@
       <script src="{{ asset('front/assets/js/plugins/jquery.theia.sticky.js') }}"></script>
       <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}"></script>
       <!-- Template  JS -->
-      <script src="{{ asset('front/assets/js/main.js?v=5.3') }}"></script>
+      <script src="{{ asset('front/assets/js/main.js?v=5.4') }}"></script>
       <script src="{{ asset('front/assets/js/shop.js?v=5.3') }}"></script>
       <script src="{{ asset('front/assets/js/script.js') }}"></script>
       <script src="{{ asset('back/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
