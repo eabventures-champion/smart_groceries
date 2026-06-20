@@ -36,7 +36,7 @@
                         <input type="text" name="product_tags" class="form-control visually-hidden" data-role="tagsinput" value="new product,top product">
                         {{-- <input type="text" name="product_tags" class="form-control visually-hidden" data-role="tagsinput" value="new product,top product"> --}}
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 d-none">
                         <label for="inputProductTitle" class="form-label">Size</label>
                         {{-- <input type="text" name="product_size" class="form-control visually-hidden" data-role="tagsinput"> --}}
                         <input type="text" name="product_size" class="form-control visually-hidden" data-role="tagsinput" value="please leave it">
@@ -73,7 +73,7 @@
                             <label for="inputPrice" class="form-label">Price</label>
                             <input type="text" name="selling_price" class="form-control" id="inputPrice" placeholder="eg. 50">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-none">
                             <label for="inputCompareatprice" class="form-label">0% (leave it) </label>
                             <input type="text" name="discount_price" class="form-control" id="inputCompareatprice" placeholder="discount (%)">
                         </div>
@@ -81,7 +81,7 @@
                             <label for="inputCostPerPrice" class="form-label">Product Code</label>
                             <input type="text" name="product_code" class="form-control" id="inputCostPerPrice" placeholder="eg. MLK">
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-6 d-none">
                             <label for="inputStarPoints" class="form-label">Quantity (leave it)</label>
                             <input type="text" name="product_qty" value="0" class="form-control" id="inputStarPoints" placeholder="0">
                         </div>

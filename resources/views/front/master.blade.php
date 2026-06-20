@@ -187,15 +187,21 @@
 
             ///Color
              $('select[name="color"]').empty();
-             if (data.color == "") {
-               $('#colorArea').hide();
-               }else{
-                  $('select[name="color"]').append('<option selected="" disabled=""> --select variant-- </option>')
-                  $('#colorArea').show();
+             var showColor = true;
+             if (!data.color || data.color.length === 0 || (data.color.length === 1 && data.color[0].trim().toLowerCase() === 'none') || data.color == "") {
+                 showColor = false;
              }
-             $.each(data.color,function(key,value){
-                $('select[name="color"]').append('<option value="'+value+' ">'+value+'  </option')
-             })
+             if (!showColor) {
+                 $('#colorArea').hide();
+             } else {
+                 $('select[name="color"]').append('<option selected="" disabled=""> --select variant-- </option>');
+                 $('#colorArea').show();
+                 $.each(data.color, function(key, value){
+                     if (value.trim().toLowerCase() !== 'none') {
+                         $('select[name="color"]').append('<option value="'+value+' ">'+value+'  </option>');
+                     }
+                 });
+             }
 
             }
          })

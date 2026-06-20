@@ -167,19 +167,21 @@
                         </div>
                      </div> --}}
                      {{-- @endif --}}
-                     @if($product->product_color == "")
-                     <div></div>
-                     @else
-                     <div class="attr-detail attr-size mb-20">
-                        <strong class="mr-10 d-none d-lg-block" style="width:50px;">Variant: </strong>
-                        <select class="form-control unicase-form-control" id="dcolor">
-                           <option selected="" disabled=""> --select variant-- </option>
-                           @foreach($product_color as $color)
-                           <option value="{{ $color }}">{{ ucwords($color) }}</option>
-                           @endforeach
-                        </select>
-                     </div>
-                     @endif
+                      @if($product->product_color == "" || strtolower(trim($product->product_color)) == 'none')
+                      <div></div>
+                      @else
+                      <div class="attr-detail attr-size mb-20">
+                         <strong class="mr-10 d-none d-lg-block" style="width:50px;">Variant: </strong>
+                         <select class="form-control unicase-form-control" id="dcolor">
+                            <option selected="" disabled=""> --select variant-- </option>
+                            @foreach($product_color as $color)
+                            @if(strtolower(trim($color)) !== 'none')
+                            <option value="{{ $color }}">{{ ucwords($color) }}</option>
+                            @endif
+                            @endforeach
+                         </select>
+                      </div>
+                      @endif
 
                      <div class="detail-extralink mt-30 mb-30">
                         <div class="detail-qty border radius">

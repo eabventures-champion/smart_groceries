@@ -35,7 +35,7 @@
                            <label for="inputProductTitle" class="form-label">Tags</label>
                            <input type="text" name="product_tags" class="form-control visually-hidden" data-role="tagsinput" value="{{ $products->product_tags }}">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 d-none">
                            <label for="inputProductTitle" class="form-label">Size</label>
                            <input type="text" name="product_size" class="form-control visually-hidden" data-role="tagsinput" value="{{ $products->product_size }} ">
                         </div>
