@@ -30,6 +30,30 @@ class ProductController extends Controller
     }
 
     public function store_product(Request $request){
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'product_thumbnail' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:1024',
+            'multi_img' => 'required|array',
+            'multi_img.*' => 'image|mimes:jpeg,png,jpg,webp,gif|max:1024',
+        ], [
+            'product_thumbnail.required' => 'Please upload a product thumbnail.',
+            'product_thumbnail.image' => 'The thumbnail must be an image file.',
+            'product_thumbnail.mimes' => 'The thumbnail must be a file of type: jpeg, png, jpg, webp, gif.',
+            'product_thumbnail.max' => 'The product thumbnail must not exceed 1MB (1024 KB).',
+            'multi_img.required' => 'Please select product multi-images.',
+            'multi_img.array' => 'The multi-images must be an array.',
+            'multi_img.*.image' => 'Each multi-image must be an image file.',
+            'multi_img.*.mimes' => 'Each multi-image must be a file of type: jpeg, png, jpg, webp, gif.',
+            'multi_img.*.max' => 'Each multi-image must not exceed 1MB (1024 KB).',
+        ]);
+
+        if ($validator->fails()) {
+            $notification = array(
+                'message' => $validator->errors()->first(),
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->withInput()->with($notification);
+        }
+
         $image = $request->file('product_thumbnail');
         $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
         Image::make($image)->resize(800,800)->save('back/assets/images/products/thumbnails/'.$name_gen);
@@ -139,6 +163,23 @@ class ProductController extends Controller
     }
 
     public function update_product_thumbnail(Request $request){
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'product_thumbnail' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:1024',
+        ], [
+            'product_thumbnail.required' => 'Please upload a product thumbnail.',
+            'product_thumbnail.image' => 'The thumbnail must be an image file.',
+            'product_thumbnail.mimes' => 'The thumbnail must be a file of type: jpeg, png, jpg, webp, gif.',
+            'product_thumbnail.max' => 'The product thumbnail must not exceed 1MB (1024 KB).',
+        ]);
+
+        if ($validator->fails()) {
+            $notification = array(
+                'message' => $validator->errors()->first(),
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
         $pro_id = $request->id;
         $oldImage = $request->old_image;
 
@@ -166,9 +207,23 @@ class ProductController extends Controller
     }
 
     public function update_multi_image(Request $request){
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'multi_img' => 'required|array',
+            'multi_img.*' => 'image|mimes:jpeg,png,jpg,webp,gif|max:1024',
+        ], [
+            'multi_img.required' => 'Choose image to update first, after that you can now update image.',
+            'multi_img.array' => 'The multi-images must be an array.',
+            'multi_img.*.image' => 'Each uploaded file must be an image file.',
+            'multi_img.*.mimes' => 'Each uploaded file must be a file of type: jpeg, png, jpg, webp, gif.',
+            'multi_img.*.max' => 'Each uploaded file must not exceed 1MB (1024 KB).',
+        ]);
 
-        if($request->multi_img == null){
-            echo "choose image to update first, after that you can now update image"; die;
+        if ($validator->fails()) {
+            $notification = array(
+                'message' => $validator->errors()->first(),
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
         }
         
         $imgs = $request->multi_img;
@@ -218,6 +273,25 @@ class ProductController extends Controller
      * Store new additional multi images for an existing product.
      */
     public function store_new_multi_image(Request $request){
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'multi_img' => 'required|array',
+            'multi_img.*' => 'image|mimes:jpeg,png,jpg,webp,gif|max:1024',
+        ], [
+            'multi_img.required' => 'Please select at least one image to upload.',
+            'multi_img.array' => 'The multi-images must be an array.',
+            'multi_img.*.image' => 'Each uploaded file must be an image file.',
+            'multi_img.*.mimes' => 'Each uploaded file must be a file of type: jpeg, png, jpg, webp, gif.',
+            'multi_img.*.max' => 'Each uploaded file must not exceed 1MB (1024 KB).',
+        ]);
+
+        if ($validator->fails()) {
+            $notification = array(
+                'message' => $validator->errors()->first(),
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
         $product_id = $request->id;
         $images = $request->file('multi_img');
 
