@@ -16,6 +16,28 @@
        </div>
     </div>
 </section>
+<script>
+   document.addEventListener("DOMContentLoaded", function() {
+       var checkSlick = setInterval(function() {
+           if (typeof jQuery !== 'undefined' && jQuery.fn.slick) {
+               clearInterval(checkSlick);
+               var $slider = jQuery(".mobile-banner-slick");
+               if ($slider.length > 0 && !$slider.hasClass('slick-initialized')) {
+                   $slider.slick({
+                       slidesToShow: 1,
+                       slidesToScroll: 1,
+                       autoplay: true,
+                       autoplaySpeed: 3000,
+                       dots: false,
+                       arrows: false,
+                       fade: false,
+                       infinite: true
+                   });
+               }
+           }
+       }, 100);
+   });
+</script>
 @endif
 
 @php
