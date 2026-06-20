@@ -601,21 +601,15 @@
    </style>
 
    <script>
-       function search_result_show() {
-           $("#searchProducts").slideDown();
-       }
+        function search_result_show() {
+            $("#searchProducts").slideDown();
+            $("#searchProducts-mobile").slideDown();
+        }
 
-       function search_result_hide() {
-           $("#searchProducts").slideUp();
-       }
-
-       function search_result_show() {
-           $("#searchProducts-mobile").slideDown();
-       }
-
-       function search_result_hide() {
-           $("#searchProducts-mobile").slideUp();
-       }
+        function search_result_hide() {
+            $("#searchProducts").slideUp();
+            $("#searchProducts-mobile").slideUp();
+        }
 
        var prevScrollpos = window.pageYOffset;
        window.onscroll = function() {

@@ -1,4 +1,4 @@
-const site_url = "http://localhost:8000/";
+const site_url = window.location.origin + "/";
 
 $("body").on("keyup","#search", function(){
 
