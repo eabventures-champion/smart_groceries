@@ -312,8 +312,8 @@ class ProductController extends Controller
                     if($sku_count > 0){
 
                         $notification = array(
-                            'SKU already exits!, Please add another SKU!',
-                            'alert-type' => 'success'
+                            'message' => 'SKU already exists! Please use a unique SKU.',
+                            'alert-type' => 'error'
                         );
                         return back()->with($notification);
                     }
@@ -323,8 +323,8 @@ class ProductController extends Controller
                     if($size_count > 0){
 
                         $notification = array(
-                            'message' => 'Size already exits!, Please add another Size!',
-                            'alert-type' => 'success'
+                            'message' => 'Size already exists! Please add another Size.',
+                            'alert-type' => 'error'
                         );
                         return back()->with($notification);
                     }
