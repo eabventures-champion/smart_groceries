@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class MultiImage extends Model
 {
     use HasFactory;
+
+    public function getPhotoNameAttribute($value)
+    {
+        if (empty($value) || !file_exists(public_path($value))) {
+            return 'back/assets/images/products/sliders/no_image.jpg';
+        }
+        return $value;
+    }
 }

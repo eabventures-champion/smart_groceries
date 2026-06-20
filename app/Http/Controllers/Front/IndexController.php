@@ -33,6 +33,10 @@ class IndexController extends Controller
 
     public function product_details($id, $slug){
         $product = Product::with([
+            'category',
+            'subcategory',
+            'brand',
+            'vendor',
             'attributes' => function($query){
                 $query->where('stock', '>', 0)->where('status', 1);
             }

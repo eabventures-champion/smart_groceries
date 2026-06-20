@@ -29,17 +29,27 @@
                      {{-- <span class="zoom-icon"><i class="fi-rs-search"></i></span> --}}
                      <!-- MAIN SLIDES -->
                      <div class="product-image-slider">
+                        @if($multiImage->isEmpty())
+                        <figure class="border-radius-10">
+                           <img src="{{ asset($product->product_thumbnail) }}" alt="product image" />
+                        </figure>
+                        @else
                         @foreach($multiImage as $img)
                         <figure class="border-radius-10">
                            <img src="{{ asset($img->photo_name) }} " alt="product image" />
                         </figure>
                         @endforeach
+                        @endif
                      </div>
                      <!-- THUMBNAILS -->
                      <div class="slider-nav-thumbnails mb-30">
+                        @if($multiImage->isEmpty())
+                        <div><img src="{{ asset($product->product_thumbnail) }}" alt="product image" /></div>
+                        @else
                         @foreach($multiImage as $img)
                         <div><img src="{{ asset($img->photo_name) }}" alt="product image" /></div>
                         @endforeach
+                        @endif
                      </div>
                      {{-- <hr> --}}
                      <div class="font-xs">
