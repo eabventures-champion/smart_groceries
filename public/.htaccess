@@ -18,7 +18,7 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} \.(jpe?g|gif|png|webp|svg|css|js|ico|woff2?|ttf|eot|mp4|webm)$ [NC]
-    RewriteRule ^ - [L,R=404]
+    RewriteRule ^ - [L]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d

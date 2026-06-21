@@ -15,6 +15,11 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
+// Bind custom public path if public_html exists parallel to project directory (production Hostinger)
+if (file_exists(dirname(__DIR__) . '/../public_html')) {
+    $app->usePublicPath(dirname(__DIR__) . '/../public_html');
+}
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
