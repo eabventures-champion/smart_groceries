@@ -50,7 +50,7 @@ class IndexController extends Controller
 
         $multiImage = MultiImage::where('product_id', $id)->get();
         $cat_id = $product->category_id;
-        $relatedProduct = Product::where('category_id', $cat_id)->where('id', '!=', $id)->orderBy('id', 'DESC')->limit(4)->get();
+        $relatedProduct = Product::with('category')->where('category_id', $cat_id)->where('id', '!=', $id)->orderBy('id', 'DESC')->limit(4)->get();
 
         $total_stock = ProductAttribute::where('product_id', $id)->sum('stock');
 

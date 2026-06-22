@@ -207,7 +207,9 @@
        {{-- Large screen - Header 3 --}}
        {{-- Stickable header --}}
        @php
-           $categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
+            $categories = \Illuminate\Support\Facades\Cache::remember('all_categories_flat', 86400, function() {
+                return App\Models\Category::orderBy('category_name', 'ASC')->get();
+            });
        @endphp
        <div class="header-bottom header-bottom-bg-color sticky-bar">
            <div class="container">
@@ -327,9 +329,11 @@
                               --}}
 
                                    @php
-                                       $categories_nav = App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')
-                                           ->limit(5)
-                                           ->get();
+                                        $categories_nav = \Illuminate\Support\Facades\Cache::remember('categories_nav_5', 86400, function() {
+                                            return App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')
+                                                ->limit(5)
+                                                ->get();
+                                        });
                                    @endphp
 
                                    @foreach ($categories_nav as $category)
@@ -694,9 +698,11 @@
                         </ul>
                      </li>
                      --}}
-                           @php
-                               $all_categories = App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')->get();
-                           @endphp
+                            @php
+                                $all_categories = \Illuminate\Support\Facades\Cache::remember('all_categories_with_sub', 86400, function() {
+                                    return App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')->get();
+                                });
+                            @endphp
                            <li class="menu-item-has-children">
                                <a href="#">Categories</a>
                                <ul class="dropdown">
