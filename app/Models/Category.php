@@ -38,7 +38,7 @@ class Category extends Model
     public function getCategoryPhotoAttribute($value)
     {
         if (empty($value) || !file_exists(public_path($value))) {
-            return 'back/assets/images/products/sliders/no_image.jpg';
+            return 'back/assets/images/admin/no_image.jpg';
         }
         return $value;
     }
