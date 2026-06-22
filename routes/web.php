@@ -458,3 +458,41 @@ if (config('app.env') === 'local') {
     })->where('any', '.*');
 }
 
+Route::get('/sync-assets-hostinger', function() {
+    if (request('key') !== 'groceries_sync_2026') {
+        return response('Unauthorized', 403);
+    }
+
+    $src = base_path('public');
+    $dst = base_path('../public_html');
+
+    if (!file_exists($dst)) {
+        return "Error: Destination public_html directory not found at: " . $dst;
+    }
+
+    $syncCount = 0;
+    $copyDirectory = function($src, $dst) use (&$copyDirectory, &$syncCount) {
+        $dir = opendir($src);
+        if (!$dir) return;
+        @mkdir($dst, 0755, true);
+        while (false !== ($file = readdir($dir))) {
+            if ($file !== '.' && $file !== '..') {
+                $srcFile = $src . '/' . $file;
+                $dstFile = $dst . '/' . $file;
+                if (is_dir($srcFile)) {
+                    $copyDirectory($srcFile, $dstFile);
+                } else {
+                    if (copy($srcFile, $dstFile)) {
+                        $syncCount++;
+                    }
+                }
+            }
+        }
+        closedir($dir);
+    };
+
+    $copyDirectory($src, $dst);
+    return "Sync completed! Copied " . $syncCount . " files to public_html.";
+});
+
+
