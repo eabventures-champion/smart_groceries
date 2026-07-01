@@ -41,6 +41,10 @@ class SiteSettingController extends Controller
             'referral_commission_type' => $request->referral_commission_type,
             'referral_flat_amount' => $request->referral_flat_amount,
             'referral_percentage' => $request->referral_percentage,
+            'student_flat_fee' => $request->student_flat_fee,
+            'student_percent_fee' => $request->student_percent_fee,
+            'non_student_flat_fee' => $request->non_student_flat_fee,
+            'non_student_percent_fee' => $request->non_student_percent_fee,
         ]);
 
        $notification = array(
@@ -64,6 +68,10 @@ class SiteSettingController extends Controller
             'referral_commission_type' => $request->referral_commission_type,
             'referral_flat_amount' => $request->referral_flat_amount,
             'referral_percentage' => $request->referral_percentage,
+            'student_flat_fee' => $request->student_flat_fee,
+            'student_percent_fee' => $request->student_percent_fee,
+            'non_student_flat_fee' => $request->non_student_flat_fee,
+            'non_student_percent_fee' => $request->non_student_percent_fee,
         ]);
 
        $notification = array(

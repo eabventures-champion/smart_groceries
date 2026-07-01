@@ -432,6 +432,15 @@
                         @if($user->year_of_admission && $user->year_of_completion)
                         <div class="academic-card">
                            <div class="card-title-sm">📚 Academic Information</div>
+                           @if($user->institution)
+                           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 10px 14px; background: rgba(46,125,50,0.06); border-radius: 10px; border-left: 3px solid #2e7d32;">
+                              <span style="font-size: 18px;">🏫</span>
+                              <div>
+                                 <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #999; font-weight: 600;">Institution</div>
+                                 <div style="font-size: 15px; font-weight: 600; color: #333;">{{ $user->institution }}</div>
+                              </div>
+                           </div>
+                           @endif
                            <div class="academic-row">
                               <div class="academic-item">
                                  <div class="value">{{ $user->year_of_admission }}</div>

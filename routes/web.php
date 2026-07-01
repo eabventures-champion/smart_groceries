@@ -247,6 +247,10 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             // For Product Image Download
             Route::get('download-product-image/{id}', 'download_product_image')->name('download.product.image');
             Route::get('download-all-product-images', 'download_all_product_images')->name('download.all.product.images');
+
+            // For Product Image Bulk Upload
+            Route::get('bulk-upload-images', 'bulk_upload_images')->name('bulk.upload.images');
+            Route::post('store-bulk-upload-images', 'store_bulk_upload_images')->name('store.bulk.upload.images');
         });
 
         Route::controller(SliderController::class)->group(function () {

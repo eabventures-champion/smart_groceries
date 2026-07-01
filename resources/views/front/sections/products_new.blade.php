@@ -243,6 +243,168 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
             <a href="{{ route('shop.page') }}" class="btn btn-xs">Shop for more items <i class="fi-rs-arrow-small-right"></i></a>
          </div>
 
+         <!-- SG Features Horizontal Promo Ads Banner -->
+         <div class="container mt-20 mb-30">
+             <div class="sg-promo-banner-container">
+                 <h4 class="sg-promo-title">✨ Smart Groceries Campus Hub</h4>
+                 <div class="sg-promo-slider">
+                     <div class="sg-promo-card" onclick="toggleSgDrawer('expert')">
+                         <div class="sg-promo-icon">🛡️</div>
+                         <div class="sg-promo-info">
+                             <h5>Connect to Expert</h5>
+                             <p>Consult verified health & nutrition experts on campus.</p>
+                         </div>
+                         <span class="sg-promo-arrow">→</span>
+                     </div>
+                     <div class="sg-promo-card" onclick="toggleSgDrawer('blog')">
+                         <div class="sg-promo-icon">📝</div>
+                         <div class="sg-promo-info">
+                             <h5>Campus Blog</h5>
+                             <p>Stay updated with latest news, lifestyle & survival tips.</p>
+                         </div>
+                         <span class="sg-promo-arrow">→</span>
+                     </div>
+                     <div class="sg-promo-card" onclick="toggleSgDrawer('affiliate')">
+                         <div class="sg-promo-icon">🎁</div>
+                         <div class="sg-promo-info">
+                             <h5>Affiliate Program</h5>
+                             <p>Share your link & earn Gh 15.00 cash for each sign-up.</p>
+                         </div>
+                         <span class="sg-promo-arrow">→</span>
+                     </div>
+                     <div class="sg-promo-card" onclick="toggleSgDrawer('request')">
+                         <div class="sg-promo-icon">✍️</div>
+                         <div class="sg-promo-info">
+                             <h5>Request an Item</h5>
+                             <p>Can't find a product? Tell us, we'll get it delivered.</p>
+                         </div>
+                         <span class="sg-promo-arrow">→</span>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <style>
+         .sg-promo-banner-container {
+             background: linear-gradient(135deg, #3BB77E 0%, #2fa56f 100%);
+             border-radius: 20px;
+             padding: 24px 30px;
+             box-shadow: 0 10px 30px rgba(59, 183, 126, 0.15);
+             margin-top: 15px;
+         }
+         .sg-promo-title {
+             color: #ffffff !important;
+             font-size: 18px;
+             font-weight: 800;
+             margin-bottom: 20px;
+             text-align: left;
+             letter-spacing: 0.3px;
+         }
+         .sg-promo-slider {
+             display: grid;
+             grid-template-columns: repeat(4, 1fr);
+             gap: 20px;
+         }
+         .sg-promo-card {
+             background: rgba(255, 255, 255, 0.12);
+             backdrop-filter: blur(10px);
+             -webkit-backdrop-filter: blur(10px);
+             border: 1px solid rgba(255, 255, 255, 0.15);
+             border-radius: 16px;
+             padding: 20px;
+             display: flex;
+             align-items: center;
+             gap: 15px;
+             cursor: pointer;
+             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+             position: relative;
+             overflow: hidden;
+             text-align: left;
+         }
+         .sg-promo-card::before {
+             content: '';
+             position: absolute;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background: rgba(255, 255, 255, 0.08);
+             opacity: 0;
+             transition: opacity 0.3s ease;
+         }
+         .sg-promo-card:hover {
+             transform: translateY(-4px);
+             background: rgba(255, 255, 255, 0.2);
+             border-color: rgba(255, 255, 255, 0.35);
+             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+         }
+         .sg-promo-card:hover::before {
+             opacity: 1;
+         }
+         .sg-promo-icon {
+             font-size: 28px;
+             flex-shrink: 0;
+         }
+         .sg-promo-info {
+             flex: 1;
+         }
+         .sg-promo-info h5 {
+             color: #ffffff !important;
+             font-size: 14px;
+             font-weight: 700;
+             margin: 0 0 5px 0;
+         }
+         .sg-promo-info p {
+             color: rgba(255, 255, 255, 0.85) !important;
+             font-size: 11px;
+             margin: 0;
+             line-height: 1.4;
+         }
+         .sg-promo-arrow {
+             color: rgba(255, 255, 255, 0.6);
+             font-size: 16px;
+             font-weight: bold;
+             transition: transform 0.3s ease, color 0.3s ease;
+         }
+         .sg-promo-card:hover .sg-promo-arrow {
+             transform: translateX(4px);
+             color: #ffffff;
+         }
+
+         @media (max-width: 991px) {
+             .sg-promo-slider {
+                 grid-template-columns: repeat(2, 1fr);
+             }
+         }
+
+         @media (max-width: 767px) {
+             .sg-promo-banner-container {
+                 padding: 20px 15px;
+             }
+             .sg-promo-title {
+                 font-size: 16px;
+                 margin-bottom: 15px;
+                 padding-left: 5px;
+             }
+             .sg-promo-slider {
+                 display: flex;
+                 overflow-x: auto;
+                 scroll-snap-type: x mandatory;
+                 gap: 12px;
+                 padding: 5px;
+                 scrollbar-width: none; /* Hide scrollbar Firefox */
+             }
+             .sg-promo-slider::-webkit-scrollbar {
+                 display: none; /* Hide scrollbar Chrome/Safari */
+             }
+             .sg-promo-card {
+                 flex: 0 0 85%;
+                 scroll-snap-align: center;
+                 padding: 16px;
+             }
+         }
+         </style>
+
       </div>
       <!--End tab-content-->
    </div>

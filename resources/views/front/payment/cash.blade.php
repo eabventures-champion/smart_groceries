@@ -29,49 +29,73 @@
             <div class="table-responsive order_table checkout">
                <table class="table no-border">
                   <tbody>
-                     @if(Session::has('coupon'))
-                     <tr>
-                        <td class="cart_total_label">
-                           <h6 class="text-muted">Subtotal</h6>
-                        </td>
-                        <td class="cart_total_amount">
-                           <h4 class="text-brand text-end">Gh {{ number_format($cartTotal, 2) }}</h4>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td class="cart_total_label">
-                           <h6 class="text-muted">Coupon Name</h6>
-                        </td>
-                        <td class="cart_total_amount">
-                           <h6 class="text-brand text-end">{{ session()->get('coupon')['coupon_name'] }} ( {{ session()->get('coupon')['coupon_discount'] }}% )</h6>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td class="cart_total_label">
-                           <h6 class="text-muted">Coupon Discount</h6>
-                        </td>
-                        <td class="cart_total_amount">
-                           <h4 class="text-brand text-end">Gh {{ number_format(session()->get('coupon')['total_amount'], 2) }}</h4>
-                        </td>
-                     </tr>
-                     @else
-                     <tr>
-                        <td class="cart_total_label">
-                           <h6 class="text-muted">Grand Total</h6>
-                        </td>
-                        <td class="cart_total_amount">
-                           <h4 class="text-brand text-end mobile-grandtotal-textcenter">Gh {{ number_format($cartTotal, 2) }}</h4>
-                        </td>
-                     </tr>
-                     {{-- <tr>
-                        <td class="cart_total_label">
-                           <h6 class="text-muted">Grand Total</h6>
-                        </td>
-                        <td class="cart_total_amount">
-                           <h4 class="text-brand text-end">$12.31</h4>
-                        </td>
-                     </tr> --}}
-                     @endif
+                      @if(Session::has('coupon'))
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Subtotal</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h4 class="text-brand text-end">Gh {{ number_format($subtotal, 2) }}</h4>
+                         </td>
+                      </tr>
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Coupon Name</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h6 class="text-brand text-end">{{ session()->get('coupon')['coupon_name'] }} ( {{ session()->get('coupon')['coupon_discount'] }}% )</h6>
+                         </td>
+                      </tr>
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Coupon Discount Amount</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h4 class="text-brand text-end">Gh {{ number_format(session()->get('coupon')['discount_amount'], 2) }}</h4>
+                         </td>
+                      </tr>
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Delivery Fee</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h4 class="text-brand text-end">Gh {{ number_format($deliveryFee, 2) }}</h4>
+                         </td>
+                      </tr>
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Grand Total</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h4 class="text-brand text-end">Gh {{ number_format($cartTotal, 2) }}</h4>
+                         </td>
+                      </tr>
+                      @else
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Subtotal</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h4 class="text-brand text-end">Gh {{ number_format($subtotal, 2) }}</h4>
+                         </td>
+                      </tr>
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Delivery Fee</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h4 class="text-brand text-end">Gh {{ number_format($deliveryFee, 2) }}</h4>
+                         </td>
+                      </tr>
+                      <tr>
+                         <td class="cart_total_label">
+                            <h6 class="text-muted">Grand Total</h6>
+                         </td>
+                         <td class="cart_total_amount">
+                            <h4 class="text-brand text-end mobile-grandtotal-textcenter">Gh {{ number_format($cartTotal, 2) }}</h4>
+                         </td>
+                      </tr>
+                      @endif
                   </tbody>
                </table>
             </div>

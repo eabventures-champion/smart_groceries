@@ -29,6 +29,10 @@ class SiteSettingSeeder extends Seeder
                 'referral_commission_type' => 'flat',
                 'referral_flat_amount' => 15.00,
                 'referral_percentage' => 10.00,
+                'student_flat_fee' => 15.00,
+                'student_percent_fee' => 10.00,
+                'non_student_flat_fee' => 20.00,
+                'non_student_percent_fee' => 12.50,
             ]
         );
     }

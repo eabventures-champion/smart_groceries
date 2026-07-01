@@ -193,6 +193,8 @@
             </li>
             <li> <a href="{{ route('add.product') }}"><i class="bx bx-right-arrow-alt"></i>Add Product</a>
             </li>
+            <li> <a href="{{ route('bulk.upload.images') }}"><i class="bx bx-right-arrow-alt"></i>Bulk Upload Images</a>
+            </li>
          </ul>
       </li>
       {{-- @endif --}}

@@ -22,7 +22,7 @@ class WishListController extends Controller
                 'created_at' => Carbon::now(),
 
                ]);
-               return response()->json(['success' => 'Successfully added to your WishList' ]);
+               return $this->wishlistResponse('Successfully added to your WishList');
             } else{
                 return response()->json(['error' => 'This product is already in your WishList' ]);
             } 
@@ -47,6 +47,16 @@ class WishListController extends Controller
     public function wish_list_remove($id){
         WishList::where('user_id', Auth::id())->where('id', $id)->delete();
 
-        return response()->json(['success' => 'Product Successfully Removed']);
+        return $this->wishlistResponse('Product Successfully Removed');
+    }
+
+    private function wishlistResponse($successMessage) {
+        $wishlist = WishList::with('product')->where('user_id', Auth::id())->latest()->get();
+        $wishQty = $wishlist->count(); 
+        return response()->json([
+            'success' => $successMessage,
+            'wishlist' => $wishlist,
+            'wishQty' => $wishQty
+        ]);
     }
 }

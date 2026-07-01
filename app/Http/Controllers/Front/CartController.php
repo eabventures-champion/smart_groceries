@@ -75,11 +75,10 @@ class CartController extends Controller
                     'image' => $product->product_thumbnail,
                     'color' => $request->color,
                     'size' => $request->size,
-                    'vendor' => $request->vendor,
                 ],
             ]);
 
-        return response()->json(['success' => 'Successfully Added on Your Cart' ]);
+            return $this->cartResponse('Successfully Added on Your Cart');
 
         }else{
 
@@ -98,7 +97,7 @@ class CartController extends Controller
                 ],
             ]);
 
-        return response()->json(['success' => 'Successfully Added on Your Cart' ]);
+            return $this->cartResponse('Successfully Added on Your Cart');
 
         }
     }
@@ -120,7 +119,7 @@ class CartController extends Controller
 
     public function remove_mini_cart($rowId){
         Cart::remove($rowId);
-        return response()->json(['success' => 'Product Removed From Cart']);
+        return $this->cartResponse('Product Removed From Cart');
     }
 
     public function add_to_cart_details(Request $request, $id){
@@ -174,11 +173,10 @@ class CartController extends Controller
                     'image' => $product->product_thumbnail,
                     'color' => $request->color,
                     'size' => $request->size,
-                    'vendor' => $request->vendor,
                 ],
             ]);
 
-            return response()->json(['success' => 'Successfully Added on Your Cart' ]);
+            return $this->cartResponse('Successfully Added on Your Cart');
 
         }else{
 
@@ -197,7 +195,7 @@ class CartController extends Controller
                 ],
             ]);
 
-            return response()->json(['success' => 'Successfully Added on Your Cart' ]);
+            return $this->cartResponse('Successfully Added on Your Cart');
         } 
         
         // $carts = Cart::content()->groupBy('id', 'size');
@@ -238,7 +236,7 @@ class CartController extends Controller
             ]); 
         }
 
-        return response()->json(['success' => 'Successfully Remove From Cart']);
+        return $this->cartResponse('Successfully Remove From Cart');
     }
 
     public function cart_decrement($rowId){
@@ -258,7 +256,7 @@ class CartController extends Controller
             ]); 
         }
 
-        return response()->json(['success' => 'Product quantity decreased!']);
+        return $this->cartResponse('Product quantity decreased!');
     }
 
     public function cart_increment($rowId){
@@ -288,7 +286,7 @@ class CartController extends Controller
                 ]); 
             }
     
-            return response()->json(['success' => 'Product quantity increased!']);
+            return $this->cartResponse('Product quantity increased!');
         }
 
         
@@ -362,7 +360,17 @@ class CartController extends Controller
 
                     $regions = DeliveryRegion::orderBy('region_name', 'ASC')->get();
 
-                    return view('front.checkout.checkout_view', compact('carts', 'cartQty', 'cartTotal', 'regions'));
+                    $userDistrict = null;
+                    $userRegionId = null;
+                    if (Auth::user()->institution) {
+                        $district = \App\Models\DeliveryDistrict::where('district_name', Auth::user()->institution)->first();
+                        if ($district) {
+                            $userDistrict = $district;
+                            $userRegionId = $district->region_id;
+                        }
+                    }
+
+                    return view('front.checkout.checkout_view', compact('carts', 'cartQty', 'cartTotal', 'regions', 'userDistrict', 'userRegionId'));
 
 
                 }else{
@@ -375,7 +383,7 @@ class CartController extends Controller
                     return redirect()->to('/')->with($notification); 
                 }
 
-        }else{
+         }else{
 
             $notification = array(
             'message' => 'You Need to Login First',
@@ -384,5 +392,15 @@ class CartController extends Controller
 
             return redirect()->route('login')->with($notification); 
         }
+    }
+
+    private function cartResponse($successMessage) {
+        return response()->json(array(
+            'success' => $successMessage,
+            'carts' => Cart::content(),
+            'cartItems' => Cart::content()->count(),
+            'cartQty' => Cart::count(),  
+            'cartTotal' => Cart::total()
+        ));
     }
 }

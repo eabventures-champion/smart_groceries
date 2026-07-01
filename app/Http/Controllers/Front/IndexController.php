@@ -49,6 +49,12 @@ class IndexController extends Controller
         $product_size = explode(',', $size);
 
         $multiImage = MultiImage::where('product_id', $id)->get();
+        if ($product->product_thumbnail) {
+            $thumbImg = new MultiImage();
+            $thumbImg->photo_name = $product->product_thumbnail;
+            $thumbImg->product_id = $id;
+            $multiImage->prepend($thumbImg);
+        }
         $cat_id = $product->category_id;
         $relatedProduct = Product::with('category')->where('category_id', $cat_id)->where('id', '!=', $id)->orderBy('id', 'DESC')->limit(4)->get();
 

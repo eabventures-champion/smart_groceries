@@ -113,13 +113,22 @@ class ProductController extends Controller
     }
 
     public function edit_product($id){
-         $multiImgs = MultiImage::where('product_id', $id)->get();
-         $activeVendor = User::where('status','active')->where('role','vendor')->latest()->get();
-         $brands = Brand::latest()->get();
-         $categories = Category::latest()->get();
-         $subcategory = SubCategory::latest()->get();
-         $products = Product::findOrFail($id);
-         return view('back.admin.product.edit_product', compact('brands', 'categories', 'activeVendor', 'products', 'subcategory', 'multiImgs'));
+          // Auto-cleanup any placeholder or missing images in multi-image table for this product
+          $badImgs = MultiImage::where('product_id', $id)->get();
+          foreach ($badImgs as $img) {
+              $rawPath = $img->getAttributes()['photo_name'] ?? '';
+              if (empty($rawPath) || str_contains($rawPath, 'no_image') || !file_exists(public_path($rawPath))) {
+                  $img->delete();
+              }
+          }
+
+          $multiImgs = MultiImage::where('product_id', $id)->get();
+          $activeVendor = User::where('status','active')->where('role','vendor')->latest()->get();
+          $brands = Brand::latest()->get();
+          $categories = Category::latest()->get();
+          $subcategory = SubCategory::latest()->get();
+          $products = Product::findOrFail($id);
+          return view('back.admin.product.edit_product', compact('brands', 'categories', 'activeVendor', 'products', 'subcategory', 'multiImgs'));
     }
 
      public function update_product(Request $request){
@@ -230,6 +239,15 @@ class ProductController extends Controller
         // dd($imgs);
 
         foreach($imgs as $id => $img ){
+            $originalName = strtolower($img->getClientOriginalName());
+            if (str_contains($originalName, 'no_image') || str_contains($originalName, 'no-image')) {
+                $notification = array(
+                    'message' => 'Cannot upload placeholder images containing "no_image".',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
             $imgDel = MultiImage::findOrFail($id);
             if ($imgDel->photo_name && file_exists($imgDel->photo_name)) {
                 unlink($imgDel->photo_name);
@@ -297,6 +315,15 @@ class ProductController extends Controller
 
         if($images){
             foreach($images as $img){
+                $originalName = strtolower($img->getClientOriginalName());
+                if (str_contains($originalName, 'no_image') || str_contains($originalName, 'no-image')) {
+                    $notification = array(
+                        'message' => 'Cannot upload placeholder images containing "no_image".',
+                        'alert-type' => 'error'
+                    );
+                    return redirect()->back()->with($notification);
+                }
+
                 $make_name = hexdec(uniqid()).'.'.$img->getClientOriginalExtension();
                 Image::make($img)->resize(800,800)->save('back/assets/images/products/multi-image/'.$make_name);
                 $uploadPath = 'back/assets/images/products/multi-image/'.$make_name;
@@ -562,5 +589,274 @@ class ProductController extends Controller
         }
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Show bulk upload page.
+     */
+    public function bulk_upload_images(){
+        return view('back.admin.product.bulk_upload_images');
+    }
+
+    /**
+     * Store bulk uploaded images (either from ZIP or directly).
+     */
+    public function store_bulk_upload_images(Request $request){
+        $request->validate([
+            'zip_file' => 'nullable|file|mimes:zip|max:51200', // 50MB
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp,gif|max:5120', // 5MB per image
+        ]);
+
+        $filesToProcess = [];
+        $tempDir = null;
+
+        // 1. Process ZIP File if uploaded
+        if ($request->hasFile('zip_file')) {
+            $zipFile = $request->file('zip_file');
+            $zip = new ZipArchive;
+            if ($zip->open($zipFile->getRealPath()) === true) {
+                // Create temp extraction directory
+                $tempDir = storage_path('app/temp_zip_extract_' . uniqid());
+                if (!file_exists($tempDir)) {
+                    mkdir($tempDir, 0777, true);
+                }
+                
+                $zip->extractTo($tempDir);
+                $zip->close();
+
+                // Find all extracted files
+                $files = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($tempDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                    \RecursiveIteratorIterator::SELF_FIRST
+                );
+
+                foreach ($files as $file) {
+                    if ($file->isFile()) {
+                        $extension = strtolower($file->getExtension());
+                        if (in_array($extension, ['jpeg', 'png', 'jpg', 'webp', 'gif'])) {
+                            $filesToProcess[] = [
+                                'path' => $file->getRealPath(),
+                                'name' => $file->getFilename(),
+                                'zip_path' => str_replace($tempDir, '', $file->getRealPath())
+                            ];
+                        }
+                    }
+                }
+            } else {
+                $notification = array(
+                    'message' => 'Failed to open uploaded ZIP file.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+        }
+
+        // 2. Process directly uploaded images if any
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $filesToProcess[] = [
+                    'path' => $img->getRealPath(),
+                    'name' => $img->getClientOriginalName()
+                ];
+            }
+        }
+
+        if (empty($filesToProcess)) {
+            $notification = array(
+                'message' => 'No valid images were uploaded or found in the ZIP.',
+                'alert-type' => 'warning'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        // Ensure directories exist
+        if (!file_exists(public_path('back/assets/images/products/thumbnails/'))) {
+            mkdir(public_path('back/assets/images/products/thumbnails/'), 0777, true);
+        }
+        if (!file_exists(public_path('back/assets/images/products/multi-image/'))) {
+            mkdir(public_path('back/assets/images/products/multi-image/'), 0777, true);
+        }
+
+        $results = [
+            'success' => [],
+            'failed' => []
+        ];
+
+        foreach ($filesToProcess as $fileData) {
+            $filePath = $fileData['path'];
+            $fileName = $fileData['name'];
+            $zipPath = isset($fileData['zip_path']) ? $fileData['zip_path'] : null;
+
+            // Reject placeholder images containing no_image or no-image
+            if (str_contains(strtolower($fileName), 'no_image') || str_contains(strtolower($fileName), 'no-image')) {
+                $results['failed'][] = [
+                    'filename' => $fileName,
+                    'reason' => 'Skipped because the filename contains "no_image" placeholder keywords.'
+                ];
+                continue;
+            }
+            
+            // Parse filename to match product and type
+            $match = $this->parseAndMatchProduct($fileName, $zipPath);
+            $product = $match['product'];
+            $type = $match['type'];
+
+            if (!$product) {
+                $results['failed'][] = [
+                    'filename' => $fileName,
+                    'reason' => 'Could not match filename to any Product ID, Code, or Slug (Parsed identifier: "' . $match['clean_identifier'] . '").'
+                ];
+                continue;
+            }
+
+            try {
+                // Generate safe name & extension
+                $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                $name_gen = hexdec(uniqid()) . '.' . $extension;
+
+                if ($type === 'thumbnail') {
+                    // Update Thumbnail
+                    $destPath = 'back/assets/images/products/thumbnails/' . $name_gen;
+                    Image::make($filePath)->resize(800, 800)->save(public_path($destPath));
+                    
+                    // Unlink old thumbnail
+                    if ($product->product_thumbnail && file_exists(public_path($product->product_thumbnail))) {
+                        @unlink(public_path($product->product_thumbnail));
+                    }
+
+                    $product->update([
+                        'product_thumbnail' => $destPath,
+                        'updated_at' => Carbon::now()
+                    ]);
+
+                    $results['success'][] = [
+                        'filename' => $fileName,
+                        'product' => $product->product_name . ' (Code: ' . ($product->product_code ?? 'N/A') . ')',
+                        'type' => 'Thumbnail'
+                    ];
+                } else {
+                    // Save as Multi Image
+                    $destPath = 'back/assets/images/products/multi-image/' . $name_gen;
+                    Image::make($filePath)->resize(800, 800)->save(public_path($destPath));
+
+                    $multi = new MultiImage();
+                    $multi->product_id = $product->id;
+                    $multi->photo_name = $destPath;
+                    $multi->created_at = Carbon::now();
+                    $multi->save();
+
+                    $results['success'][] = [
+                        'filename' => $fileName,
+                        'product' => $product->product_name . ' (Code: ' . ($product->product_code ?? 'N/A') . ')',
+                        'type' => 'Multi Image'
+                    ];
+                }
+            } catch (\Exception $e) {
+                $results['failed'][] = [
+                    'filename' => $fileName,
+                    'reason' => 'Image processing error: ' . $e->getMessage()
+                ];
+            }
+        }
+
+        // Clean up temp zip directory if it was created
+        if ($tempDir && file_exists($tempDir)) {
+            $this->recursiveDeleteDir($tempDir);
+        }
+
+        return view('back.admin.product.bulk_upload_report', compact('results'));
+    }
+
+    private function parseAndMatchProduct($filename, $zipPath = null) {
+        $filenameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
+        $lowerName = strtolower($filenameWithoutExt);
+        
+        // 1. Determine type based on ZIP path if available
+        $type = 'thumbnail'; // Default
+        if ($zipPath !== null) {
+            $lowerZipPath = strtolower($zipPath);
+            if (str_contains($lowerZipPath, 'multi-images') || str_contains($lowerZipPath, 'multi_images')) {
+                $type = 'multi-image';
+            } elseif (str_contains($lowerZipPath, 'thumbnails')) {
+                $type = 'thumbnail';
+            }
+        }
+        
+        // 2. Clean filename by removing the long timestamp suffix first (e.g. _1868887259668294)
+        // Match 8 or more digits at the end of the string
+        $cleanName = preg_replace('/(_|-)[0-9]{8,}$/', '', $lowerName);
+        
+        // 3. Check for keywords or indices to determine type (if not already set by ZIP path)
+        if ($zipPath === null) {
+            if (
+                str_contains($cleanName, 'multi') || 
+                str_contains($cleanName, 'gallery') || 
+                preg_match('/(_|-)[0-9]+$/', $cleanName) // ends with a number (index)
+            ) {
+                $type = 'multi-image';
+            }
+        }
+        
+        // 4. Strip suffixes and indices to get the product identifier
+        // Remove keywords: _thumb, _thumbnail, _multi, _multi_image, etc.
+        $cleanIdentifier = preg_replace('/(_|-)(thumb(nail)?|multi(_image|_img)?)(_|-)?([0-9]+)?$/i', '', $cleanName);
+        // Remove any remaining trailing index/number (e.g. "abena_rico_1" -> "abena_rico")
+        $cleanIdentifier = preg_replace('/(_|-)[0-9]+$/', '', $cleanIdentifier);
+        
+        // Clean up dashes/underscores at the end if any
+        $cleanIdentifier = trim($cleanIdentifier, '_-');
+        
+        // Try matching the product
+        $product = null;
+        
+        // A. Match by ID (numeric)
+        if (is_numeric($cleanIdentifier)) {
+            $product = Product::find((int)$cleanIdentifier);
+        }
+        
+        // B. Match by Product Code
+        if (!$product) {
+            $product = Product::where('product_code', $cleanIdentifier)
+                              ->orWhere('product_code', str_replace('_', '-', $cleanIdentifier))
+                              ->orWhere('product_code', str_replace('-', '_', $cleanIdentifier))
+                              ->first();
+        }
+        
+        // C. Match by Product Slug
+        if (!$product) {
+            $slug = strtolower(str_replace('_', '-', $cleanIdentifier));
+            $product = Product::where('product_slug', $slug)->first();
+        }
+        
+        // D. Match by Product Name (slugified match)
+        if (!$product) {
+            $slug = strtolower(str_replace('_', '-', $cleanIdentifier));
+            $product = Product::where('product_slug', 'like', '%' . $slug . '%')->first();
+        }
+        
+        return [
+            'product' => $product,
+            'type' => $type,
+            'clean_identifier' => $cleanIdentifier
+        ];
+    }
+
+    private function recursiveDeleteDir($dir) {
+        if (!file_exists($dir)) {
+            return true;
+        }
+        if (!is_dir($dir)) {
+            return unlink($dir);
+        }
+        foreach (scandir($dir) as $item) {
+            if ($item == '.' || $item == '..') {
+                continue;
+            }
+            if (!$this->recursiveDeleteDir($dir . '/' . $item)) {
+                return false;
+            }
+        }
+        return rmdir($dir);
     }
 }

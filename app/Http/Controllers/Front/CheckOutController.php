@@ -23,11 +23,25 @@ class CheckOutController extends Controller
 
     public function check_out_store(Request $request){
 
+        $subtotal = (float)str_replace(',', '', Cart::total());
+        if (\Illuminate\Support\Facades\Session::has('coupon')) {
+            $orderAmount = (float)\Illuminate\Support\Facades\Session::get('coupon')['total_amount'];
+        } else {
+            $orderAmount = $subtotal;
+        }
+
+        if ($orderAmount < 50) {
+            $notification = array(
+                'message' => 'Orders below GH¢ 50.00 are not eligible for delivery.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
         $data = array();
         $data['delivery_name'] = $request->delivery_name;
         $data['delivery_email'] = $request->delivery_email;
         $data['delivery_phone'] = $request->delivery_phone;
-        // $data['post_code'] = $request->post_code; 
 
         $region_id = $request->region_id;
         $district_id = $request->district_id;
@@ -36,7 +50,6 @@ class CheckOutController extends Controller
         $get_region = DeliveryRegion::where('id', $region_id)->first()->toArray();
         $get_district = DeliveryDistrict::where('id', $district_id)->first()->toArray();
         $get_city = DeliveryCity::where('id', $city_id)->first()->toArray();
-        // dd($get_city['city']);
 
         $data['region'] = $get_region['region_name'];
         $data['district'] = $get_district['district_name'];
@@ -48,17 +61,11 @@ class CheckOutController extends Controller
 
         $data['delivery_address'] = $request->delivery_address;
         $data['notes'] = $request->notes; 
-        $cartTotal = Cart::total();
 
-        return view('front.payment.cash', compact('data','cartTotal'));
+        $isStudent = \Illuminate\Support\Facades\Auth::user()->status_identity === 'student';
+        $deliveryFee = \App\Models\SiteSetting::calculateDeliveryFee($orderAmount, $isStudent);
+        $cartTotal = $orderAmount + $deliveryFee;
 
-        // if ($request->payment_option == 'stripe') {
-        //    return view('front.payment.stripe', compact('data','cartTotal'));
-           
-        // }elseif ($request->payment_option == 'card'){
-        //     return 'Card Page';
-        // }else{
-        //     return view('front.payment.cash', compact('data','cartTotal'));
-        // }
+        return view('front.payment.cash', compact('data', 'cartTotal', 'subtotal', 'deliveryFee'));
     }
 }

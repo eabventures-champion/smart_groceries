@@ -27,7 +27,13 @@ class Role
          }
 
         if($request->user()->role !== $role){
-            return redirect('dashboard');
+            $redirectTo = match($request->user()->role) {
+                'admin' => 'admin/dashboard',
+                'expert' => 'expert/dashboard',
+                'vendor' => 'vendor/dashboard',
+                default => 'dashboard',
+            };
+            return redirect($redirectTo);
         }
         
         return $next($request);

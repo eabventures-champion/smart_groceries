@@ -39,8 +39,16 @@ class StripeController extends Controller
             if (Session::has('coupon')) {
                 $total_amount = Session::get('coupon')['total_amount'];
             } else {
-                $total_amount = round(Cart::total());
+                $total_amount = round((float)str_replace(',', '', Cart::total()), 2);
             }
+
+            $isStudent = false;
+            $orderUser = User::find(Auth::id());
+            if ($orderUser) {
+                $isStudent = $orderUser->status_identity === 'student';
+            }
+            $deliveryFee = \App\Models\SiteSetting::calculateDeliveryFee($total_amount, $isStudent);
+            $final_amount = $total_amount + $deliveryFee;
 
             $order_id = Order::insertGetId([
                 'user_id' => Auth::id(),
@@ -59,7 +67,7 @@ class StripeController extends Controller
                 'payment_method' => 'Mobile money',
 
                 'currency' => $paymentDetails['data']['currency'],
-                'amount' => $total_amount,
+                'amount' => $final_amount,
                 'order_number' => $paymentDetails['data']['receipt_number'],
 
                 'invoice_no' => 'SMART' . mt_rand(10000000, 99999999),
@@ -107,7 +115,7 @@ class StripeController extends Controller
 
             $data = [
                 'invoice_no' => $invoice->invoice_no,
-                'amount' => $total_amount,
+                'amount' => $final_amount,
                 'name' => $invoice->name,
                 'email' => $invoice->email,
             ];

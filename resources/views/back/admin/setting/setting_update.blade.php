@@ -140,6 +140,45 @@
                            </div>
                         </div>
 
+                        <hr>
+                        <h5 class="mb-3 text-primary">Delivery Fee Settings</h5>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Student Flat Fee (GH¢)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="student_flat_fee" value="{{ $setting->student_flat_fee ?? '15.00' }}" required />
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Student Percentage Fee (%)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="student_percent_fee" value="{{ $setting->student_percent_fee ?? '10.00' }}" required />
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Non-Student Flat Fee (GH¢)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="non_student_flat_fee" value="{{ $setting->non_student_flat_fee ?? '20.00' }}" required />
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Non-Student Percentage Fee (%)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="non_student_percent_fee" value="{{ $setting->non_student_percent_fee ?? '12.50' }}" required />
+                           </div>
+                        </div>
+
                         <div class="row">
                            <div class="col-sm-3"></div>
                            <div class="col-sm-9 text-secondary">

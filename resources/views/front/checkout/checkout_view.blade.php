@@ -56,7 +56,7 @@
                            <select required name="region_id" class="form-control">
                               <option value="">Select Region...</option>
                               @foreach($regions as $item)
-                              <option value="{{ $item->id }}">{{ $item->region_name }}</option>
+                              <option value="{{ $item->id }}" {{ isset($userRegionId) && $userRegionId == $item->id ? 'selected' : '' }}>{{ $item->region_name }}</option>
                               @endforeach
                            </select>
                         </div>
@@ -123,13 +123,27 @@
                   </table>
                   <table class="table no-border">
                      <tbody>
+                        @php
+                           $setting = \App\Models\SiteSetting::find(1);
+                           $isStudent = Auth::check() && Auth::user()->status_identity === 'student';
+                           $subtotal = (float)str_replace(',', '', $cartTotal);
+                           
+                           if (Session::has('coupon')) {
+                               $orderAmount = (float)session()->get('coupon')['total_amount'];
+                           } else {
+                               $orderAmount = $subtotal;
+                           }
+
+                           $deliveryFee = \App\Models\SiteSetting::calculateDeliveryFee($orderAmount, $isStudent);
+                           $grandTotal = $orderAmount + $deliveryFee;
+                        @endphp
                         @if(Session::has('coupon'))
                         <tr>
                            <td class="cart_total_label">
                               <h6 class="text-muted">Subtotal</h6>
                            </td>
                            <td class="cart_total_amount">
-                              <h4 class="text-brand text-end">Gh {{ number_format($cartTotal, 2) }}</h4>
+                              <h4 class="text-brand text-end">Gh {{ number_format($subtotal, 2) }}</h4>
                            </td>
                         </tr>
                         <tr>
@@ -150,19 +164,43 @@
                         </tr>
                         <tr>
                            <td class="cart_total_label">
+                              <h6 class="text-muted">Delivery Fee</h6>
+                           </td>
+                           <td class="cart_total_amount">
+                              <h4 class="text-brand text-end">Gh {{ number_format($deliveryFee, 2) }}</h4>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="cart_total_label">
                               <h6 class="text-muted">Grand Total</h6>
                            </td>
                            <td class="cart_total_amount">
-                              <h4 class="text-brand text-end">Gh {{ number_format(session()->get('coupon')['total_amount'], 2) }}</h4>
+                              <h4 class="text-brand text-end">Gh {{ number_format($grandTotal, 2) }}</h4>
                            </td>
                         </tr>
                         @else
                         <tr>
                            <td class="cart_total_label">
+                              <h6 class="text-muted">Subtotal</h6>
+                           </td>
+                           <td class="cart_total_amount">
+                              <h4 class="text-brand text-end">Gh {{ number_format($subtotal, 2) }}</h4>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="cart_total_label">
+                              <h6 class="text-muted">Delivery Fee</h6>
+                           </td>
+                           <td class="cart_total_amount">
+                              <h4 class="text-brand text-end">Gh {{ number_format($deliveryFee, 2) }}</h4>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="cart_total_label">
                               <h6 class="text-muted">Grand Total </h6>
                            </td>
-                           <td class="cart_total_amount ">
-                              <h4 class="text-brand text-center mobile-grandtotal-textcenter">Gh {{ number_format($cartTotal, 2) }}</h4>
+                           <td class="cart_total_amount">
+                              <h4 class="text-brand text-end">Gh {{ number_format($grandTotal, 2) }}</h4>
                            </td>
                         </tr>
                         @endif
@@ -214,12 +252,37 @@
                        $.each(data, function(key, value){
                            $('select[name="district_id"]').append('<option value="'+ value.id + '">' + value.district_name + '</option>');
                        });
+                       $('select[name="district_id"]').trigger('change');
                    },
                });
            } else {
                alert('danger');
            }
        });
+
+       // Auto-load matching district on page load if region is pre-selected
+       var region_id = $('select[name="region_id"]').val();
+       if (region_id) {
+           $.ajax({
+               url: "{{ url('/institution-get/ajax') }}/"+region_id,
+               type: "GET",
+               dataType:"json",
+               success:function(data){
+                   $('select[name="city_id"]').html('');
+                   var d =$('select[name="district_id"]').empty();
+                   $.each(data, function(key, value){
+                       var selected = '';
+                       @if(isset($userDistrict))
+                           if (value.id == {{ $userDistrict->id }}) {
+                               selected = 'selected';
+                           }
+                       @endif
+                       $('select[name="district_id"]').append('<option value="'+ value.id + '" ' + selected + '>' + value.district_name + '</option>');
+                   });
+                   $('select[name="district_id"]').trigger('change');
+               },
+           });
+       }
    });
    // Show State Data
    $(document).ready(function(){
@@ -243,5 +306,29 @@
            }
        });
    });
+
+   $(document).ready(function(){
+        $('form').on('submit', function(e){
+            var orderAmount = {{ $orderAmount }};
+            if (orderAmount < 50) {
+                e.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '<span style="color: #bf8069; font-family: \'Outfit\', sans-serif; font-weight: 600;">Minimum Order Required</span>',
+                        html: '<div style="font-family: \'Inter\', sans-serif; font-size: 15px; color: #555; line-height: 1.6;">Orders below <strong style="color: #bf8069;">GH¢ 50.00</strong> are not eligible for delivery.<br>Please add more items to your cart to proceed.</div>',
+                        confirmButtonColor: '#bf8069',
+                        confirmButtonText: 'Go Back to Shop',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/';
+                        }
+                    });
+                } else {
+                    alert('Orders below GH¢ 50.00 are not eligible for delivery.');
+                }
+            }
+        });
+    });
 </script>
 @endsection

@@ -4,6 +4,34 @@
 
 @if (!$featured->isEmpty())
     <section class="section-padding d-block d-lg-none">
+        <style>
+        @media (max-width: 767px) {
+            .carausel-4-columns-cover {
+                padding: 0 40px !important; /* Give space for arrows on left and right */
+                box-sizing: border-box !important;
+            }
+            .carausel-4-columns-cover .carausel-4-columns {
+                margin: 0 auto !important;
+                max-width: 280px !important;
+                float: none !important;
+            }
+            .carausel-4-columns-cover .product-cart-wrap {
+                margin: 0 auto !important;
+            }
+            /* Adjust arrows position so they don't overlap the card on small viewports */
+            .carausel-4-columns-cover .slider-arrow.slider-arrow-2 {
+                width: 100% !important;
+                left: 0 !important;
+                right: 0 !important;
+            }
+            .carausel-4-columns-cover .slider-arrow .slider-prev {
+                left: 5px !important;
+            }
+            .carausel-4-columns-cover .slider-arrow .slider-next {
+                right: 5px !important;
+            }
+        }
+        </style>
         <div class="container">
             <div class="section-title wow animate__animated animate__fadeIn">
                 <h3 class=""> Featured Products </h3>
