@@ -220,6 +220,27 @@
        ->limit(5)
        ->with('user')
        ->get();
+
+   // Recalculate customer tiers based on dynamic database recognition tiers
+   $tiers = App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
+
+   foreach ($top_customers as $cust) {
+       if ($cust->user) {
+           $spent = (float)$cust->total_spent;
+           $new_tier = 'Regular Customer';
+           foreach ($tiers as $t) {
+               if ($spent >= (float)$t->min_spent) {
+                   $new_tier = $t->name;
+                   break;
+               }
+           }
+
+           if ($cust->user->recognition_tier !== $new_tier) {
+               $cust->user->recognition_tier = $new_tier;
+               $cust->user->save();
+           }
+       }
+   }
    @endphp
 
     <div class="row">
@@ -322,7 +343,11 @@
                                             {{ strtoupper(substr($cust->user->name, 0, 1)) }}
                                         </div>
                                         <div class="ms-2">
-                                            <h6 class="mb-0" style="font-size: 13px;">{{ $cust->user->name }}</h6>
+                                            <h6 class="mb-0" style="font-size: 13px;">
+                                                <a href="{{ route('admin.client.detail', $cust->user->id) }}" class="text-primary fw-bold" style="text-decoration: none;">
+                                                    {{ $cust->user->name }}
+                                                </a>
+                                            </h6>
                                             <p class="mb-0 text-muted" style="font-size: 11px;">{{ $cust->user->email }}</p>
                                         </div>
                                     </div>
@@ -330,21 +355,37 @@
                                 <td><span style="font-weight: 600;">{{ $cust->order_count }}</span> Orders</td>
                                 <td style="font-weight: 600; color: #2e8b5e;">Gh {{ number_format($cust->total_spent, 2) }}</td>
                                 <td>
-                                    @if($key == 0)
-                                        <span class="badge bg-warning text-dark"><i class="bx bxs-crown me-1"></i>VIP Platinum</span>
-                                    @elseif($key == 1)
-                                        <span class="badge bg-secondary text-white"><i class="bx bxs-medal me-1"></i>Gold Tier</span>
-                                    @else
-                                        <span class="badge bg-light text-dark"><i class="bx bx-award me-1"></i>Silver Tier</span>
-                                    @endif
+                                    @php
+                                        $userTierObj = \App\Models\RecognitionTier::where('name', $cust->user->recognition_tier)->first();
+                                        $badgeStyle = $userTierObj ? $userTierObj->badge_style : 'light';
+                                        $discountPct = $userTierObj ? $userTierObj->discount_percent : 0;
+                                        $slugName = strtoupper(Str::slug($cust->user->name));
+                                        $tierPrefix = $userTierObj ? strtoupper(Str::slug($userTierObj->name)) . '-' : 'REGULAR-';
+                                    @endphp
+                                    <span class="badge 
+                                        @if($badgeStyle === 'warning') bg-warning text-dark
+                                        @elseif($badgeStyle === 'secondary') bg-secondary text-white
+                                        @elseif($badgeStyle === 'light') bg-light text-dark border
+                                        @elseif($badgeStyle === 'success') bg-success text-white
+                                        @elseif($badgeStyle === 'danger') bg-danger text-white
+                                        @else bg-primary text-white
+                                        @endif">
+                                        <i class="bx 
+                                            @if($badgeStyle === 'warning') bxs-crown
+                                            @elseif($badgeStyle === 'secondary') bxs-medal
+                                            @elseif($badgeStyle === 'light') bx-award
+                                            @elseif($badgeStyle === 'success') bx-check-shield
+                                            @elseif($badgeStyle === 'danger') bx-star
+                                            @else bx-medal
+                                            @endif me-1"></i>{{ $cust->user->recognition_tier ?? 'Regular' }}
+                                    </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('add.coupon') }}?code={{ $key == 0 ? 'VIP-PLATINUM-' : ($key == 1 ? 'GOLD-TIER-' : 'SILVER-TIER-') }}{{ strtoupper(Str::slug($cust->user->name)) }}&discount={{ $key == 0 ? 20 : ($key == 1 ? 10 : 5) }}&user_id={{ $cust->user->id }}" 
+                                    <a href="{{ route('add.coupon') }}?code={{ $tierPrefix }}{{ $slugName }}&discount={{ $discountPct }}&user_id={{ $cust->user->id }}" 
                                        class="btn btn-sm text-white" 
                                        style="background: #3bb77e; font-size: 11px; padding: 5px 10px; font-weight: 700; border-radius: 8px;">
                                         <i class="bx bx-check-circle me-1"></i>Approve & Set Discount
-                                    </a>
-                                </td>
+                                    </a></td>
                             </tr>
                             @endif
                         @empty

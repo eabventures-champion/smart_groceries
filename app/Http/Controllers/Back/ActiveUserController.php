@@ -25,6 +25,23 @@ class ActiveUserController extends Controller
         $pendingOrders = \App\Models\Order::where('user_id', $id)->where('status', 'pending')->count();
         $completedOrders = \App\Models\Order::where('user_id', $id)->where('status', 'deliverd')->count();
 
+        // Dynamically calculate and save recognition tier based on actual spent amount on all orders
+        $totalSpent = (float)\App\Models\Order::where('user_id', $id)->sum('amount');
+        $tiers = \App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
+
+        $new_tier = 'Regular Customer';
+        foreach ($tiers as $t) {
+            if ($totalSpent >= (float)$t->min_spent) {
+                $new_tier = $t->name;
+                break;
+            }
+        }
+
+        if ($user->recognition_tier !== $new_tier) {
+            $user->recognition_tier = $new_tier;
+            $user->save();
+        }
+
         return view('back.admin.user.user_detail', compact('user', 'totalOrders', 'pendingOrders', 'completedOrders'));
     } // End Method
 
@@ -35,10 +52,4 @@ class ActiveUserController extends Controller
             ->get();
         return view('back.admin.user.affiliate_all_data', compact('affiliates'));
     }
-
-    // public function all_vendor(){
-    //     $vendors = User::where('role','vendor')->latest()->get();
-    //     return view('backend.user.vendor_all_data',compact('vendors'));
-
-    // }
 }

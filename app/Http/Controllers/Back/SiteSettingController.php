@@ -45,14 +45,17 @@ class SiteSettingController extends Controller
             'student_percent_fee' => $request->student_percent_fee,
             'non_student_flat_fee' => $request->non_student_flat_fee,
             'non_student_percent_fee' => $request->non_student_percent_fee,
+            'recognition_platinum_min' => $request->recognition_platinum_min,
+            'recognition_gold_min' => $request->recognition_gold_min,
+            'recognition_silver_min' => $request->recognition_silver_min,
         ]);
 
-       $notification = array(
-            'message' => 'Site Setting Updated with image Successfully',
-            'alert-type' => 'success'
-        );
+        $notification = array(
+             'message' => 'Site Setting Updated with image Successfully',
+             'alert-type' => 'success'
+         );
 
-        return redirect()->back()->with($notification); 
+         return redirect()->back()->with($notification); 
 
         } else {
 
@@ -72,6 +75,9 @@ class SiteSettingController extends Controller
             'student_percent_fee' => $request->student_percent_fee,
             'non_student_flat_fee' => $request->non_student_flat_fee,
             'non_student_percent_fee' => $request->non_student_percent_fee,
+            'recognition_platinum_min' => $request->recognition_platinum_min,
+            'recognition_gold_min' => $request->recognition_gold_min,
+            'recognition_silver_min' => $request->recognition_silver_min,
         ]);
 
        $notification = array(
@@ -79,7 +85,7 @@ class SiteSettingController extends Controller
             'alert-type' => 'success'
         );
 
-        return redirect()->back()->with($notification); 
+         return redirect()->back()->with($notification); 
 
         } // end else
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Back\DeliveryAreaController;
+use App\Http\Controllers\Back\RecognitionTierController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -346,7 +347,6 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('/all/clients' , 'all_user')->name('all.users');
             Route::get('/client/detail/{id}', 'client_detail')->name('admin.client.detail');
             Route::get('/all/affiliates', 'all_affiliates')->name('all.affiliates');
-            // Route::get('/all/vendor' , 'all_vendor')->name('all-vendor');
         });
 
         Route::controller(ReviewController::class)->group(function(){
@@ -361,7 +361,15 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::post('site/setting/update' , 'site_setting_update')->name('site.setting.update');
             Route::get('seo/setting' , 'seo_setting')->name('seo.setting');
             Route::post('seo/setting/update', 'seo_setting_update')->name('seo.setting.update');
-       });
+        });
+
+        Route::controller(RecognitionTierController::class)->group(function(){
+            Route::get('recognition/tiers', 'all_tiers')->name('all.recognition.tiers');
+            Route::post('recognition/tier/store', 'store_tier')->name('admin.store.recognition.tier');
+            Route::get('recognition-tier/edit/{id}', 'edit_tier');
+            Route::post('recognition/tier/update', 'update_tier')->name('admin.update.recognition.tier');
+            Route::get('recognition/tier/delete/{id}', 'delete_tier')->name('admin.delete.recognition.tier');
+        });
 
         Route::controller(RoleController::class)->group(function(){
             Route::get('all/permission', 'all_permission')->name('all.permission');

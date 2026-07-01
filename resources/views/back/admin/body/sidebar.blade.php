@@ -363,6 +363,8 @@
             </li>
             <li> <a href="{{ route('seo.setting') }}"><i class="bx bx-right-arrow-alt"></i>Seo Setting</a>
             </li>
+            <li> <a href="{{ route('all.recognition.tiers') }}"><i class="bx bx-right-arrow-alt"></i>Recognition Tiers</a>
+            </li>
          </ul>
       </li>
       {{-- @endif --}}
