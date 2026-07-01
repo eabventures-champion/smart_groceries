@@ -25,6 +25,14 @@ $(document).ready(function(){
               }
 
               $(".qty-stock").html("<h4 class='heading-2 text-center'><button type='button' class='btn btn-primary position-relative' style='padding: 5px 10px; font-weight:200'>in stock<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary' style='background-color: #351313 !important;font-size: .95em;'>" + "" + resp['product_stock'] + "</span></button></h4>");
+
+              // Update qty input max with per-size stock
+              var sizeStock = parseInt(resp['product_stock'], 10);
+              $('#dqty').attr('max', sizeStock).attr('data-stock', sizeStock);
+              var currentQty = parseInt($('#dqty').val(), 10) || 1;
+              if (currentQty > sizeStock) {
+                 $('#dqty').val(sizeStock > 0 ? sizeStock : 1);
+              }
            },
            error: function () {
               alert('Error');

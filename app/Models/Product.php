@@ -61,4 +61,61 @@ class Product extends Model
         }
         return $value;
     }
+
+    public function totalStock()
+    {
+        $attributeSum = $this->attributes()->sum('stock');
+        if ($attributeSum > 0) {
+            return (int)$attributeSum;
+        }
+        return (int)$this->product_qty;
+    }
+
+    public function checkStockAndAlert()
+    {
+        $totalStock = $this->totalStock();
+        
+        if ($totalStock <= 10) {
+            if (!$this->low_stock_alert_sent) {
+                // Send alert
+                $this->sendLowStockAlert($totalStock);
+                
+                // Set flag and save quietly to avoid triggering saved event again
+                $this->low_stock_alert_sent = true;
+                $this->saveQuietly();
+            }
+        } else {
+            if ($this->low_stock_alert_sent) {
+                $this->low_stock_alert_sent = false;
+                $this->saveQuietly();
+            }
+        }
+    }
+
+    protected function sendLowStockAlert($totalStock)
+    {
+        $admins = User::where('role', 'admin')->get();
+        
+        foreach ($admins as $admin) {
+            // Send Database Notification
+            $admin->notify(new \App\Notifications\LowStockAlertNotification($this, $totalStock));
+            
+            // Send Email Alert
+            try {
+                \Illuminate\Support\Facades\Mail::to($admin->email)->send(new \App\Mail\LowStockAlertMail($this, $totalStock));
+            } catch (\Exception $e) {
+                // Fail silently in case mail server is not configured in local environment
+                \Illuminate\Support\Facades\Log::error("Failed to send low stock email: " . $e->getMessage());
+            }
+        }
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($product) {
+            $product->checkStockAndAlert();
+        });
+    }
 }

@@ -362,7 +362,15 @@
          var vendor = $('#vproduct_id').val();
          var color = $('#dcolor option:selected').text();
          var size = $('.dsize option:selected').text();
-         var quantity = $('#dqty').val();
+         var quantity = parseInt($('#dqty').val(), 10);
+         var maxStock = parseInt($('#dqty').attr('max'), 10);
+
+         // Client-side stock validation
+         if (maxStock && quantity > maxStock) {
+            toastr.error('Requested quantity (' + quantity + ') exceeds available stock (' + maxStock + '). Please reduce your quantity.');
+            $('#dqty').val(maxStock);
+            return;
+         }
 
          // $('#getPrice').val('');
          // $('#dcolor').val('');

@@ -1,5 +1,14 @@
 @extends('back.admin.master')
 @section('content')
+<style>
+   @keyframes lowStockPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.08); }
+   }
+   .low-stock-pulse {
+      animation: lowStockPulse 1.5s ease-in-out infinite;
+   }
+</style>
 <div class="page-content">
    <!--breadcrumb-->
    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -68,12 +77,11 @@
                            $total_stock = App\Models\ProductAttribute::where('product_id', $item->id)->sum('stock');
                         @endphp
                         {{ $total_stock }}
-                        
-                        {{-- @if($item->discount_price == NULL)
-                           <span class="badge rounded-pill bg-info">No Discount</span>
-                           @else
-                           <span class="badge rounded-pill bg-danger"> {{ round($item->discount_price) }}% off</span>
-                        @endif --}}
+                        @if($total_stock <= 10)
+                           <span class="badge bg-danger rounded-pill px-2 py-1 ms-1 low-stock-pulse" style="font-size: 10px; font-weight: 700;">
+                              <i class="bx bx-error-circle"></i> Refill
+                           </span>
+                        @endif
                      </td>
                      <td> 
                         @if($item->status == 1)

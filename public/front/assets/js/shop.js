@@ -79,8 +79,14 @@
 
             $('.qty-up').on('click', function (event) {
                 event.preventDefault();
-                qtyval = qtyval + 1;   
-                $(this).prev().val(qtyval);
+                var $input = $(this).prev();
+                var maxStock = parseInt($input.attr('max'), 10) || 99999;
+                qtyval = qtyval + 1;
+                if (qtyval > maxStock) {
+                    qtyval = maxStock;
+                    toastr.warning('Maximum available stock is ' + maxStock);
+                }
+                $input.val(qtyval);
             });
 
              $(".qty-down").on("click", function (event) {
@@ -93,6 +99,22 @@
                      $(this).next().val(qtyval);
                  }
              });
+
+            // Enforce max on manual input
+            $(this).find('.qty-val').on('change blur', function() {
+                var maxStock = parseInt($(this).attr('max'), 10) || 99999;
+                var val = parseInt($(this).val(), 10) || 1;
+                if (val > maxStock) {
+                    $(this).val(maxStock);
+                    qtyval = maxStock;
+                    toastr.warning('Maximum available stock is ' + maxStock);
+                } else if (val < 1) {
+                    $(this).val(1);
+                    qtyval = 1;
+                } else {
+                    qtyval = val;
+                }
+            });
         });
 
         $('.dropdown-menu .cart_list').on('click', function (event) {

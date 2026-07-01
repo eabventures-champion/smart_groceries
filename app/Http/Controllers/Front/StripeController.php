@@ -10,6 +10,7 @@ use App\Mail\OrderMail;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Models\ProductAttribute;
+use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Notifications\OrderComplete;
 use Illuminate\Support\Facades\Mail;
@@ -150,6 +151,12 @@ class StripeController extends Controller
                 $get_product_stock = ProductAttribute::get_product_stock($product_id, $product_size);
                 $new_product_stock = $get_product_stock - $product_qty;
                 ProductAttribute::where(['product_id' => $product_id, 'size' => $product_size])->update(['stock' => $new_product_stock]);
+
+                // Check if product stock is low and trigger alert
+                $product = Product::find($product_id);
+                if ($product) {
+                    $product->checkStockAndAlert();
+                }
             }
 
             if (Session::has('coupon')) {

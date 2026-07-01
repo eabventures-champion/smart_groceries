@@ -157,7 +157,7 @@
                      </div> --}}
                      <div class="attr-detail attr-size mb-10">
                         <strong class="mr-10 d-none d-lg-block" style="width:50px;">Size : </strong>
-                        <select name="size" id="getPrice" product-id="{{ $product['id'] }}" class="form-control unicase-form-control dsize">
+                        <select name="size" id="getPrice" product-id="{{ $product['id'] }}" class="form-control unicase-form-control dsize" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
                            <option selected="" disabled=""> --select size-- </option>
                            @foreach($product['attributes'] as $attribute)
                             <option value="{{ $attribute['size'] }}">{{ $attribute['size']  }}</option>
@@ -182,7 +182,7 @@
                       @else
                       <div class="attr-detail attr-size mb-20">
                          <strong class="mr-10 d-none d-lg-block" style="width:50px;">Variant: </strong>
-                         <select class="form-control unicase-form-control" id="dcolor">
+                         <select class="form-control unicase-form-control" id="dcolor" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
                             <option selected="" disabled=""> --select variant-- </option>
                             @foreach($product_color as $color)
                             @if(strtolower(trim($color)) !== 'none')
@@ -194,9 +194,9 @@
                       @endif
 
                      <div class="detail-extralink mt-30 mb-30">
-                        <div class="detail-qty border radius">
+                        <div class="detail-qty border radius" @if($total_stock <= 0) style="opacity: 0.5; pointer-events: none;" @endif>
                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                           <input type="text" name="quantity" id="dqty" class="qty-val" value="1" min="1">
+                           <input type="text" name="quantity" id="dqty" class="qty-val" value="{{ $total_stock > 0 ? 1 : 0 }}" min="{{ $total_stock > 0 ? 1 : 0 }}" max="{{ $total_stock }}" data-stock="{{ $total_stock }}" @if($total_stock <= 0) disabled readonly @endif>
                            <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                         </div>
                         <div class="qty-stock"></div>
@@ -205,7 +205,7 @@
                         <div class="product-extra-link2 d-block d-lg-none">
                            <input type="hidden" id="dproduct_id" value="{{ $product->id }}">
                            <input type="hidden" id="vproduct_id" value="{{ $product->vendor_id }}">
-                           <button type="submit" class="button button-add-to-cart" onclick="addToCartDetails()"><i class="fi-rs-shopping-cart"></i> &nbsp;Add</button>&nbsp;&nbsp;
+                           <button type="submit" class="button button-add-to-cart" onclick="addToCartDetails()" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif><i class="fi-rs-shopping-cart"></i> &nbsp;{{ $total_stock > 0 ? 'Add' : 'Out of Stock' }}</button>&nbsp;&nbsp;
                            <a aria-label="Add To Wishlist" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>
                            {{-- <a aria-label="Compare" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>                            --}}
                         </div>
@@ -214,7 +214,7 @@
                         <div class="product-extra-link2 d-none d-lg-block">
                            <input type="hidden" id="dproduct_id" value="{{ $product->id }}">
                            <input type="hidden" id="vproduct_id" value="{{ $product->vendor_id }}">
-                           <button type="submit" class="button button-add-to-cart" onclick="addToCartDetails()"><i class="fi-rs-shopping-cart"></i>Add to cart</button>
+                           <button type="submit" class="button button-add-to-cart" onclick="addToCartDetails()" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif><i class="fi-rs-shopping-cart"></i>{{ $total_stock > 0 ? 'Add to cart' : 'Out of Stock' }}</button>
                            {{-- <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a> --}}
                            <a aria-label="Add To Wishlist" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>
                            <a aria-label="Compare" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>
