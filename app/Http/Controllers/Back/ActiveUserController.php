@@ -27,7 +27,16 @@ class ActiveUserController extends Controller
 
         // Dynamically calculate and save recognition tier based on actual spent amount on all orders
         $totalSpent = (float)\App\Models\Order::where('user_id', $id)->sum('amount');
-        $tiers = \App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
+        
+        if (\Illuminate\Support\Facades\Schema::hasTable('recognition_tiers')) {
+            $tiers = \App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
+        } else {
+            $tiers = collect([
+                (object)['name' => 'VIP Platinum', 'min_spent' => 500.00, 'discount_percent' => 20.00, 'badge_style' => 'warning'],
+                (object)['name' => 'Gold Tier', 'min_spent' => 300.00, 'discount_percent' => 10.00, 'badge_style' => 'secondary'],
+                (object)['name' => 'Silver Tier', 'min_spent' => 100.00, 'discount_percent' => 5.00, 'badge_style' => 'light'],
+            ]);
+        }
 
         $new_tier = 'Regular Customer';
         foreach ($tiers as $t) {
@@ -37,9 +46,11 @@ class ActiveUserController extends Controller
             }
         }
 
-        if ($user->recognition_tier !== $new_tier) {
-            $user->recognition_tier = $new_tier;
-            $user->save();
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'recognition_tier')) {
+            if ($user->recognition_tier !== $new_tier) {
+                $user->recognition_tier = $new_tier;
+                $user->save();
+            }
         }
 
         return view('back.admin.user.user_detail', compact('user', 'totalOrders', 'pendingOrders', 'completedOrders'));

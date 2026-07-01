@@ -101,44 +101,61 @@
                          <div class="card-body p-3 text-center">
                             <h6 class="mb-3 font-weight-bold text-dark"><i class="bx bx-award me-1 text-warning fs-5"></i> Recognition Tier</h6>
                             
-                            @php
-                                $userTierObj = \App\Models\RecognitionTier::where('name', $user->recognition_tier)->first();
-                                $badgeStyle = $userTierObj ? $userTierObj->badge_style : 'light';
-                            @endphp
+                             @php
+                                 $recTier = Schema::hasColumn('users', 'recognition_tier') ? ($user->recognition_tier ?? null) : null;
+                                 $userTierObj = null;
+                                 if (\Illuminate\Support\Facades\Schema::hasTable('recognition_tiers')) {
+                                     $userTierObj = \App\Models\RecognitionTier::where('name', $recTier)->first();
+                                 }
+                                 $badgeStyle = $userTierObj ? $userTierObj->badge_style : 'light';
+                                 if (!$userTierObj && $recTier) {
+                                     if ($recTier === 'VIP Platinum') { $badgeStyle = 'warning'; }
+                                     elseif ($recTier === 'Gold Tier') { $badgeStyle = 'secondary'; }
+                                     elseif ($recTier === 'Silver Tier') { $badgeStyle = 'light'; }
+                                 }
+                             @endphp
 
-                            <div class="mb-2">
-                                <span class="badge px-3 py-2" style="font-size: 13px;
-                                    @if($badgeStyle === 'warning') background-color: #ffc107; color: #000;
-                                    @elseif($badgeStyle === 'secondary') background-color: #6c757d; color: #fff;
-                                    @elseif($badgeStyle === 'light') background-color: #f8f9fa; color: #212529; border: 1px solid #ccc;
-                                    @elseif($badgeStyle === 'success') background-color: #198754; color: #fff;
-                                    @elseif($badgeStyle === 'danger') background-color: #dc3545; color: #fff;
-                                    @else background-color: #0d6efd; color: #fff;
-                                    @endif">
-                                    <i class="bx 
-                                        @if($badgeStyle === 'warning') bxs-crown
-                                        @elseif($badgeStyle === 'secondary') bxs-medal
-                                        @elseif($badgeStyle === 'light') bx-award
-                                        @elseif($badgeStyle === 'success') bx-check-shield
-                                        @elseif($badgeStyle === 'danger') bx-star
-                                        @else bx-medal
-                                        @endif me-1"></i>{{ $user->recognition_tier ?? 'Regular Customer' }}
-                                </span>
-                            </div>
+                             <div class="mb-2">
+                                 <span class="badge px-3 py-2" style="font-size: 13px;
+                                     @if($badgeStyle === 'warning') background-color: #ffc107; color: #000;
+                                     @elseif($badgeStyle === 'secondary') background-color: #6c757d; color: #fff;
+                                     @elseif($badgeStyle === 'light') background-color: #f8f9fa; color: #212529; border: 1px solid #ccc;
+                                     @elseif($badgeStyle === 'success') background-color: #198754; color: #fff;
+                                     @elseif($badgeStyle === 'danger') background-color: #dc3545; color: #fff;
+                                     @else background-color: #0d6efd; color: #fff;
+                                     @endif">
+                                     <i class="bx 
+                                         @if($badgeStyle === 'warning') bxs-crown
+                                         @elseif($badgeStyle === 'secondary') bxs-medal
+                                         @elseif($badgeStyle === 'light') bx-award
+                                         @elseif($badgeStyle === 'success') bx-check-shield
+                                         @elseif($badgeStyle === 'danger') bx-star
+                                         @else bx-medal
+                                         @endif me-1"></i>{{ $recTier ?? 'Regular Customer' }}
+                                 </span>
+                             </div>
 
-                            <hr class="my-3">
+                             <hr class="my-3">
 
-                            <div class="text-start" style="font-size: 11px; line-height: 1.6;">
-                                <div class="d-flex justify-content-between text-muted mb-1">
-                                    <span>Total Spent (All Orders):</span>
-                                    <strong class="text-dark">GH¢ {{ number_format(\App\Models\Order::where('user_id', $user->id)->sum('amount'), 2) }}</strong>
-                                </div>
-                                @php
-                                    $tiersList = \App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
-                                @endphp
-                                <div class="border-top pt-2 mt-2">
+                             <div class="text-start" style="font-size: 11px; line-height: 1.6;">
+                                 <div class="d-flex justify-content-between text-muted mb-1">
+                                     <span>Total Spent (All Orders):</span>
+                                     <strong class="text-dark">GH¢ {{ number_format(\App\Models\Order::where('user_id', $user->id)->sum('amount'), 2) }}</strong>
+                                 </div>
+                                 @php
+                                     if (\Illuminate\Support\Facades\Schema::hasTable('recognition_tiers')) {
+                                         $tiersList = \App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
+                                     } else {
+                                         $tiersList = collect([
+                                             (object)['name' => 'VIP Platinum', 'min_spent' => 500.00, 'badge_style' => 'warning'],
+                                             (object)['name' => 'Gold Tier', 'min_spent' => 300.00, 'badge_style' => 'secondary'],
+                                             (object)['name' => 'Silver Tier', 'min_spent' => 100.00, 'badge_style' => 'light'],
+                                         ]);
+                                     }
+                                 @endphp
+                                 <div class="border-top pt-2 mt-2">
                                     @foreach($tiersList as $t)
-                                        <div class="d-flex justify-content-between mb-1 {{ $user->recognition_tier == $t->name ? 'fw-bold text-success' : 'text-muted' }}">
+                                        <div class="d-flex justify-content-between mb-1 {{ $recTier == $t->name ? 'fw-bold text-success' : 'text-muted' }}">
                                             <span>{{ $t->name }}:</span>
                                             <span>&ge; GH¢ {{ number_format($t->min_spent, 2) }}</span>
                                         </div>

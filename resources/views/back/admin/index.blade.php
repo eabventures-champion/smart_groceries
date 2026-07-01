@@ -222,7 +222,15 @@
        ->get();
 
    // Recalculate customer tiers based on dynamic database recognition tiers
-   $tiers = App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
+   if (\Illuminate\Support\Facades\Schema::hasTable('recognition_tiers')) {
+       $tiers = App\Models\RecognitionTier::orderBy('min_spent', 'desc')->get();
+   } else {
+       $tiers = collect([
+           (object)['name' => 'VIP Platinum', 'min_spent' => 500.00, 'discount_percent' => 20.00, 'badge_style' => 'warning'],
+           (object)['name' => 'Gold Tier', 'min_spent' => 300.00, 'discount_percent' => 10.00, 'badge_style' => 'secondary'],
+           (object)['name' => 'Silver Tier', 'min_spent' => 100.00, 'discount_percent' => 5.00, 'badge_style' => 'light'],
+       ]);
+   }
 
    foreach ($top_customers as $cust) {
        if ($cust->user) {
@@ -235,9 +243,11 @@
                }
            }
 
-           if ($cust->user->recognition_tier !== $new_tier) {
-               $cust->user->recognition_tier = $new_tier;
-               $cust->user->save();
+           if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'recognition_tier')) {
+               if ($cust->user->recognition_tier !== $new_tier) {
+                   $cust->user->recognition_tier = $new_tier;
+                   $cust->user->save();
+               }
            }
        }
    }
@@ -356,11 +366,22 @@
                                 <td style="font-weight: 600; color: #2e8b5e;">Gh {{ number_format($cust->total_spent, 2) }}</td>
                                 <td>
                                     @php
-                                        $userTierObj = \App\Models\RecognitionTier::where('name', $cust->user->recognition_tier)->first();
+                                        $userTierObj = null;
+                                        $recTier = Schema::hasColumn('users', 'recognition_tier') ? ($cust->user->recognition_tier ?? null) : null;
+                                        if (\Illuminate\Support\Facades\Schema::hasTable('recognition_tiers')) {
+                                            $userTierObj = \App\Models\RecognitionTier::where('name', $recTier)->first();
+                                        }
                                         $badgeStyle = $userTierObj ? $userTierObj->badge_style : 'light';
                                         $discountPct = $userTierObj ? $userTierObj->discount_percent : 0;
                                         $slugName = strtoupper(Str::slug($cust->user->name));
                                         $tierPrefix = $userTierObj ? strtoupper(Str::slug($userTierObj->name)) . '-' : 'REGULAR-';
+
+                                        // Fallbacks if table/tier doesn't exist
+                                        if (!$userTierObj && $recTier) {
+                                            if ($recTier === 'VIP Platinum') { $badgeStyle = 'warning'; $discountPct = 20; $tierPrefix = 'VIP-PLATINUM-'; }
+                                            elseif ($recTier === 'Gold Tier') { $badgeStyle = 'secondary'; $discountPct = 10; $tierPrefix = 'GOLD-TIER-'; }
+                                            elseif ($recTier === 'Silver Tier') { $badgeStyle = 'light'; $discountPct = 5; $tierPrefix = 'SILVER-TIER-'; }
+                                        }
                                     @endphp
                                     <span class="badge 
                                         @if($badgeStyle === 'warning') bg-warning text-dark
