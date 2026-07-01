@@ -21,7 +21,7 @@
                 </div>
                 {{-- <h6 class="text-body">There are products in this list</h6> --}}
             </div>
-            <div class="table-responsive shopping-summery">
+            <div class="table-responsive shopping-summery d-none d-md-block">
                 <table class="table table-wishlist">
                     <thead>
                         <tr class="main-heading">
@@ -39,6 +39,9 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Mobile View Wishlist List -->
+            <div id="wishlist-mobile-container" class="d-block d-md-none mb-50"></div>
         </div>
     </div>
 </div>

@@ -456,34 +456,72 @@
             // Reset Select All checkbox and hide Bulk Delete button
             $('#selectAllWishlist').prop('checked', false);
             $('#bulkDeleteWishlistBtn').addClass('d-none');
+             var rows = ""
+             var mobileCards = ""
+             $.each(response.wishlist, function(key,value){
+                rows += `<tr class="pt-30">
+                             <td style="width: 50px; text-align: center; vertical-align: middle;">
+                                <input class="form-check-input wishlist-checkbox" type="checkbox" value="${value.id}" onchange="checkWishlistSelection()" style="display: block !important; margin: 0 auto;">
+                             </td>
+                             <td class="image product-thumbnail pt-40">
+                               <a class="product-name mb-10" href="/product/details/${value.product.id}/${value.product.product_slug}">
+                                <img src="/${value.product.product_thumbnail}" alt="#" />
+                                <h6>${value.product.product_name}</h6>
+                               </a>
+                             </td>
 
-            var rows = ""
-            $.each(response.wishlist, function(key,value){
-               rows += `<tr class="pt-30">
-                            <td style="width: 50px; text-align: center; vertical-align: middle;">
-                               <input class="form-check-input wishlist-checkbox" type="checkbox" value="${value.id}" onchange="checkWishlistSelection()" style="display: block !important; margin: 0 auto;">
-                            </td>
-                            <td class="image product-thumbnail pt-40">
-                              <a class="product-name mb-10" href="/product/details/${value.product.id}/${value.product.product_slug}">
-                               <img src="/${value.product.product_thumbnail}" alt="#" />
-                               <h6>${value.product.product_name}</h6>
-                              </a>
-                            </td>
+                             <td class="price" data-title="Price">
+                               ${value.product.discount_price == null
+                               ? `<h4 class="text-brand">Gh ${value.product.selling_price}</h4>`
+                               :`<h4 class="text-brand">Gh ${((100 - value.product.discount_price)/100) * value.product.selling_price}</h4><h4 class="wishlist-change">Gh ${value.product.selling_price}</h4>`
+                               }
+                             </td>
 
-                            <td class="price" data-title="Price">
-                              ${value.product.discount_price == null
-                              ? `<h4 class="text-brand">Gh ${value.product.selling_price}</h4>`
-                              :`<h4 class="text-brand">Gh ${((100 - value.product.discount_price)/100) * value.product.selling_price}</h4><h4 class="wishlist-change">Gh ${value.product.selling_price}</h4>`
-                              }
-                            </td>
+                             <td class="action text-center" data-title="Remove">
+                                 <a type="submit" class="text-body" id="${value.id}" onclick="wishlistRemove(this.id)"><i class="fi-rs-trash"></i></a>
+                             </td>
+                         </tr>`;
 
-                            <td class="action text-center" data-title="Remove">
-                                <a type="submit" class="text-body" id="${value.id}" onclick="wishlistRemove(this.id)"><i class="fi-rs-trash"></i></a>
-                            </td>
-                        </tr>`
-            });
-            $('#wishlist').html(rows);
-         }
+                // Mobile Card layout (Horizontal, compact, premium look)
+                mobileCards += `
+                <div class="wishlist-mobile-card" style="display: flex; align-items: center; background: #fff; border: 1px solid #ececec; border-radius: 12px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); gap: 12px; margin-bottom: 15px !important;">
+                    <!-- Checkbox -->
+                    <div style="display: flex; align-items: center; justify-content: center; width: 30px; flex-shrink: 0;">
+                        <input class="form-check-input wishlist-checkbox" type="checkbox" value="${value.id}" onchange="checkWishlistSelection()" style="display: block !important; margin: 0;">
+                    </div>
+                    
+                    <!-- Image -->
+                    <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #f8f9fa; border: 1px solid #f1f1f1;">
+                        <a href="/product/details/${value.product.id}/${value.product.product_slug}">
+                            <img src="/${value.product.product_thumbnail}" alt="#" style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                    </div>
+                    
+                    <!-- Info (Name & Price) -->
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                        <a href="/product/details/${value.product.id}/${value.product.product_slug}" style="font-weight: 600; color: #253D4E; font-size: 13px; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;">
+                            ${value.product.product_name}
+                        </a>
+                        <span style="font-weight: 700; color: #7B2828; font-size: 14px;">
+                            ${value.product.discount_price == null
+                            ? `Gh ${value.product.selling_price}`
+                            : `Gh ${(((100 - value.product.discount_price)/100) * value.product.selling_price).toFixed(2)}`
+                            }
+                        </span>
+                    </div>
+                    
+                    <!-- Delete Button -->
+                    <div style="flex-shrink: 0; padding-left: 5px;">
+                        <a type="submit" class="text-body" id="${value.id}" onclick="wishlistRemove(this.id)" style="font-size: 16px; color: #e74c3c !important; cursor: pointer; display: inline-block; padding: 5px;">
+                            <i class="fi-rs-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                `;
+             });
+             $('#wishlist').html(rows);
+             $('#wishlist-mobile-container').html(mobileCards);
+          }
 
          function wishlist(data = null){
             if (data && data.wishlist !== undefined) {
@@ -501,7 +539,7 @@
             }
          }
          // Delay wishlist load until after page renders
-         setTimeout(function(){ wishlist(); }, 1200);
+         setTimeout(function(){ wishlist(); }, 100);
 
          // Wishlist Selection Helper Functions
          function toggleSelectAllWishlist(masterCheckbox) {
