@@ -10,7 +10,7 @@
                <div class="text-white" style="font-size: 13px;">
                   The <code>recognition_tiers</code> table does not exist in your database yet.
                   To fix this, please click this link to execute migrations online:
-                  <a href="/admin/run-migrations-secure" class="text-white fw-bold" style="text-decoration: underline;" target="_blank">Run Database Migrations Now</a>
+                  <a href="{{ route('admin.run.migrations.secure') }}" class="text-white fw-bold" style="text-decoration: underline;" target="_blank">Run Database Migrations Now</a>
                </div>
             </div>
          </div>
