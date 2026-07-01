@@ -66,6 +66,8 @@ class CheckOutController extends Controller
         $deliveryFee = \App\Models\SiteSetting::calculateDeliveryFee($orderAmount, $isStudent);
         $cartTotal = $orderAmount + $deliveryFee;
 
-        return view('front.payment.cash', compact('data', 'cartTotal', 'subtotal', 'deliveryFee'));
+        $deliveryInfo = \App\Models\Order::getDeliveryEstimation();
+
+        return view('front.payment.cash', compact('data', 'cartTotal', 'subtotal', 'deliveryFee', 'deliveryInfo'));
     }
 }

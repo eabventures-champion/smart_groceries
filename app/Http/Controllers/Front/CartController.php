@@ -36,8 +36,10 @@ class CartController extends Controller
         }
 
         $size = $request->size;
-        $product_attribute_price = ProductAttribute::where(['product_id' => $id, 'size' => $size])->first()->toArray();
-        $price = $product_attribute_price['price'];
+        $product_attribute_price = ProductAttribute::where('product_id', $id)
+            ->whereRaw('TRIM(size) = ?', [trim($size)])
+            ->first();
+        $price = $product_attribute_price ? $product_attribute_price->price : 0;
 
         $productDetails = Product::select('discount_price')->where('id', $id)->first();
         $productDetails = json_decode(json_encode($productDetails), true);
@@ -136,8 +138,10 @@ class CartController extends Controller
         }
         
         $size = $request->size;
-        $product_attribute_price = ProductAttribute::where(['product_id' => $id, 'size' => $size])->first()->toArray();
-        $price = $product_attribute_price['price'];
+        $product_attribute_price = ProductAttribute::where('product_id', $id)
+            ->whereRaw('TRIM(size) = ?', [trim($size)])
+            ->first();
+        $price = $product_attribute_price ? $product_attribute_price->price : 0;
 
         $productDetails = Product::select('discount_price')->where('id', $id)->first();
         $productDetails = json_decode(json_encode($productDetails), true);
@@ -213,10 +217,32 @@ class CartController extends Controller
         $cartQty = Cart::count();
         $cartTotal = Cart::total();
 
+        $cartProductsData = [];
+        foreach ($carts as $item) {
+            $product = \App\Models\Product::with('attributes')->find($item->id);
+            if ($product) {
+                $colors = array_filter(array_map('trim', explode(',', $product->product_color)));
+                $colors = array_filter($colors, function($c) {
+                    return strtolower($c) !== 'none' && $c !== '';
+                });
+                
+                $cartProductsData[$item->rowId] = [
+                    'attributes' => $product->attributes,
+                    'colors' => array_values($colors)
+                ];
+            } else {
+                $cartProductsData[$item->rowId] = [
+                    'attributes' => [],
+                    'colors' => []
+                ];
+            }
+        }
+
         return response()->json(array(
             'carts' => $carts,
             'cartQty' => $cartQty,  
-            'cartTotal' => $cartTotal
+            'cartTotal' => $cartTotal,
+            'productData' => $cartProductsData
         ));
     }
 
@@ -262,14 +288,13 @@ class CartController extends Controller
     public function cart_increment($rowId){
         $row = Cart::get($rowId);
         // dd($row->options->size);
-        $check_available_stock = ProductAttribute::select('stock')->where(
-            [
-                'product_id' => $row->id,
-                'size' => $row->options->size
-            ]
-        )->first()->toArray();
+        $check_available_stock = ProductAttribute::select('stock')
+            ->where('product_id', $row->id)
+            ->whereRaw('TRIM(size) = ?', [trim($row->options->size)])
+            ->first();
+        $stockQty = $check_available_stock ? $check_available_stock->stock : 9999;
 
-        if(($row->qty +1) > $check_available_stock['stock']){
+        if(($row->qty +1) > $stockQty){
             return response()->json(['error' => 'Product Stock is not available for that quantity!']);
         }else{
             Cart::update($rowId, $row->qty +1);
@@ -436,5 +461,85 @@ class CartController extends Controller
             'cartQty' => Cart::count(),  
             'cartTotal' => Cart::total()
         ));
+    }
+
+    public function update_cart_item_properties(Request $request) {
+        $rowId = $request->rowId;
+        $size = $request->size;
+        $color = $request->color;
+        
+        $cartItem = Cart::get($rowId);
+        if (!$cartItem) {
+            return response()->json(['error' => 'Item not found in cart']);
+        }
+        
+        // Find product price based on selected size
+        $price = $cartItem->price; // Default to current price
+        
+        if ($size) {
+            $attribute = \App\Models\ProductAttribute::where('product_id', $cartItem->id)
+                ->whereRaw('TRIM(size) = ?', [trim($size)])
+                ->first();
+            if ($attribute) {
+                // Check if product has discount
+                $product = \App\Models\Product::find($cartItem->id);
+                if ($product->discount_price == null) {
+                    $price = $attribute->price;
+                } else {
+                    $amount = (100 - $product->discount_price) / 100;
+                    $price = $amount * $attribute->price;
+                }
+            }
+        }
+        
+        // Use remove + re-add to reliably update price
+        $qty = $cartItem->qty;
+        $name = $cartItem->name;
+        $productId = $cartItem->id;
+        $weight = $cartItem->weight;
+        $oldOptions = $cartItem->options->toArray();
+        
+        // Merge new options
+        $newOptions = array_merge($oldOptions, [
+            'size' => $size,
+            'color' => $color
+        ]);
+        
+        // Remove old item
+        Cart::remove($rowId);
+        
+        // Re-add with correct price
+        $newItem = Cart::add([
+            'id' => $productId,
+            'name' => $name,
+            'qty' => $qty,
+            'price' => $price,
+            'weight' => $weight,
+            'options' => $newOptions,
+        ]);
+        
+        // If coupon is active, recalculate coupon
+        if (Session::has('coupon')) {
+            $coupon_name = Session::get('coupon')['coupon_name'];
+            $coupon = \App\Models\Coupon::where('coupon_name', $coupon_name)->first();
+            if ($coupon) {
+                Session::put('coupon', [
+                    'coupon_name' => $coupon->coupon_name, 
+                    'coupon_discount' => $coupon->coupon_discount, 
+                    'discount_amount' => round(Cart::total() * $coupon->coupon_discount/100), 
+                    'total_amount' => round(Cart::total() - Cart::total() * $coupon->coupon_discount/100)
+                ]);
+            }
+        }
+
+        $subtotal = $price * $qty;
+
+        return response()->json([
+            'success' => 'Properties updated successfully',
+            'newRowId' => $newItem->rowId,
+            'price' => number_format($price, 0),
+            'subtotal' => number_format($subtotal, 0),
+            'cartTotal' => Cart::total(),
+        ]);
     }
 }

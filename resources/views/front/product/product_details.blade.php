@@ -3,13 +3,285 @@
 @section('title')
 {{ $product->product_name }}
 @endsection
-{{--
+
 <style>
-   *{
-   zoom: 90.6%;
+   .premium-details-container {
+       font-family: 'Inter', sans-serif;
+   }
+   .premium-details-container h2.title-detail {
+       font-family: 'Outfit', sans-serif;
+       font-weight: 800;
+       color: #253D4E;
+       font-size: 32px;
+       margin-bottom: 20px;
+       line-height: 1.25;
+   }
+   /* Main Detail Card */
+   .premium-details-container .product-detail {
+       background: #ffffff;
+       border-radius: 24px;
+       border: 1px solid #f1f2f4;
+       box-shadow: 0 15px 45px rgba(0, 0, 0, 0.02);
+       padding: 40px;
+       margin-top: 20px;
+   }
+   /* Gallery Styles */
+   .premium-details-container .detail-gallery {
+       position: relative;
+   }
+   .premium-details-container .product-image-slider {
+       border-radius: 16px;
+       border: 1px solid #f1f2f4;
+       background: #fafbfc;
+       overflow: hidden;
+       margin-bottom: 20px;
+   }
+   .premium-details-container .slider-nav-thumbnails {
+       margin-top: 15px;
+   }
+   .premium-details-container .slider-nav-thumbnails div {
+       border-radius: 10px;
+       overflow: hidden;
+       border: 2px solid transparent;
+       cursor: pointer;
+       transition: border-color 0.2s ease;
+   }
+   .premium-details-container .slider-nav-thumbnails div.slick-current {
+       border-color: #3bb77e;
+   }
+   /* Stock Badge */
+   .premium-details-container .stock-status {
+       display: inline-block !important;
+       padding: 6px 14px !important;
+       font-size: 13px !important;
+       font-weight: 700 !important;
+       border-radius: 30px !important;
+       margin-bottom: 20px !important;
+       font-family: 'Outfit', sans-serif;
+       height: auto !important;
+   }
+   .premium-details-container .stock-status.in-stock {
+       background: rgba(46, 204, 113, 0.1) !important;
+       color: #2ecc71 !important;
+   }
+   .premium-details-container .stock-status.out-stock {
+       background: rgba(231, 76, 60, 0.1) !important;
+       color: #e74c3c !important;
+   }
+   .premium-details-container .stock-status .total-qty-stock p {
+       margin: 2px 0 0 0 !important;
+       font-size: 12px;
+       font-weight: 600;
+   }
+   /* Price Block */
+   .premium-details-container .product-price-cover {
+       background: #fdfaf3;
+       border-radius: 16px;
+       padding: 18px 24px;
+       border: 1px solid #f9ebd1;
+       display: inline-block;
+       width: 100%;
+       margin-bottom: 25px;
+   }
+   .premium-details-container .product-price {
+       display: flex;
+       align-items: baseline;
+       gap: 12px;
+   }
+   .premium-details-container .product-price .current-price {
+       font-size: 34px !important;
+       font-weight: 800 !important;
+       color: #3bb77e !important;
+       font-family: 'Outfit', sans-serif;
+   }
+   .premium-details-container .product-price .old-price {
+       font-size: 18px !important;
+       color: #adadad !important;
+       text-decoration: line-through;
+       font-weight: 500;
+   }
+   .premium-details-container .product-price .save-price {
+       background: #f74b81;
+       color: #fff;
+       padding: 4px 10px;
+       border-radius: 30px;
+       font-size: 12px;
+       font-weight: 700;
+   }
+   /* Attributes layout */
+   .premium-details-container .attr-detail {
+       display: flex;
+       align-items: center;
+       gap: 15px;
+       margin-bottom: 18px;
+       max-width: 450px;
+   }
+   .premium-details-container .attr-detail strong {
+       width: 80px;
+       font-size: 14px;
+       color: #253D4E;
+       font-family: 'Outfit', sans-serif;
+       font-weight: 700;
+   }
+   .premium-details-container .attr-detail select {
+       border-radius: 8px !important;
+       border: 1px solid #ececec !important;
+       padding: 10px 14px !important;
+       font-size: 14px !important;
+       height: auto !important;
+       color: #253D4E !important;
+       flex: 1;
+       background-color: #fff;
+   }
+   /* Quantity Selector */
+   .premium-details-container .detail-qty {
+       border-radius: 30px !important;
+       border: 1px solid #ececec !important;
+       padding: 10px 18px !important;
+       background: #fff !important;
+       display: inline-flex !important;
+       align-items: center !important;
+       height: 50px !important;
+       max-width: 120px !important;
+   }
+   .premium-details-container .detail-qty a {
+       color: #7e7e7e !important;
+       font-size: 16px !important;
+       display: inline-flex !important;
+   }
+   .premium-details-container .detail-qty .qty-val {
+       border: none !important;
+       font-weight: 700 !important;
+       color: #253D4E !important;
+       width: 40px !important;
+       text-align: center !important;
+       background: transparent !important;
+       font-size: 16px !important;
+       margin: 0 5px !important;
+   }
+   /* Extralink / Buttons Row */
+   .premium-details-container .detail-extralink {
+       display: flex;
+       align-items: center;
+       flex-wrap: wrap;
+       gap: 15px;
+       margin-top: 30px;
+       margin-bottom: 30px;
+   }
+   .premium-details-container .button-add-to-cart {
+       background-color: #3bb77e !important;
+       border: none !important;
+       color: #fff !important;
+       padding: 14px 40px !important;
+       font-family: 'Outfit', sans-serif !important;
+       font-weight: 700 !important;
+       border-radius: 30px !important;
+       font-size: 16px !important;
+       height: 50px !important;
+       display: inline-flex !important;
+       align-items: center !important;
+       justify-content: center !important;
+       gap: 8px !important;
+       transition: all 0.3s ease !important;
+       box-shadow: 0 8px 20px rgba(59, 183, 126, 0.25) !important;
+       cursor: pointer !important;
+   }
+   .premium-details-container .button-add-to-cart:hover {
+       transform: translateY(-2px) !important;
+       box-shadow: 0 12px 25px rgba(59, 183, 126, 0.35) !important;
+   }
+   .premium-details-container .action-btn {
+       border: 1px solid #ececec !important;
+       border-radius: 50% !important;
+       width: 50px !important;
+       height: 50px !important;
+       display: inline-flex !important;
+       align-items: center !important;
+       justify-content: center !important;
+       color: #253D4E !important;
+       font-size: 18px !important;
+       background: #fff !important;
+       transition: all 0.3s ease !important;
+       cursor: pointer !important;
+   }
+   .premium-details-container .action-btn:hover {
+       background-color: #3bb77e !important;
+       color: #fff !important;
+       border-color: #3bb77e !important;
+       transform: translateY(-2px);
+   }
+   /* Description tabs styling */
+   .premium-details-container .tab-style3 .nav-tabs {
+       border-bottom: 2px solid #f1f2f4;
+       margin-bottom: 25px;
+   }
+   .premium-details-container .tab-style3 .nav-tabs .nav-link {
+       font-family: 'Outfit', sans-serif;
+       font-weight: 700;
+       color: #7e7e7e;
+       border: none;
+       padding: 12px 0;
+       margin-right: 35px;
+       position: relative;
+       background: transparent;
+       font-size: 16px;
+   }
+   .premium-details-container .tab-style3 .nav-tabs .nav-link.active {
+       color: #3bb77e;
+   }
+   .premium-details-container .tab-style3 .nav-tabs .nav-link.active::after {
+       content: '';
+       position: absolute;
+       bottom: -2px;
+       left: 0;
+       width: 100%;
+       height: 2px;
+       background-color: #3bb77e;
+   }
+   .premium-details-container .entry-main-content {
+       font-family: 'Inter', sans-serif;
+       font-size: 15px;
+       line-height: 1.7;
+       color: #687182;
+   }
+   
+   /* Related Products Premium Grid Styling */
+   .related-products-section .product-cart-wrap {
+       background: #ffffff;
+       border-radius: 18px;
+       border: 1px solid #f1f2f4;
+       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.01);
+       overflow: hidden;
+       transition: all 0.3s ease;
+       height: 100%;
+       display: flex;
+       flex-direction: column;
+   }
+   .related-products-section .product-cart-wrap:hover {
+       transform: translateY(-5px);
+       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+       border-color: #e2e8f0;
+   }
+   .related-products-section .product-img-action-wrap {
+       background-color: #f7f9fa;
+       padding: 20px;
+       position: relative;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       height: 200px;
+   }
+   .related-products-section .product-img-action-wrap img {
+       max-height: 100%;
+       max-width: 100%;
+       object-fit: contain;
+       transition: transform 0.5s ease;
+   }
+   .related-products-section .product-cart-wrap:hover .product-img-action-wrap img {
+       transform: scale(1.05);
    }
 </style>
---}}
+
 <div class="page-header breadcrumb-wrap">
    <div class="container">
       <div class="breadcrumb">
@@ -18,7 +290,7 @@
       </div>
    </div>
 </div>
-<div class="container mb-30">
+<div class="container mb-30 premium-details-container">
    <div class="row">
       <div class="col-xl-10 col-lg-12 m-auto">
          <div class="product-detail accordion-detail">
@@ -126,14 +398,14 @@
                         <span class="get_attribute_price">
                            @if($product->discount_price == NULL)
                            <div class="product-price primary-color float-left">
-                              <span class="current-price text-brand">Gh {{ number_format($product->selling_price, 2) }}</span>
+                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format($product->selling_price, 2) }}</span>
                            </div>
                            @else
                            <div class="product-price primary-color float-left">
-                              <span class="current-price text-brand">Gh {{ number_format($new_price, 2) }}</span>
+                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $new_price }}">Gh {{ number_format($new_price, 2) }}</span>
                               <span>
                               <span class="save-price font-md color3 ml-20">{{ round($product->discount_price) }}% Off</span>
-                              <span class="old-price font-md ml-20">Gh {{ number_format($product->selling_price, 2) }}</span>
+                              <span class="old-price font-md ml-20" id="detail-old-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format($product->selling_price, 2) }}</span>
                               </span>
                            </div>
                            @endif
@@ -539,7 +811,7 @@
                   <h2 class="section-title style-1 mb-30">Related products</h2>
                </div>
                <div class="col-12">
-                  <div class="row related-products">
+                  <div class="row related-products related-products-section">
                      @foreach($relatedProduct as $product)
                      <div class="col-lg-3 col-md-4 col-6 col-sm-6">
                         <div class="product-cart-wrap hover-up">

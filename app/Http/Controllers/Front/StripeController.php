@@ -51,6 +51,8 @@ class StripeController extends Controller
             $deliveryFee = \App\Models\SiteSetting::calculateDeliveryFee($total_amount, $isStudent);
             $final_amount = $total_amount + $deliveryFee;
 
+            $deliveryInfo = \App\Models\Order::getDeliveryEstimation();
+
             $order_id = Order::insertGetId([
                 'user_id' => Auth::id(),
                 'region_id' => $paymentDetails['data']['metadata']['region_id'],
@@ -75,7 +77,9 @@ class StripeController extends Controller
                 'order_date' => Carbon::now()->format('d F Y'),
                 'order_month' => Carbon::now()->format('F'),
                 'order_year' => Carbon::now()->format('Y'),
-                'status' => 'pending',
+                'status' => $deliveryInfo['is_queued'] ? 'queued' : 'pending',
+                'estimated_delivery_date' => $deliveryInfo['next_delivery_date'],
+                'delivery_proximity' => $deliveryInfo['proximity_days'],
                 'created_at' => Carbon::now(),
             ]);
 

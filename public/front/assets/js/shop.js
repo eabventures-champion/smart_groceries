@@ -73,46 +73,79 @@
                 $(this).parents('.attr-detail').find('.current-color').text($(this).attr('data-color'));
             });
         });
+        function validatePropertiesSelected($input) {
+            if ($input.closest('.shopping-summery').length) {
+                return true;
+            }
+            
+            var $container = $input.closest('.detail-info, .product-info');
+            if (!$container.length) {
+                $container = $input.closest('.modal-content, .row');
+            }
+            
+            var $sizeSelect = $container.find('select[name="size"], select#dsize, select#getPrice, select#getPrice_modal');
+            if ($sizeSelect.length && $sizeSelect.is(':visible')) {
+                var sizeVal = $sizeSelect.val();
+                if (!sizeVal || sizeVal === '' || sizeVal.indexOf('--select') !== -1) {
+                    toastr.error('Please select a size first');
+                    return false;
+                }
+            }
+            
+            var $colorSelect = $container.find('select[name="color"], select#dcolor, select#color');
+            if ($colorSelect.length && $colorSelect.is(':visible')) {
+                var colorVal = $colorSelect.val();
+                if (!colorVal || colorVal === '' || colorVal.indexOf('--select') !== -1) {
+                    toastr.error('Please select a variant first');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
         //Qty Up-Down
         $('.detail-qty').each(function () {
-            var qtyval = parseInt($(this).find(".qty-val").val(), 10);
+            var $this = $(this);
+            var $input = $this.find(".qty-val");
 
-            $('.qty-up').on('click', function (event) {
+            $this.find('.qty-up').on('click', function (event) {
                 event.preventDefault();
-                var $input = $(this).prev();
+                if (!validatePropertiesSelected($input)) {
+                    return false;
+                }
+                var qtyval = parseInt($input.val(), 10) || 1;
                 var maxStock = parseInt($input.attr('max'), 10) || 99999;
                 qtyval = qtyval + 1;
                 if (qtyval > maxStock) {
                     qtyval = maxStock;
                     toastr.warning('Maximum available stock is ' + maxStock);
                 }
-                $input.val(qtyval);
+                $input.val(qtyval).trigger('change');
             });
 
-             $(".qty-down").on("click", function (event) {
-                 event.preventDefault(); 
-                 qtyval = qtyval - 1;
-                 if (qtyval > 1) {
-                     $(this).next().val(qtyval);
-                 } else {
-                     qtyval = 1;
-                     $(this).next().val(qtyval);
-                 }
-             });
+            $this.find('.qty-down').on('click', function (event) {
+                event.preventDefault();
+                var qtyval = parseInt($input.val(), 10) || 1;
+                qtyval = qtyval - 1;
+                if (qtyval < 1) {
+                    qtyval = 1;
+                }
+                $input.val(qtyval).trigger('change');
+            });
 
-            // Enforce max on manual input
-            $(this).find('.qty-val').on('change blur', function() {
+            $input.on('change blur', function() {
+                if (parseInt($(this).val(), 10) > 1 && !validatePropertiesSelected($input)) {
+                    $(this).val(1).trigger('change');
+                    return false;
+                }
                 var maxStock = parseInt($(this).attr('max'), 10) || 99999;
                 var val = parseInt($(this).val(), 10) || 1;
                 if (val > maxStock) {
                     $(this).val(maxStock);
-                    qtyval = maxStock;
                     toastr.warning('Maximum available stock is ' + maxStock);
                 } else if (val < 1) {
                     $(this).val(1);
-                    qtyval = 1;
-                } else {
-                    qtyval = val;
                 }
             });
         });

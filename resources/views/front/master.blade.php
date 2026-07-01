@@ -52,6 +52,50 @@
       <script src="https://js.stripe.com/v3/"></script>
       @endif
 
+      <!-- Custom CSS Overrides for product grid action buttons (Desktop & Mobile) -->
+      <style>
+         /* Desktop hover actions */
+         .product-cart-wrap .product-action-1 {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            background-color: #fff !important;
+            border-radius: 5px !important;
+            border: 1px solid #BCE3C9 !important;
+         }
+         .product-cart-wrap .product-action-1 a.action-btn {
+            width: 32px !important;
+            height: 32px !important;
+            line-height: 32px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+         }
+         .product-cart-wrap .product-action-1 a.action-btn i {
+            font-size: 13px !important;
+            line-height: 1 !important;
+         }
+
+         /* Mobile actions alignment (only on screens < 992px) */
+         @media (max-width: 991.98px) {
+            .product-action-1-mobile {
+               display: flex !important;
+               align-items: center !important;
+               justify-content: flex-start !important;
+               gap: 8px !important;
+               margin-top: 5px !important;
+               white-space: nowrap !important;
+            }
+            .product-action-1-mobile a {
+               padding: 0 !important;
+               display: inline-flex !important;
+               align-items: center !important;
+               justify-content: center !important;
+               font-size: 18px !important;
+            }
+         }
+      </style>
    </head>
    <body>
       {{-- @include('front.body.loader') --}}
@@ -127,10 +171,29 @@
          })
          /// Start product view with Modal
          function productView(id){
-         // alert(id)
-         $.ajax({
-            type: 'GET',
-            url: '/product/view/modal/'+id,
+            // Reset modal fields instantly to prevent stale data flash
+            $('#pname').text('Loading...');
+            $('#pprice').text('');
+            $('#oldprice').text('');
+            $('#hide_curreny').text('');
+            $('#pbrand').text('');
+            $('#pcategory').text('');
+            $('#pcode').text('');
+            $('#pimage').attr('src', '/upload/no_image.jpg');
+            $('#available').text('');
+            $('#stockout').text('');
+            $('#call_us').text('');
+            $('#quantity_stock').text('');
+            $('#total_stock').text('');
+            $('#modal-qty-stock').html('');
+            $('select[name="size"]').empty();
+            $('#sizeArea').hide();
+            $('select[name="color"]').empty();
+            $('#colorArea').hide();
+
+            $.ajax({
+               type: 'GET',
+               url: '/product/view/modal/'+id,
             dataType: 'json',
             success:function(data){
                $('#pname').text(data.product.product_name);
@@ -149,13 +212,12 @@
 
             // Product Price
             if (data.product.discount_price == null) {
-               //  $('#pprice').text('');
-                $('#oldprice').text('');
+                $('#oldprice').text('').attr('data-base-price', '');
                 $('#hide_curreny').text('');
-                $('#pprice').text(data.product.selling_price);
+                $('#pprice').text(data.product.selling_price).attr('data-base-price', data.product.selling_price);
                }else{
-                  $('#pprice').text(data.new_price.toFixed(2));
-                  $('#oldprice').text(data.product.selling_price);
+                  $('#pprice').text(data.new_price.toFixed(2)).attr('data-base-price', data.new_price);
+                  $('#oldprice').text(data.product.selling_price).attr('data-base-price', data.product.selling_price);
                   $('#hide_curreny').text('Gh');
             } // end else
 
@@ -179,10 +241,16 @@
 
             ///Size
              $('select[name="size"]').empty();
-             $('select[name="size"]').append('<option selected="" disabled=""> --select size-- </option>')
-             $.each(data.product_attribute,function(key,value){
-                $('select[name="size"]').append('<option value="'+value.size+' ">'+value.size+'  </option')
-             })
+             if (data.product_attribute && data.product_attribute.length > 0) {
+                 $('select[name="size"]').append('<option selected="" disabled=""> --select size-- </option>');
+                 $.each(data.product_attribute, function(key,value){
+                    $('select[name="size"]').append('<option value="'+value.size+' ">'+value.size+'  </option>');
+                 });
+                 $('#sizeArea').show();
+                 $('select[name="size"]').show();
+             } else {
+                 $('#sizeArea').hide();
+             }
              // end size
 
             ///Color
@@ -270,34 +338,41 @@
             $('#cartItems').text(response.cartItems);
 
             // console.log(response)
-            var miniCart = ""
+            var miniCart = "<ul>"
             $.each(response.carts, function(key,value){
-               miniCart += ` <ul>
-                  <li>
-                     <div class="shopping-cart-img">
-                        <a href=""><img alt="Nest" src="/${value.options.image} " style="width:50px;height:50px;" /></a>
+                var detailText = value.options.size;
+                if (value.options.color) {
+                    detailText += ` (${value.options.color})`;
+                }
+                miniCart += `
+                  <li style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f2f4; margin: 0; gap: 12px;">
+                     <div class="shopping-cart-img" style="flex: 0 0 60px; max-width: 60px; margin-right: 0;">
+                        <a href="/product/details/${value.id}/product"><img alt="Product" src="/${value.options.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #f1f2f4; display: block;" /></a>
                      </div>
-                     <div class="shopping-cart-title" style="margin: -55px 74px 14px; width: 146px;">
-                        <h4>
-                           <a href="">
-                              ${value.name} - ${value.options.size}
-
-                              ${value.options.color == null
-                                 ? `<span></span>`
-                                 : `<br><span>(${value.options.color})</span>`
-                               }
+                     <div class="shopping-cart-title" style="flex: 1; min-width: 0; margin: 0;">
+                        <h4 style="margin: 0 0 4px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px;">
+                           <a href="/product/details/${value.id}/product" style="color: #253D4E; font-weight: 700; font-family: 'Outfit', sans-serif;">
+                              ${value.name}
                            </a>
                         </h4>
-                        <h4><span>${value.qty} × </span>${value.price}<span> = Gh ${value.qty * value.price}</span></h4>
+                        <span style="font-size: 12px; color: #7e7e7e; display: block; margin-bottom: 4px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                           ${detailText}
+                        </span>
+                        <h3 style="font-size: 13px; font-weight: 700; color: #3bb77e; margin: 0; font-family: 'Inter', sans-serif;">
+                           <span style="color: #253D4E; font-weight: 500;">${value.qty} × </span>
+                           Gh ${parseFloat(value.price).toFixed(2)}
+                           <span style="color: #7e7e7e; font-weight: 500; margin-left: 5px;">= Gh ${(value.qty * value.price).toFixed(2)}</span>
+                        </h3>
                      </div>
-                     <div class="shopping-cart-delete" style="margin: -55px 10px 0px;">
-                        <a type="submit" id="${value.rowId}" onclick="miniCartRemove(this.id)"  ><i class="fi-rs-cross-small"></i></a>
+                     <div class="shopping-cart-delete" style="flex: 0 0 auto; margin: 0;">
+                        <a type="button" id="${value.rowId}" onclick="miniCartRemove(this.id)" style="color: #7e7e7e; background: #f7f8f9; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.background='#ffecea'; this.style.color='#ef4444';" onmouseout="this.style.background='#f7f8f9'; this.style.color='#7e7e7e';">
+                            <i class="fi-rs-cross-small" style="font-size: 16px; font-weight: bold;"></i>
+                        </a>
                      </div>
                   </li>
-               </ul>
-               <hr><br>
-                     `
+                `;
             });
+            miniCart += "</ul>";
             $('#miniCart').html(miniCart);
             $('#miniCart-mobile').html(miniCart);
          }
@@ -812,60 +887,175 @@
       <script type="text/javascript">
 
          function cart(){
-         $.ajax({
-            type: 'GET',
-            url: '/get-cart-product/',
-            dataType: 'json',
-            success:function(response){
-               //  console.log(response)
+          $.ajax({
+             type: 'GET',
+             url: '/get-cart-product/',
+             dataType: 'json',
+             success:function(response){
 
-            var rows = ""
-            $.each(response.carts, function(key,value){
+             var rows = ""
+             $.each(response.carts, function(key,value){
+                var pData = response.productData ? response.productData[value.rowId] : null;
+                var sizeSelect = '';
+                var colorSelect = '';
+               
+                if (pData) {
+                    // Build size select if attributes are available
+                    if (pData.attributes && pData.attributes.length > 0) {
+                        sizeSelect = `<div class="mb-2"><span class="cart-prop-label">Size</span>
+                            <select class="cart-prop-select cart-size-select" data-rowid="${value.rowId}">`;
+                        $.each(pData.attributes, function(k, attr){
+                            var selected = (value.options.size && value.options.size.trim() === attr.size.trim()) ? 'selected' : '';
+                            sizeSelect += `<option value="${attr.size}" data-price="${attr.price}" ${selected}>${attr.size}</option>`;
+                        });
+                        sizeSelect += `</select></div>`;
+                    } else if (value.options.size) {
+                        sizeSelect = `<div class="mb-2"><span class="cart-prop-label">Size</span><span class="cart-prop-value">${value.options.size}</span></div>`;
+                    }
+                   
+                    // Build variant/color select if colors are available
+                    if (pData.colors && pData.colors.length > 0) {
+                        colorSelect = `<div><span class="cart-prop-label">Variant</span>
+                            <select class="cart-prop-select cart-color-select" data-rowid="${value.rowId}">`;
+                        if (!value.options.color) {
+                            colorSelect += `<option value="" selected disabled>--select variant--</option>`;
+                        }
+                        $.each(pData.colors, function(k, col){
+                            var selected = (value.options.color && value.options.color.trim() === col.trim()) ? 'selected' : '';
+                            colorSelect += `<option value="${col}" ${selected}>${col}</option>`;
+                        });
+                        colorSelect += `</select></div>`;
+                    } else if (value.options.color) {
+                        colorSelect = `<div><span class="cart-prop-label">Variant</span><span class="cart-prop-value">${value.options.color}</span></div>`;
+                    }
+                } else {
+                    if (value.options.size) {
+                        sizeSelect = `<div class="mb-2"><span class="cart-prop-label">Size</span><span class="cart-prop-value">${value.options.size}</span></div>`;
+                    }
+                    if (value.options.color) {
+                        colorSelect = `<div><span class="cart-prop-label">Variant</span><span class="cart-prop-value">${value.options.color}</span></div>`;
+                    }
+                }
 
-               rows += `<tr class="pt-30">
-                <td class="custome-checkbox start"></td>
-                <td class="image product-thumbnail pt-40"><img src="/${value.options.image} " alt="#">
-                <h6><a class="product-name text-heading" href="">${value.name} </a></h6>
-                </td>
+                rows += `<tr class="cart-item-row" data-rowid="${value.rowId}">
+                 <td class="custome-checkbox start"></td>
+                 <td class="image product-thumbnail pt-40" style="padding-top:15px !important; padding-bottom:15px !important;"><img src="/${value.options.image} " alt="#">
+                 <h6><a class="product-name text-heading" href="">${value.name} </a></h6>
+                 </td>
 
-                <td class="price" data-title="Price">
-                    <h6 class="text-body">Gh ${value.price} </h6>
-                </td>
-                <td class="price" data-title="Properties">
-                  ${value.options.color == null
-                    ? `<span></span>`
-                    : `<br><span>(${value.options.color})</span>`
-                  }
+                 <td class="price" data-title="Price">
+                     <h6 class="cart-unit-price" style="font-weight: 700; transition: all 0.3s ease;">Gh ${value.price} </h6>
+                 </td>
+                 <td class="price cart-properties-cell" data-title="Properties">
+                     ${sizeSelect}
+                     ${colorSelect}
+                 </td>
 
-                  ${value.options.size == null
-                    ? `<span>size not selected</span>`
-                    : `<h6 class="text-body">${value.options.size} </h6>`
-                  }
-                </td>
+                 <td class="price" data-title="Quantity">
+                     <div class="detail-extralink">
+                         <div class="detail-qty border radius">
+                          <a type="submit" class="qty-down" id="${value.rowId}" onclick="cartDecrement(this.id)"><i class="fi-rs-angle-small-down"></i></a>
+                          <input type="text" name="quantity" class="qty-val" value="${value.qty}" min="1" readonly>
+                          <a type="submit" class="qty-up" id="${value.rowId}" onclick="cartIncrement(this.id)"><i class="fi-rs-angle-small-up"></i></a>
+                         </div>
+                     </div>
+                 </td>
 
-                <td class="price" data-title="Quantity">
-                    <div class="detail-extralink">
-                        <div class="detail-qty border radius">
-                         <a type="submit" class="qty-down" id="${value.rowId}" onclick="cartDecrement(this.id)"><i class="fi-rs-angle-small-down"></i></a>
-                         <input type="text" name="quantity" class="qty-val" value="${value.qty}" min="1">
-                         <a type="submit" class="qty-up" id="${value.rowId}" onclick="cartIncrement(this.id)"><i class="fi-rs-angle-small-up"></i></a>
-                        </div>
-                    </div>
-                </td>
+                 <td class="price" data-title="Sub total">
+                     <h5 class="text-brand cart-subtotal" style="font-weight: 800; transition: all 0.3s ease;">Gh ${value.subtotal} </h5>
+                 </td>
 
-                <td class="price" data-title="Sub total">
-                    <h5 class="text-brand">Gh ${value.subtotal} </h5>
-                </td>
+                 <td class="action text-center" data-title="Remove">
+                  <a type="submit" class="text-body" style="cursor:pointer;" id="${value.rowId}" onclick="cartRemove(this.id)"><i class="fi-rs-trash"></i></a></td>       </tr>`
+               });
+                 $('#cartPage').html(rows);
+             }
+          })
+          }
+          // Delay cart load until after page renders
+          setTimeout(function(){ cart(); }, 1000);
 
-                <td class="action text-center" data-title="Remove">
-                 <a type="submit" class="text-body" id="${value.rowId}" onclick="cartRemove(this.id)"><i class="fi-rs-trash"></i></a></td>       </tr>`
-              });
-                $('#cartPage').html(rows);
-            }
-         })
-         }
-         // Delay cart load until after page renders
-         setTimeout(function(){ cart(); }, 1000);
+         // Handle properties changes — instant update without full re-render
+         $(document).on('change', '.cart-size-select, .cart-color-select', function(){
+             var $changedSelect = $(this);
+             var rowId = $changedSelect.data('rowid');
+             var $row = $changedSelect.closest('tr.cart-item-row');
+             var size = $row.find('.cart-size-select').val() || '';
+             var color = $row.find('.cart-color-select').val() || '';
+             
+             // Show loading state on price cells
+             var $priceCell = $row.find('.cart-unit-price');
+             var $subtotalCell = $row.find('.cart-subtotal');
+             $priceCell.css({'opacity': '0.4'});
+             $subtotalCell.css({'opacity': '0.4'});
+             
+             // Disable selects during update
+             $row.find('.cart-prop-select').prop('disabled', true).css('opacity', '0.6');
+             
+             $.ajax({
+                 type: 'POST',
+                 url: '/cart-update-properties',
+                 headers: {
+                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                 },
+                 data: {
+                     rowId: rowId,
+                     size: size,
+                     color: color
+                 },
+                 dataType: 'json',
+                 success: function(data) {
+                     if (data.success) {
+                         // Instant client-side update of price and subtotal
+                         $priceCell.text('Gh ' + data.price);
+                         $subtotalCell.text('Gh ' + data.subtotal);
+                         
+                         // Animate the price flash
+                         $priceCell.css({'opacity': '1', 'color': '#3bb77e'});
+                         $subtotalCell.css({'opacity': '1', 'color': '#3bb77e'});
+                         setTimeout(function(){
+                             $priceCell.css({'color': ''});
+                             $subtotalCell.css({'color': ''});
+                         }, 800);
+                         
+                         // Update data-rowid on ALL elements in this row to the new rowId
+                         var newRowId = data.newRowId;
+                         $row.attr('data-rowid', newRowId);
+                         $row.find('.cart-size-select').attr('data-rowid', newRowId).data('rowid', newRowId);
+                         $row.find('.cart-color-select').attr('data-rowid', newRowId).data('rowid', newRowId);
+                         $row.find('.qty-down').attr('id', newRowId);
+                         $row.find('.qty-up').attr('id', newRowId);
+                         $row.find('.action a').attr('id', newRowId);
+                         
+                         // Re-enable selects
+                         $row.find('.cart-prop-select').prop('disabled', false).css('opacity', '1');
+                         
+                         // Update coupon and minicart silently
+                         if (typeof couponCalculation === 'function') {
+                             couponCalculation();
+                         }
+                         if (typeof miniCart === 'function') {
+                             miniCart();
+                         }
+                         
+                         toastr.success(data.success);
+                     } else {
+                         // Re-enable selects on error
+                         $row.find('.cart-prop-select').prop('disabled', false).css('opacity', '1');
+                         $priceCell.css({'opacity': '1'});
+                         $subtotalCell.css({'opacity': '1'});
+                         toastr.error(data.error);
+                     }
+                 },
+                 error: function() {
+                     // Re-enable selects on AJAX error
+                     $row.find('.cart-prop-select').prop('disabled', false).css('opacity', '1');
+                     $priceCell.css({'opacity': '1'});
+                     $subtotalCell.css({'opacity': '1'});
+                     toastr.error('Failed to update properties. Please try again.');
+                 }
+             });
+         });
 
          // Cart Remove Start
          function cartRemove(id){

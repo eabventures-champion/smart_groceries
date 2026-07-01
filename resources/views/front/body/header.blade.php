@@ -147,7 +147,7 @@
                                    </a>
                                    <a href="{{ route('mycart') }}"><span class="lable"
                                            style="color:#ffffff !important">Cart</span></a>
-                                   <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                   <div class="cart-dropdown-wrap cart-dropdown-hm2" style="right: -25px !important;">
                                        <div id="miniCart"
                                            style="max-height: 350px; overflow-y: auto; scrollbar-width: thin;"></div>
                                        <div class="shopping-cart-footer">
@@ -476,7 +476,7 @@
                                    <span class="pro-count blue" style="background-color: #7B2828 !important"
                                        id="cartQty-mobile">0</span>
                                </a>
-                               <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                               <div class="cart-dropdown-wrap cart-dropdown-hm2" style="right: -25px !important;">
                                    <div id="miniCart-mobile"
                                        style="max-height: 300px; overflow-y: auto; scrollbar-width: thin;">
                                    </div>
@@ -681,8 +681,10 @@
         }
 
         function search_result_hide() {
-            $("#searchProducts").slideUp();
-            $("#searchProducts-mobile").slideUp();
+            setTimeout(function() {
+                $("#searchProducts").slideUp();
+                $("#searchProducts-mobile").slideUp();
+            }, 250);
         }
 
        var prevScrollpos = window.pageYOffset;

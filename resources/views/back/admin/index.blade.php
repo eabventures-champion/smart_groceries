@@ -12,6 +12,7 @@
     $year = App\Models\Order::where('order_year', $year)->sum('amount');
 
     $pending_count = App\Models\Order::where('status', 'pending')->count();
+    $queued_count = App\Models\Order::where('status', 'queued')->count();
     $vendor_count = App\Models\User::where('status', 'active')->where('role','vendor')->count();
     $customer_count = App\Models\User::where('status', 'active')->where('role','user')->count();
 
@@ -519,14 +520,14 @@
     </script>
 
    @php
-   $orders = App\Models\Order::where('status','pending')->orderBy('id','DESC')->limit(10)->get();
+   $orders = App\Models\Order::whereIn('status', ['pending', 'queued'])->orderBy('id','DESC')->limit(10)->get();
    @endphp
 
    <div class="card radius-10">
       <div class="card-body">
          <div class="d-flex align-items-center">
             <div>
-               <h5 class="mb-0">Orders Summary</h5>
+               <h5 class="mb-0">Recent Pending & Queued Orders Summary</h5>
             </div>
             <div class="font-22 ms-auto"><i class="bx bx-dots-horizontal-rounded"></i>
             </div>
@@ -554,9 +555,15 @@
                      <td>Gh {{ number_format($order->amount, 2) }}</td>
                      {{-- <td>{{ $order->payment_method }}</td> --}}
                      <td>
+                        @if($order->status == 'queued')
+                        <div class="badge rounded-pill bg-light-danger text-danger w-100"> 
+                           Queued
+                        </div>
+                        @else
                         <div class="badge rounded-pill bg-light-primary text-primary w-100"> 
                            {{ $order->status  }}
                         </div>
+                        @endif
                      </td>
                      <td>{{ ($order->created_at)->diffForHumans() }}</td>
                   </tr>

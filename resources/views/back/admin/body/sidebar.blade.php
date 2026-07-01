@@ -98,6 +98,7 @@
       {{-- @endif --}}
       @php
          $pendingCount = \App\Models\Order::where('status', 'pending')->count();
+         $queuedCount = \App\Models\Order::where('status', 'queued')->count();
          $confirmedCount = \App\Models\Order::where('status', 'confirmed')->count();
          $processingCount = \App\Models\Order::where('status', 'processing')->count();
          $deliveringCount = \App\Models\Order::where('status', 'delivering')->count();
@@ -120,6 +121,12 @@
                <a href="{{ route('pending.order') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
                   <span><i class="bx bx-right-arrow-alt"></i>Pending Order</span>
                   <span class="badge bg-warning text-dark" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $pendingCount }}</span>
+               </a>
+            </li>
+            <li> 
+               <a href="{{ route('admin.queued.order') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Queued Order</span>
+                  <span class="badge bg-danger text-white" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $queuedCount }}</span>
                </a>
             </li>
             <li> 

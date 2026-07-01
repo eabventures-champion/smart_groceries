@@ -74,6 +74,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
         Route::get('cart-decrement/{rowId}', 'cart_decrement');
         Route::get('cart-increment/{rowId}', 'cart_increment');
         Route::get('cart-empty', 'cart_empty')->name('cart.empty');
+        Route::post('cart-update-properties', 'update_cart_item_properties');
     });
 
     Route::post('add-to-wishlist/{product_id}', 'WishListController@add_to_wish_list');
@@ -314,6 +315,8 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
 
         Route::controller(OrderController::class)->group(function(){
             Route::get('pending/order' , 'pending_order')->name('pending.order');
+            Route::get('queued/order' , 'queued_order')->name('admin.queued.order');
+            Route::get('queued/confirm/{order_id}' , 'queued_to_confirm')->name('admin.queued-confirm');
             Route::get('order/details/{order_id}' , 'admin_order_details')->name('admin.order.details');
             Route::get('confirmed/order' , 'admin_confirmed_order')->name('admin.confirmed.order');
             Route::get('processing/order' , 'admin_processing_order')->name('admin.processing.order');

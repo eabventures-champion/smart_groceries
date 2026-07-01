@@ -86,6 +86,23 @@ class OrderController extends Controller
         return redirect()->route('admin.delivering.order')->with($notification); 
     }
 
+    public function queued_order(){
+        $orders = Order::where('status', 'queued')->orderBy('id','DESC')->get();
+        return view('back.admin.orders.queued_orders', compact('orders'));
+    }
+
+    public function queued_to_confirm($order_id){
+        Order::findOrFail($order_id)->update([
+            'status' => 'confirmed',
+            'confirmed_date' => Carbon::now()
+        ]);
+        $notification = array(
+            'message' => 'Queued Order Approved and Confirmed Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('admin.confirmed.order')->with($notification); 
+    }
+
     public function admin_invoice_download($order_id){
         $order = Order::with('region','district','city','user')->where('id', $order_id)->first();
         $orderItem = OrderItem::with('product')->where('order_id',$order_id)->orderBy('id','DESC')->get();

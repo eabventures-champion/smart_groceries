@@ -61,6 +61,16 @@
                      <th>Order Date   :</th>
                      <th>{{ $order->order_date }}</th>
                   </tr>
+                  @if($order->estimated_delivery_date)
+                  <tr>
+                     <th>Est. Delivery Date:</th>
+                     <th class="text-primary fw-bold">{{ \Carbon\Carbon::parse($order->estimated_delivery_date)->format('l, d F Y') }}</th>
+                  </tr>
+                  <tr>
+                     <th>Proximity:</th>
+                     <th>{{ $order->delivery_proximity }} days</th>
+                  </tr>
+                  @endif
                   <tr>
                      <th>Delivery Notes:</th>
                      @if($order->notes == NULL)
@@ -110,7 +120,9 @@
                   <tr>
                      <th>Order Status:</th>
                      <th>
-                        @if($order->status == 'pending')
+                        @if($order->status == 'queued')
+                        <span class="badge bg-danger" style="font-size: 15px;">{{ $order->status }}</span>
+                        @elseif($order->status == 'pending')
                         <span class="badge bg-warning text-dark" style="font-size: 15px;">{{ $order->status }}</span>
                         @elseif($order->status == 'confirmed')
                         <span class="badge bg-info text-dark" style="font-size: 15px;">{{ $order->status }}</span>
@@ -130,7 +142,9 @@
                   <tr>
                      <th> </th>
                      <th>
-                        @if($order->status == 'pending')
+                        @if($order->status == 'queued')
+                        <a href="{{ route('admin.queued-confirm',$order->id) }}" class="btn btn-sm btn-block btn-success" id="confirm" >Approve & Confirm Order</a>
+                        @elseif($order->status == 'pending')
                         <a href="{{ route('pending-confirm',$order->id) }}" class="btn btn-sm btn-block btn-success" id="confirm" >Confirm Order</a>
                         @elseif($order->status == 'confirmed')
                         <a href="{{ route('confirm-processing',$order->id) }}" class="btn btn-sm btn-block btn-success" id="processing" >Processing Order</a>
@@ -139,7 +153,7 @@
                         @elseif($order->status == 'delivering')
                         <button class="btn btn-sm btn-block btn-secondary" disabled>Awaiting Customer Confirmation</button>
                         @endif
-                    </th>
+                     </th>
                   </tr>
                </table>
             </div>

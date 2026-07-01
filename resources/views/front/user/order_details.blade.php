@@ -53,6 +53,7 @@
    font-size: 12px; font-weight: 700; text-transform: capitalize;
 }
 .od-status-pending { background: #fff3cd; color: #856404; }
+.od-status-queued { background: #f8d7da; color: #721c24; }
 .od-status-confirmed { background: #d1ecf1; color: #0c5460; }
 .od-status-processing { background: #cce5ff; color: #004085; }
 .od-status-delivering { background: #d1ecf1; color: #0c5460; }
@@ -238,7 +239,8 @@
                                  <span class="od-value">
                                     @php
                                        $statusClass = 'od-status-pending';
-                                       if($order->status == 'confirmed') $statusClass = 'od-status-confirmed';
+                                       if($order->status == 'queued') $statusClass = 'od-status-queued';
+                                       elseif($order->status == 'confirmed') $statusClass = 'od-status-confirmed';
                                        elseif($order->status == 'processing') $statusClass = 'od-status-processing';
                                        elseif($order->status == 'delivering') $statusClass = 'od-status-delivering';
                                        elseif($order->status == 'delivered') $statusClass = 'od-status-delivered';
@@ -251,6 +253,12 @@
                                     @endif
                                  </span>
                               </div>
+                              @if($order->estimated_delivery_date)
+                              <div class="od-info-row">
+                                 <span class="od-label">Est. Delivery</span>
+                                 <span class="od-value text-brand" style="font-weight: 700;">{{ \Carbon\Carbon::parse($order->estimated_delivery_date)->format('l, d F Y') }} (in {{ $order->delivery_proximity }} days)</span>
+                              </div>
+                              @endif
                            </div>
                         </div>
                      </div>

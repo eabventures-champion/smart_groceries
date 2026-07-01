@@ -16,8 +16,11 @@ class ProductAttribute extends Model
     }
 
     public static function get_product_stock ($product_id, $size){
-        $get_product_stock = ProductAttribute::select('stock')->where(['product_id'=> $product_id, 'size' => $size])->first();
-        return $get_product_stock->stock;
+        $get_product_stock = ProductAttribute::select('stock')
+            ->where('product_id', $product_id)
+            ->whereRaw('TRIM(size) = ?', [trim($size)])
+            ->first();
+        return $get_product_stock ? $get_product_stock->stock : 0;
     }
 
     public static function boot()
