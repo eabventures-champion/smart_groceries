@@ -144,6 +144,8 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
             Route::get('user/order_details/{order_id}' , 'user_order_details');
             Route::get('user/invoice_download/{order_id}' , 'user_order_invoice');
             Route::post('return/order/{order_id}' , 'return_order')->name('return.order');
+            Route::post('user/order/confirm-delivery/{order_id}', 'confirm_order_delivery')->name('user.confirm.delivery');
+            Route::post('user/mark-notification-as-read/{id}', 'markNotificationAsRead')->name('user.mark.notification.read');
 
             Route::post('order/tracking' , 'order_tracking')->name('order.tracking');
         });
@@ -318,6 +320,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('pending/confirm/{order_id}' , 'pending_to_confirm')->name('pending-confirm');
             Route::get('confirm/processing/{order_id}' , 'confirm_to_process')->name('confirm-processing');
             Route::get('processing/delivered/{order_id}' , 'process_to_deliver')->name('processing-delivered');
+            Route::get('admin/delivering/order' , 'admin_delivering_order')->name('admin.delivering.order');
             Route::get('invoice/download/{order_id}' , 'admin_invoice_download')->name('admin.invoice.download');
         });
 
@@ -342,6 +345,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
         Route::controller(ActiveUserController::class)->group(function(){
             Route::get('/all/clients' , 'all_user')->name('all.users');
             Route::get('/client/detail/{id}', 'client_detail')->name('admin.client.detail');
+            Route::get('/all/affiliates', 'all_affiliates')->name('all.affiliates');
             // Route::get('/all/vendor' , 'all_vendor')->name('all-vendor');
         });
 
@@ -398,6 +402,8 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('lifestyle/experts/edit/{id}', 'expertEdit')->name('admin.lifestyle.experts.edit');
             Route::post('lifestyle/experts/update', 'expertUpdate')->name('admin.lifestyle.experts.update');
             Route::get('lifestyle/experts/delete/{id}', 'expertDelete')->name('admin.lifestyle.experts.delete');
+            Route::get('lifestyle/experts/inactive/{id}', 'expertInactive')->name('admin.lifestyle.experts.inactive');
+            Route::get('lifestyle/experts/active/{id}', 'expertActive')->name('admin.lifestyle.experts.active');
 
             // Health Tips
             Route::get('lifestyle/tips', 'tipsList')->name('admin.lifestyle.tips');

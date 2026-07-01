@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Front;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\ExpertBooking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use App\Notifications\OrderReturnRequestNotification;
 
 class UserController extends Controller
 {
@@ -25,7 +28,7 @@ class UserController extends Controller
         // Get order stats for dashboard
         $totalOrders = Order::where('user_id', $id)->count();
         $pendingOrders = Order::where('user_id', $id)->where('status', 'pending')->count();
-        $completedOrders = Order::where('user_id', $id)->where('status', 'deliverd')->count();
+        $completedOrders = Order::where('user_id', $id)->where('status', 'delivered')->count();
 
         return view('index', compact('user', 'totalOrders', 'pendingOrders', 'completedOrders'));
     }
@@ -173,16 +176,68 @@ class UserController extends Controller
     }
 
     public function return_order(Request $request, $order_id){
-        Order::findOrFail($order_id)->update([
+        $order = Order::findOrFail($order_id);
+        $order->update([
             'return_date' => Carbon::now()->format('d F Y'),
             'return_reason' => $request->return_reason,
             'return_order' => 1, 
         ]);
+
+        // Notify admin about the return request
+        $admin = User::where('role', 'admin')->first();
+        if ($admin) {
+            $order->refresh();
+            $admin->notify(new OrderReturnRequestNotification($order));
+        }
 
         $notification = array(
             'message' => 'Return Request Sent Successfully',
             'alert-type' => 'success'
         );
         return redirect()->route('user.order.page')->with($notification); 
+    }
+
+    public function confirm_order_delivery($order_id){
+        $order = Order::where('id', $order_id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'delivering')
+            ->firstOrFail();
+
+        // Decrement product inventory quantities
+        $productItems = OrderItem::where('order_id', $order_id)->get();
+        foreach($productItems as $item){
+            Product::where('id', $item->product_id)
+                ->update(['product_qty' => DB::raw('product_qty-'.$item->qty) ]);
+        }
+
+        // Update order status
+        $order->update([
+            'status' => 'delivered',
+            'delivered_date' => Carbon::now()
+        ]);
+
+        // Mark database notifications as read for this order
+        $user = Auth::user();
+        if ($user) {
+            foreach ($user->unreadNotifications as $notification) {
+                if (isset($notification->data['order_id']) && $notification->data['order_id'] == $order_id) {
+                    $notification->markAsRead();
+                }
+            }
+        }
+
+        $notification = array(
+            'message' => 'Delivery Confirmed Successfully!',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('user.order.page')->with($notification); 
+    }
+
+    public function markNotificationAsRead($id) {
+        $notification = Auth::user()->notifications()->where('id', $id)->first();
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['success' => true]);
     }
 }

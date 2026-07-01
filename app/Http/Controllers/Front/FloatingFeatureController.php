@@ -65,6 +65,12 @@ class FloatingFeatureController extends Controller
             'status' => 'pending',
         ]);
 
+        // Notify all admins of the new expert booking
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\AdminNewBookingNotification($booking));
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Your session has been successfully booked! We will follow up via email.',
@@ -97,6 +103,12 @@ class FloatingFeatureController extends Controller
             'special_note' => $request->special_note,
             'status' => 'submitted',
         ]);
+
+        // Notify all admins of the new custom product request
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\AdminNewItemRequestNotification($itemRequest));
+        }
 
         // If guest, save request ID to session so they can track it during their visit
         if (!Auth::check()) {
@@ -262,7 +274,7 @@ class FloatingFeatureController extends Controller
     public function getExpertsData()
     {
         $categories = ExpertCategory::all();
-        $experts = Expert::with('category')->where('is_active', true)->get();
+        $experts = Expert::with(['category', 'user'])->where('is_active', true)->get();
         $tips = HealthTip::latest()->get();
 
         // Attach confirmed bookings dates and times for slot blocking

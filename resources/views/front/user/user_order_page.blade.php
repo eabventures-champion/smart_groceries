@@ -58,14 +58,16 @@
                                              <span class="badge rounded-pill bg-info">Confirmed</span>
                                              @elseif($order->status == 'processing')
                                              <span class="badge rounded-pill bg-dark">Processing</span>
+                                             @elseif($order->status == 'delivering')
+                                             <span class="badge rounded-pill bg-info text-dark" style="text-transform: capitalize;">Out for Delivery</span>
                                              @elseif($order->status == 'delivered')
                                              <span class="badge rounded-pill bg-success">Delivered</span>
                                                 @if($order->return_order == 1)
-                                                <span class="badge rounded-pill bg-warning">but with issues</span>
-                                                   @elseif($order->return_order == 2)
-                                                   <span class="badge rounded-pill " style="background:blue;">Issue resolved</span>
-                                                   @elseif($order->return_order == 3)
-                                                   <span class="badge rounded-pill " style="background: red;">Return request not granted</span>
+                                                   <span class="badge rounded-pill bg-warning text-dark">Return Pending</span>
+                                                @elseif($order->return_order == 2)
+                                                   <span class="badge rounded-pill bg-primary">Returned (Approved)</span>
+                                                @elseif($order->return_order == 3)
+                                                   <span class="badge rounded-pill bg-danger">Return Not Approved</span>
                                                 @endif
                                              @endif
                                           </td>
@@ -76,6 +78,8 @@
                                                 {{ Carbon\Carbon::parse($order->confirmed_date)->diffForHumans() }}
                                                 @elseif($order->status == 'processing')
                                                 {{ Carbon\Carbon::parse($order->processing_date)->diffForHumans() }}
+                                                @elseif($order->status == 'delivering')
+                                                {{ $order->shipped_date ? Carbon\Carbon::parse($order->shipped_date)->diffForHumans() : 'Just now' }}
                                                 @else
                                                 {{ Carbon\Carbon::parse($order->delivered_date)->diffForHumans() }}
                                              @endif
@@ -83,6 +87,12 @@
                                           <td>
                                              <a title="view" href="{{ url('user/order_details/'.$order->id) }} " class="btn-sm btn-success"><i class="fa fa-eye"></i></a>
                                              <a title="download" href="{{ url('user/invoice_download/'.$order->id) }}" class="btn-sm btn-danger"><i class="fa fa-download"></i></a>
+                                             @if($order->status == 'delivering')
+                                             <form action="{{ route('user.confirm.delivery', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you have received this delivery?');">
+                                                 @csrf
+                                                 <button type="submit" title="Confirm Receipt" class="btn-sm text-white" style="border: none; background-color: #3BB77E; cursor: pointer; padding: 4px 8px; border-radius: 4px;"><i class="fa fa-check"></i></button>
+                                             </form>
+                                             @endif
                                              {{-- <div class="row">
                                                 <div class="col mx-0 my-2">
                                                    <a title="view" href="{{ url('user/order_details/'.$order->id) }} " class="btn-sm btn-success mr-2"><i class="fa fa-eye"></i></a>
@@ -134,14 +144,16 @@
                                                  <span class="badge rounded-pill bg-info" style="font-size: 11px; padding: 4px 10px; color: #fff;">Confirmed</span>
                                                  @elseif($order->status == 'processing')
                                                  <span class="badge rounded-pill bg-dark" style="font-size: 11px; padding: 4px 10px; color: #fff;">Processing</span>
+                                                 @elseif($order->status == 'delivering')
+                                                 <span class="badge rounded-pill bg-info text-dark" style="font-size: 11px; padding: 4px 10px; text-transform: capitalize;">Out for Delivery</span>
                                                  @elseif($order->status == 'delivered')
                                                  <span class="badge rounded-pill bg-success" style="font-size: 11px; padding: 4px 10px; color: #fff;">Delivered</span>
                                                     @if($order->return_order == 1)
-                                                    <span class="badge rounded-pill bg-warning" style="font-size: 11px; padding: 4px 10px; color: #fff; margin-left: 2px;">with issues</span>
+                                                       <span class="badge rounded-pill bg-warning text-dark" style="font-size: 11px; padding: 4px 10px; margin-left: 2px;">Return Pending</span>
                                                     @elseif($order->return_order == 2)
-                                                    <span class="badge rounded-pill" style="background:blue; font-size: 11px; padding: 4px 10px; color: #fff; margin-left: 2px;">Issue resolved</span>
+                                                       <span class="badge rounded-pill bg-primary" style="font-size: 11px; padding: 4px 10px; color: #fff; margin-left: 2px;">Returned (Approved)</span>
                                                     @elseif($order->return_order == 3)
-                                                    <span class="badge rounded-pill" style="background: red; font-size: 11px; padding: 4px 10px; color: #fff; margin-left: 2px;">Return request denied</span>
+                                                       <span class="badge rounded-pill bg-danger" style="font-size: 11px; padding: 4px 10px; color: #fff; margin-left: 2px;">Return Not Approved</span>
                                                     @endif
                                                  @endif
                                               </div>
@@ -155,6 +167,16 @@
                                                   <i class="fa fa-download mr-5"></i> Invoice
                                               </a>
                                           </div>
+                                          @if($order->status == 'delivering')
+                                          <div style="margin-top: 10px;">
+                                              <form action="{{ route('user.confirm.delivery', $order->id) }}" method="POST" style="width: 100%; margin: 0;" onsubmit="return confirm('Are you sure you have received this delivery?');">
+                                                  @csrf
+                                                  <button type="submit" class="btn btn-sm" style="width: 100%; padding: 10px 12px; font-size: 13px; border-radius: 8px; background-color: #3BB77E; border: none; color: #fff; text-align: center; font-weight: 700; cursor: pointer;">
+                                                      <i class="fa fa-check mr-5"></i> Confirm Receipt
+                                                  </button>
+                                              </form>
+                                          </div>
+                                          @endif
                                       </div>
                                   </div>
                                   @endforeach

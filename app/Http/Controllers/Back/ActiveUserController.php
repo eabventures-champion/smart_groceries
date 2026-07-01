@@ -28,6 +28,14 @@ class ActiveUserController extends Controller
         return view('back.admin.user.user_detail', compact('user', 'totalOrders', 'pendingOrders', 'completedOrders'));
     } // End Method
 
+    public function all_affiliates(){
+        $affiliates = User::where('role', 'user')
+            ->whereNotNull('referral_code')
+            ->orderBy('referral_balance', 'desc')
+            ->get();
+        return view('back.admin.user.affiliate_all_data', compact('affiliates'));
+    }
+
     // public function all_vendor(){
     //     $vendors = User::where('role','vendor')->latest()->get();
     //     return view('backend.user.vendor_all_data',compact('vendors'));

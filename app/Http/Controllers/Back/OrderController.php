@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use App\Notifications\OrderDeliveringNotification;
 
 class OrderController extends Controller
 {
@@ -60,19 +61,29 @@ class OrderController extends Controller
     }
 
 
+    public function admin_delivering_order(){
+        $orders = Order::where('status','delivering')->orderBy('id','DESC')->get();
+        return view('back.admin.orders.delivering_orders', compact('orders'));
+    }
+
     public function process_to_deliver($order_id){
-        $product = OrderItem::where('order_id', $order_id)->get();
-            foreach($product as $item){
-                Product::where('id', $item->product_id)
-                        ->update(['product_qty' => DB::raw('product_qty-'.$item->qty) ]);
-            } 
-            
-        Order::findOrFail($order_id)->update(['status' => 'delivered', 'delivered_date' => Carbon::now()]);
+        $order = Order::findOrFail($order_id);
+        $order->update([
+            'status' => 'delivering',
+            'shipped_date' => Carbon::now()
+        ]);
+
+        // Send database notification to the user
+        $user = $order->user;
+        if ($user) {
+            $user->notify(new OrderDeliveringNotification($order));
+        }
+
         $notification = array(
-            'message' => 'Order Delivered Successfully',
+            'message' => 'Delivery Initiated Successfully',
             'alert-type' => 'success'
         );
-        return redirect()->route('admin.delivered.order')->with($notification); 
+        return redirect()->route('admin.delivering.order')->with($notification); 
     }
 
     public function admin_invoice_download($order_id){

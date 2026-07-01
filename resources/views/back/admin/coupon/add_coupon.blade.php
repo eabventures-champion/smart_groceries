@@ -30,7 +30,7 @@
                            <h6 class="mb-0">Coupon Name</h6>
                         </div>
                         <div class="form-group col-sm-9 text-secondary">
-                           <input type="text" name="coupon_name" class="form-control" />
+                           <input type="text" name="coupon_name" class="form-control" value="{{ request('code') }}" />
                         </div>
                      </div>
                      <div class="row mb-3">
@@ -38,7 +38,20 @@
                            <h6 class="mb-0">Coupon Discount (%)</h6>
                         </div>
                         <div class="form-group col-sm-9 text-secondary">
-                           <input type="text" name="coupon_discount" class="form-control" />
+                           <input type="text" name="coupon_discount" class="form-control" value="{{ request('discount') }}" />
+                        </div>
+                     </div>
+                     <div class="row mb-3">
+                        <div class="col-sm-3">
+                           <h6 class="mb-0">Assign to Customer (Optional)</h6>
+                        </div>
+                        <div class="form-group col-sm-9 text-secondary">
+                           <select name="user_id" class="form-select">
+                              <option value="">-- Global Coupon (All Customers) --</option>
+                              @foreach(\App\Models\User::where('role', 'user')->orderBy('name', 'ASC')->get() as $user)
+                                  <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
+                              @endforeach
+                           </select>
                         </div>
                      </div>
                      <div class="row mb-3">

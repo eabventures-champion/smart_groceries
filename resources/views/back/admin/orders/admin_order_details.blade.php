@@ -110,9 +110,18 @@
                   <tr>
                      <th>Order Status:</th>
                      <th>
-                        <span class="badge bg-success" style="font-size: 15px;">
-                        {{ $order->status }}
-                        </span>
+                        @if($order->status == 'pending')
+                        <span class="badge bg-warning text-dark" style="font-size: 15px;">{{ $order->status }}</span>
+                        @elseif($order->status == 'confirmed')
+                        <span class="badge bg-info text-dark" style="font-size: 15px;">{{ $order->status }}</span>
+                        @elseif($order->status == 'processing')
+                        <span class="badge bg-primary" style="font-size: 15px;">{{ $order->status }}</span>
+                        @elseif($order->status == 'delivering')
+                        <span class="badge bg-info text-dark" style="font-size: 15px; text-transform: capitalize;">Out for Delivery</span>
+                        @else
+                        <span class="badge bg-success" style="font-size: 15px;">{{ $order->status }}</span>
+                        @endif
+                        
                         @if($order->return_order == 1)
                         <span class="badge bg-danger">but with issues</span>
                         @endif
@@ -126,7 +135,9 @@
                         @elseif($order->status == 'confirmed')
                         <a href="{{ route('confirm-processing',$order->id) }}" class="btn btn-sm btn-block btn-success" id="processing" >Processing Order</a>
                         @elseif($order->status == 'processing')
-                        <a href="{{ route('processing-delivered',$order->id) }}" class="btn btn-sm btn-block btn-success" id="delivered" >Deliver Order</a>
+                        <a href="{{ route('processing-delivered',$order->id) }}" class="btn btn-sm btn-block btn-success" id="delivered" >Initiate Delivery</a>
+                        @elseif($order->status == 'delivering')
+                        <button class="btn btn-sm btn-block btn-secondary" disabled>Awaiting Customer Confirmation</button>
                         @endif
                     </th>
                   </tr>

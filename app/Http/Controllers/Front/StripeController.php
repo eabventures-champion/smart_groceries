@@ -80,6 +80,12 @@ class StripeController extends Controller
 
             $invoice = Order::findOrFail($order_id);
 
+            // Notify all admins of the new order
+            $admins = User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new \App\Notifications\AdminNewOrderNotification($invoice));
+            }
+
             // Process affiliate referral commission if set to percentage
             $setting = \App\Models\SiteSetting::find(1);
             if ($setting && $setting->referral_commission_type === 'percentage') {
@@ -196,7 +202,7 @@ class StripeController extends Controller
         $data = array(
             'metadata' => $metadata,
             'email' => $request->email,
-            'amount' => $request->amount * 100,
+            'amount' => (int)round($request->amount * 100),
             'reference' => $this->paystack->genTranxRef(),
             'currency' => "GHS",
             'callback_url' => url('/payment/callback'),

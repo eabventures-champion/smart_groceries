@@ -307,6 +307,7 @@ class CartController extends Controller
         $coupon = Coupon::where('coupon_name', $request->coupon_name)->where('coupon_validity', '>=', Carbon::now()->format('Y-m-d'))->first();
 
         if ($coupon) {
+            Session::forget('coupon_removed');
             Session::put('coupon',[
                 'coupon_name' => $coupon->coupon_name, 
                 'coupon_discount' => $coupon->coupon_discount, 
@@ -325,8 +326,25 @@ class CartController extends Controller
     }
 
     public function coupon_calculation(){
-        if (Session::has('coupon')) {
+        // Auto-apply personal coupon if user is logged in, session has no coupon, and it was not explicitly removed
+        if (Auth::check() && !Session::has('coupon') && !Session::has('coupon_removed')) {
+            $personalCoupon = Coupon::where('user_id', Auth::id())
+                ->where('status', 1)
+                ->whereDate('coupon_validity', '>=', Carbon::now()->format('Y-m-d'))
+                ->orderBy('coupon_discount', 'desc')
+                ->first();
 
+            if ($personalCoupon && Cart::total() > 0) {
+                Session::put('coupon', [
+                    'coupon_name' => $personalCoupon->coupon_name, 
+                    'coupon_discount' => $personalCoupon->coupon_discount, 
+                    'discount_amount' => round(Cart::total() * $personalCoupon->coupon_discount/100), 
+                    'total_amount' => round(Cart::total() - Cart::total() * $personalCoupon->coupon_discount/100)
+                ]);
+            }
+        }
+
+        if (Session::has('coupon')) {
             return response()->json(array(
              'subtotal' => Cart::total(),
              'coupon_name' => session()->get('coupon')['coupon_name'],
@@ -343,6 +361,7 @@ class CartController extends Controller
 
     public function coupon_remove(){
         Session::forget('coupon');
+        Session::put('coupon_removed', true);
         return response()->json(['success' => 'Coupon Removed Successfully']);
     }
 
@@ -351,10 +370,25 @@ class CartController extends Controller
 
                 if (Cart::total() > 0) { 
 
+                    // Auto-apply personal coupon if session has no coupon and was not explicitly removed
+                    if (Auth::check() && !Session::has('coupon') && !Session::has('coupon_removed')) {
+                        $personalCoupon = Coupon::where('user_id', Auth::id())
+                            ->where('status', 1)
+                            ->whereDate('coupon_validity', '>=', Carbon::now()->format('Y-m-d'))
+                            ->orderBy('coupon_discount', 'desc')
+                            ->first();
+
+                        if ($personalCoupon) {
+                             Session::put('coupon', [
+                                 'coupon_name' => $personalCoupon->coupon_name, 
+                                 'coupon_discount' => $personalCoupon->coupon_discount, 
+                                 'discount_amount' => round(Cart::total() * $personalCoupon->coupon_discount/100), 
+                                 'total_amount' => round(Cart::total() - Cart::total() * $personalCoupon->coupon_discount/100)
+                             ]);
+                        }
+                    }
+
                     $carts = Cart::content();
-                    // $carts = Cart::content()->groupBy('id', 'size');
-                    // dd($carts);
-                    // echo "<pre>"; print_r($carts); die;
                     $cartQty = Cart::count();
                     $cartTotal = Cart::total();
 

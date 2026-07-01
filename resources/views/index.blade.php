@@ -513,7 +513,37 @@
                               </div>
                            @endif
                         </div>
-                        @endif
+                         @endif
+
+                          @php
+                              $userCoupons = \App\Models\Coupon::where('user_id', Auth::id())
+                                  ->where('status', 1)
+                                  ->whereDate('coupon_validity', '>=', date('Y-m-d'))
+                                  ->get();
+                          @endphp
+
+                         @if($userCoupons->count() > 0)
+                         <div class="card mb-4" style="border: 2px dashed #3BB77E; background-color: #f6fdf9; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(59, 183, 126, 0.08);">
+                             <div class="card-body" style="padding: 20px;">
+                                 <div class="d-flex align-items-center" style="margin-bottom: 10px;">
+                                     <span style="font-size: 24px; margin-right: 12px;">🎁</span>
+                                     <div>
+                                         <h5 style="color: #2e8b5e; font-weight: 700; margin-bottom: 2px; font-size: 16px;">Your Personal Discount Coupon!</h5>
+                                         <p class="text-muted mb-0" style="font-size: 12px;">Use this coupon code at checkout to apply your discount.</p>
+                                     </div>
+                                 </div>
+                                 <div class="d-flex flex-wrap align-items-center mt-3" style="gap: 15px;">
+                                     @foreach($userCoupons as $coupon)
+                                     <div style="background: #fff; border: 1px solid #ececec; border-radius: 8px; padding: 10px 15px; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                         <span class="badge bg-success" style="font-size: 12px; font-weight: bold; padding: 5px 10px; color: #fff;">{{ $coupon->coupon_discount }}% OFF</span>
+                                         <code style="font-size: 14px; font-weight: 700; color: #2e8b5e; background: #f6fdf9; padding: 3px 8px; border-radius: 4px; border: 1px dashed #3BB77E; font-family: monospace;">{{ $coupon->coupon_name }}</code>
+                                         <small class="text-muted" style="font-size: 11px;">Expires: {{ date('d M Y', strtotime($coupon->coupon_validity)) }}</small>
+                                     </div>
+                                     @endforeach
+                                 </div>
+                             </div>
+                         </div>
+                         @endif
 
                         {{-- ═══ ORDER STATS ═══ --}}
                         <div class="stats-grid">

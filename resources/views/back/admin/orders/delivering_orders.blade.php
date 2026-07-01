@@ -1,0 +1,50 @@
+@extends('back.admin.master')
+@section('content')
+<div class="page-content">
+   <!--breadcrumb-->
+   <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+      <div class="breadcrumb-title pe-3">All Delivering Orders</div>
+      <div class="ms-auto">
+         <div class="btn-group">
+         </div>
+      </div>
+   </div>
+   <!--end breadcrumb-->
+   <hr/>
+   <div class="card">
+      <div class="card-body">
+         <div class="table-responsive">
+            <table id="example" class="table table-striped table-bordered" style="width:100%">
+               <thead>
+                  <tr>
+                     <th>S/N</th>
+                     <th>Date </th>
+                     <th>Invoice </th>
+                     <th>Amount </th>
+                     <th>Status </th>
+                     <th>Dispatch Time</th>
+                     <th>Action</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  @foreach($orders as $key => $item)		
+                  <tr>
+                     <td> {{ $key+1 }} </td>
+                     <td>{{ $item->order_date }}</td>
+                     <td>{{ $item->invoice_no }}</td>
+                     <td>Gh {{ number_format($item->amount, 2) }}</td>
+                     <td> <span class="badge rounded-pill bg-info text-dark" style="text-transform: capitalize;"> {{ $item->status }}</span></td>
+                     <td>{{ $item->shipped_date ? Carbon\Carbon::parse($item->shipped_date)->diffForHumans() : 'Just now' }}</td>
+                     <td>
+                        <a href="{{ route('admin.order.details',$item->id) }}" class="btn btn-sm btn-info" title="Details"><i class="fa fa-eye"></i> </a>
+                        <a href="{{ route('admin.invoice.download',$item->id) }}" class="btn btn-sm btn-danger" title="Invoice Pdf"><i class="fa fa-download"></i> </a>
+                     </td>
+                  </tr>
+                  @endforeach
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+@endsection

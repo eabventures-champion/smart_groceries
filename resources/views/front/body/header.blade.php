@@ -546,6 +546,99 @@
 
    </header>
 
+     @auth
+         @php
+             $couponNotification = Auth::user()->unreadNotifications->where('type', 'App\Notifications\CustomerCouponAssignedNotification')->first();
+         @endphp
+         @if($couponNotification)
+             <!-- Premium Coupon Notification Banner -->
+             <div id="coupon-notification-banner" style="background: linear-gradient(90deg, #7B2828 0%, #a63a3a 100%); color: #fff; padding: 12px 15px; text-align: center; font-weight: 600; font-size: 14px; position: relative; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                 <div class="container d-flex align-items-center justify-content-center flex-wrap gap-2">
+                     <span>
+                         <i class="fa fa-gift" style="margin-right: 5px; animation: pulse 1.5s infinite;"></i> 
+                         <strong>Exclusive Reward:</strong> 
+                         You received a <strong>{{ $couponNotification->data['coupon_discount'] }}% OFF</strong> coupon code: <code style="color: #7B2828; background: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-family: monospace; font-size: 14px; margin: 0 5px;">{{ $couponNotification->data['coupon_name'] }}</code>
+                     </span>
+                     <span class="banner-buttons d-inline-flex gap-2" style="margin-left: 15px; align-items: center;">
+                         <button onclick="dismissCouponNotification('{{ $couponNotification->id }}')" class="btn btn-sm" style="background: #fff; border: none; color: #7B2828; padding: 4px 12px; font-weight: 700; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s;">
+                             Dismiss
+                         </button>
+                     </span>
+                 </div>
+             </div>
+             <script>
+                 function dismissCouponNotification(notificationId) {
+                     fetch('/user/mark-notification-as-read/' + notificationId, {
+                         method: 'POST',
+                         headers: {
+                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                             'Content-Type': 'application/json'
+                         }
+                     })
+                     .then(response => response.json())
+                     .then(data => {
+                         if (data.success) {
+                             var banner = document.getElementById('coupon-notification-banner');
+                             if (banner) {
+                                 banner.style.transition = 'all 0.5s ease';
+                                 banner.style.opacity = '0';
+                                 setTimeout(() => banner.remove(), 500);
+                             }
+                         }
+                     });
+                 }
+             </script>
+         @endif
+
+         @php
+             $deliveringOrders = App\Models\Order::where('user_id', Auth::id())->where('status', 'delivering')->get();
+         @endphp
+         @if($deliveringOrders->count() > 0)
+            <!-- Premium Delivery Notification Banner -->
+            <div class="delivery-notification-banner" style="background: linear-gradient(90deg, #3BB77E 0%, #27ae60 100%); color: #fff; padding: 12px 15px; text-align: center; font-weight: 600; font-size: 14px; position: relative; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div class="container d-flex align-items-center justify-content-center flex-wrap gap-2">
+                    <span>
+                        <i class="fa fa-box-open" style="margin-right: 5px; animation: pulse 1.5s infinite;"></i> 
+                        <strong>Delivery Update:</strong> 
+                        @if($deliveringOrders->count() == 1)
+                            Your order <strong>#{{ $deliveringOrders->first()->invoice_no }}</strong> is out for delivery!
+                        @else
+                            You have <strong>{{ $deliveringOrders->count() }}</strong> orders out for delivery!
+                        @endif
+                    </span>
+                    <span class="banner-buttons d-inline-flex gap-2" style="margin-left: 15px; align-items: center;">
+                        @if($deliveringOrders->count() == 1)
+                            <form action="{{ route('user.confirm.delivery', $deliveringOrders->first()->id) }}" method="POST" style="display:inline; margin: 0;" onsubmit="return confirm('Are you sure you have received this delivery?');">
+                                @csrf
+                                <button type="submit" class="btn btn-sm" style="background: #fff; border: none; color: #27ae60; padding: 4px 12px; font-weight: 700; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s;">
+                                    <i class="fa fa-check" style="margin-right: 5px;"></i> Confirm Receipt
+                                </button>
+                            </form>
+                            <a href="{{ url('user/order_details/'.$deliveringOrders->first()->id) }}" class="btn btn-sm text-white" style="border: 1px solid #fff; background: transparent; padding: 3px 10px; font-weight: 600; border-radius: 4px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; line-height: 1;">
+                                View Details
+                            </a>
+                        @else
+                            <a href="{{ route('user.order.page') }}" class="btn btn-sm" style="background: #fff; border: none; color: #27ae60; padding: 4px 12px; font-weight: 700; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; line-height: 1;">
+                                <i class="fa fa-list" style="margin-right: 5px;"></i> View Orders to Confirm
+                            </a>
+                        @endif
+                    </span>
+                </div>
+            </div>
+            <style>
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                    100% { transform: scale(1); }
+                }
+                .delivery-notification-banner button:hover {
+                    background: #f8f9fa !important;
+                    transform: translateY(-1px);
+                }
+            </style>
+        @endif
+    @endauth
+
    {{-- For mobile search bar --}}
    <div class="container">
        <div id="" class="mobile-search search-style-3 mobile-header-border d-block d-lg-none">

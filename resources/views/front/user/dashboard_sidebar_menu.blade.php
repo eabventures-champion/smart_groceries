@@ -1,5 +1,8 @@
 @php
 $route = Route::current()->getName();
+$userId = Auth::id();
+$ordersCount = \App\Models\Order::where('user_id', $userId)->count();
+$returnOrdersCount = \App\Models\Order::where('user_id', $userId)->where('return_order', '>', 0)->count();
 @endphp
 <div class="col-md-3 d-none d-lg-block">
    <div class="dashboard-menu">
@@ -8,13 +11,23 @@ $route = Route::current()->getName();
             <a class="nav-link {{ ($route ==  'dashboard')? 'active':  '' }} "  href="{{ route('dashboard') }}" ><i class="fi fi-ss-home mr-10"></i>Dashboard</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link {{ ($route ==  'user.order.page')? 'active':  '' }}" href="{{ route('user.order.page') }}" ><i class="fi fi-rs-order-history mr-10"></i>Orders</a>
+            <a class="nav-link {{ ($route ==  'user.order.page')? 'active':  '' }}" href="{{ route('user.order.page') }}" >
+               <i class="fi fi-rs-order-history mr-10"></i>Orders
+               <span class="badge rounded-pill bg-success" style="float: right; font-size: 10px; padding: 3px 7px; color: #fff;">{{ $ordersCount }}</span>
+            </a>
          </li>
          <li class="nav-item">
             <a class="nav-link {{ ($route ==  'user.bookings')? 'active':  '' }}" href="{{ route('user.bookings') }}" ><i class="fi fi-rs-calendar mr-10"></i>Expert Bookings</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link {{ ($route ==  'return.order.page')? 'active':  '' }}" href="{{ route('return.order.page') }}" ><i class="fi fi-rr-truck-arrow-left mr-10"></i>Return Orders</a>
+            <a class="nav-link {{ ($route ==  'return.order.page')? 'active':  '' }}" href="{{ route('return.order.page') }}" >
+               <i class="fi fi-rr-truck-arrow-left mr-10"></i>Return Orders
+               @if($returnOrdersCount > 0)
+                  <span class="badge rounded-pill bg-danger" style="float: right; font-size: 10px; padding: 3px 7px; color: #fff;">{{ $returnOrdersCount }}</span>
+               @else
+                  <span class="badge rounded-pill bg-secondary" style="float: right; font-size: 10px; padding: 3px 7px; color: #fff;">0</span>
+               @endif
+            </a>
          </li>
          <li class="nav-item">
             <a class="nav-link {{ ($route ==  'user.track.order')? 'active':  '' }}" href="{{ route('user.track.order') }}" ><i class="fi fi-rs-map-location-track mr-10"></i>Track Your Order</a>

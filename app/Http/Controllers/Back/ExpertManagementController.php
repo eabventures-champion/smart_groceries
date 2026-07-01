@@ -210,6 +210,30 @@ class ExpertManagementController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    public function expertInactive($id)
+    {
+        Expert::findOrFail($id)->update(['is_active' => false]);
+
+        $notification = [
+            'message' => 'Expert Hidden successfully.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
+    public function expertActive($id)
+    {
+        Expert::findOrFail($id)->update(['is_active' => true]);
+
+        $notification = [
+            'message' => 'Expert Activated successfully.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
     // ==================== EDUCATIONAL HEALTH TIPS CRUD ====================
 
     public function tipsList()

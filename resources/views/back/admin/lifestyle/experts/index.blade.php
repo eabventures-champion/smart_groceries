@@ -34,8 +34,12 @@
                     <tr>
                         <td>{{ $key+1 }}</td>
                         <td>
-                            <div style="width: 40px; height: 40px; background: {{ $expert->avatar_bg_color }}; color: {{ $expert->avatar_text_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                                {{ $expert->initials }}
+                            <div style="width: 40px; height: 40px; background: {{ $expert->avatar_bg_color }}; color: {{ $expert->avatar_text_color }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden;">
+                                @if($expert->user && $expert->user->photo)
+                                    <img src="{{ url('back/assets/images/admin/'.$expert->user->photo) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    {{ $expert->initials }}
+                                @endif
                             </div>
                         </td>
                         <td>{{ $expert->name }}</td>
@@ -51,9 +55,9 @@
                         <td><code>{{ $expert->whatsapp_number }}</code></td>
                         <td>
                             @if ($expert->is_active)
-                                <span class="badge bg-success">Active</span>
+                                <a href="{{ route('admin.lifestyle.experts.inactive', $expert->id) }}" class="badge bg-success" style="text-decoration: none;" title="Click to hide from Homepage">Active</a>
                             @else
-                                <span class="badge bg-danger">Inactive</span>
+                                <a href="{{ route('admin.lifestyle.experts.active', $expert->id) }}" class="badge bg-danger" style="text-decoration: none;" title="Click to show on Homepage">Inactive</a>
                             @endif
                         </td>
                         <td>

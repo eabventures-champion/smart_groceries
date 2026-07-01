@@ -18,8 +18,7 @@ class ReviewController extends Controller
             'comment' => 'required',
         ]);
 
-        Review::insert([
-
+        $review_id = Review::insertGetId([
             'product_id' => $product,
             'user_id' => Auth::id(),
             'comment' => $request->comment,
@@ -27,6 +26,14 @@ class ReviewController extends Controller
             'vendor_id' => $vendor,
             'created_at' => Carbon::now(),
         ]);
+
+        $review = Review::find($review_id);
+
+        // Notify all admins of the new review
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\AdminNewReviewNotification($review));
+        }
 
         $notification = array(
             'message' => 'Review sent successfully',

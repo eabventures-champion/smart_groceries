@@ -93,7 +93,7 @@
                      <h5 class="mb-0 text-white">Setup Expert Profile & Information</h5>
                   </div>
                   <div class="card-body p-4">
-                     <form id="myForm" method="POST" action="{{ route('expert.profile.update') }}">
+                     <form id="myForm" method="POST" action="{{ route('expert.profile.update') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="row mb-3">
@@ -142,14 +142,44 @@
                            </div>
                         </div>
 
-                        <div class="row mb-3">
-                           <div class="col-sm-3">
-                              <h6 class="mb-0">WhatsApp Message Template</h6>
-                           </div>
-                           <div class="form-group col-sm-9 text-secondary">
-                              <textarea name="whatsapp_message" class="form-control" rows="2" placeholder="Pre-populated message when a client clicks your WhatsApp chat link...">{{ $expert ? $expert->whatsapp_message : '' }}</textarea>
-                           </div>
-                        </div>
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                               <h6 class="mb-0">WhatsApp Message Template</h6>
+                            </div>
+                            <div class="form-group col-sm-9 text-secondary">
+                               <textarea name="whatsapp_message" class="form-control" rows="2" placeholder="Pre-populated message when a client clicks your WhatsApp chat link...">{{ $expert ? $expert->whatsapp_message : '' }}</textarea>
+                            </div>
+                         </div>
+
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                               <h6 class="mb-0">Profile Image</h6>
+                            </div>
+                            <div class="form-group col-sm-9 text-secondary">
+                               <input type="file" name="photo" class="form-control" id="image" />
+                               <div class="mt-2">
+                                   <img id="showImage" src="{{ (!empty(Auth::user()->photo)) ? url('back/assets/images/admin/'.Auth::user()->photo) : url('back/assets/images/admin/no_image.jpg') }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #3bb77e; padding: 2px;">
+                               </div>
+                            </div>
+                         </div>
+
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                               <h6 class="mb-0">Reset Password (Optional)</h6>
+                            </div>
+                            <div class="form-group col-sm-9 text-secondary">
+                               <input type="password" name="new_password" class="form-control" placeholder="Leave blank to keep current password" />
+                            </div>
+                         </div>
+
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                               <h6 class="mb-0">Confirm Password</h6>
+                            </div>
+                            <div class="form-group col-sm-9 text-secondary">
+                               <input type="password" name="new_password_confirmation" class="form-control" placeholder="Confirm your new password" />
+                            </div>
+                         </div>
 
                         @php
                             $decoded = $expert ? json_decode($expert->getRawOriginal('availability_schedule'), true) : null;
@@ -241,4 +271,16 @@
       </div>
    </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#image').change(function(e){
+            var reader = new FileReader();
+            reader.onload = function(e){
+                $('#showImage').attr('src',e.target.result);
+            }
+            reader.readAsDataURL(e.target.files['0']);
+        });
+    });
+</script>
 @endsection

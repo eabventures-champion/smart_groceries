@@ -19,12 +19,21 @@ class CouponController extends Controller
     }
 
     public function store_coupon(Request $request){
-        Coupon::insert([
+        $coupon = Coupon::create([
+            'user_id' => $request->user_id ?: null,
             'coupon_name' => strtoupper($request->coupon_name),            
             'coupon_discount' => $request->coupon_discount,
             'coupon_validity' => $request->coupon_validity,
             'created_at' => Carbon::now(),
         ]);
+
+        // Notify user if assigned
+        if ($coupon->user_id) {
+            $user = \App\Models\User::find($coupon->user_id);
+            if ($user) {
+                $user->notify(new \App\Notifications\CustomerCouponAssignedNotification($coupon));
+            }
+        }
 
         $notification = array(
             'message' => 'Coupon added successfully',
@@ -43,19 +52,30 @@ class CouponController extends Controller
 
     public function update_coupon(Request $request){
         $coupon_id = $request->id;
-         Coupon::findOrFail($coupon_id)->update([
+        $coupon = Coupon::findOrFail($coupon_id);
+        $old_user_id = $coupon->user_id;
+
+        $coupon->update([
+            'user_id' => $request->user_id ?: null,
             'coupon_name' => strtoupper($request->coupon_name),
             'coupon_discount' => $request->coupon_discount,
             'coupon_validity' => $request->coupon_validity,
-            'created_at' => Carbon::now(),
         ]);
 
-       $notification = array(
-            'message' => 'Coupon Updated Successfully',
-            'alert-type' => 'success'
-        );
+        // Notify user if assignment is new
+        if ($coupon->user_id && $coupon->user_id != $old_user_id) {
+            $user = \App\Models\User::find($coupon->user_id);
+            if ($user) {
+                $user->notify(new \App\Notifications\CustomerCouponAssignedNotification($coupon));
+            }
+        }
 
-        return redirect()->route('all.coupon')->with($notification); 
+        $notification = array(
+             'message' => 'Coupon Updated Successfully',
+             'alert-type' => 'success'
+         );
+
+         return redirect()->route('all.coupon')->with($notification); 
     }// End Method 
 
      public function delete_coupon($id){

@@ -55,6 +55,7 @@
 .od-status-pending { background: #fff3cd; color: #856404; }
 .od-status-confirmed { background: #d1ecf1; color: #0c5460; }
 .od-status-processing { background: #cce5ff; color: #004085; }
+.od-status-delivering { background: #d1ecf1; color: #0c5460; }
 .od-status-delivered { background: #d4edda; color: #155724; }
 .od-status-issue { background: #f8d7da; color: #721c24; margin-left: 6px; }
 
@@ -141,7 +142,28 @@
                @include('front.user.dashboard_sidebar_menu')
                <!-- // End Col md 3 menu -->
                <!-- // Start Col md 9  -->
-               <div class="col-md-9">
+                <div class="col-md-9">
+                   @if($order->status == 'delivering')
+                   <!-- Premium Action Card to Confirm Delivery -->
+                   <div class="card mb-20" style="border: 1px solid #c3e6cb; border-radius: 12px; background-color: #d4edda; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                      <div class="card-body" style="padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                         <div>
+                            <h5 style="color: #155724; font-weight: 700; margin-bottom: 5px; font-size: 16px;">
+                               <i class="fa fa-box-open" style="color: #28a745; margin-right: 8px;"></i> Confirm Order Delivery
+                            </h5>
+                            <p style="color: #155724; font-size: 13px; font-weight: 500; margin: 0; line-height: 1.4;">
+                               Your order is currently out for delivery. Please confirm receipt once you have received it.
+                            </p>
+                         </div>
+                         <form action="{{ route('user.confirm.delivery', $order->id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you have received this delivery?');">
+                            @csrf
+                            <button type="submit" class="btn" style="background-color: #28a745; border: none; color: #fff; padding: 10px 24px; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(40,167,69,0.2);">
+                               <i class="fa fa-check" style="margin-right: 5px;"></i> Confirm Receipt
+                            </button>
+                         </form>
+                      </div>
+                   </div>
+                   @endif
                   <div class="row">
                      <!-- ── Delivery Details Card ── -->
                      <div class="col-md-6">
@@ -218,9 +240,12 @@
                                        $statusClass = 'od-status-pending';
                                        if($order->status == 'confirmed') $statusClass = 'od-status-confirmed';
                                        elseif($order->status == 'processing') $statusClass = 'od-status-processing';
+                                       elseif($order->status == 'delivering') $statusClass = 'od-status-delivering';
                                        elseif($order->status == 'delivered') $statusClass = 'od-status-delivered';
                                     @endphp
-                                    <span class="od-status-badge {{ $statusClass }}">{{ $order->status }}</span>
+                                    <span class="od-status-badge {{ $statusClass }}">
+                                        {{ $order->status == 'delivering' ? 'Out for Delivery' : $order->status }}
+                                    </span>
                                     @if($order->return_order == 1)
                                        <span class="od-status-badge od-status-issue">Return Requested</span>
                                     @endif

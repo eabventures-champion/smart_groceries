@@ -91,12 +91,22 @@
          <ul>
             <li> <a href="{{ route('all.users') }}"><i class="bx bx-right-arrow-alt"></i>All Users</a>
             </li>
-            {{--
-            <li> <a href="{{ route('all-vendor') }}"><i class="bx bx-right-arrow-alt"></i>All Vendor</a> --}}
+            <li> <a href="{{ route('all.affiliates') }}"><i class="bx bx-right-arrow-alt"></i>All Affiliates</a>
             </li>
          </ul>
       </li>
       {{-- @endif --}}
+      @php
+         $pendingCount = \App\Models\Order::where('status', 'pending')->count();
+         $confirmedCount = \App\Models\Order::where('status', 'confirmed')->count();
+         $processingCount = \App\Models\Order::where('status', 'processing')->count();
+         $deliveringCount = \App\Models\Order::where('status', 'delivering')->count();
+         $deliveredCount = \App\Models\Order::where('status', 'delivered')->count();
+
+         $returnRequestCount = \App\Models\Order::where('return_order', 1)->count();
+         $returnApprovedCount = \App\Models\Order::where('return_order', 2)->count();
+         $returnUnapprovedCount = \App\Models\Order::where('return_order', 3)->count();
+      @endphp
       {{-- @if(Auth::user()->can('order.menu')) --}}
       <li class="menu-label">Orders Management</li>
       <li>
@@ -106,13 +116,35 @@
             <div class="menu-title">Order Manage </div>
          </a>
          <ul>
-            <li> <a href="{{ route('pending.order') }}"><i class="bx bx-right-arrow-alt"></i>Pending Order</a>
+            <li> 
+               <a href="{{ route('pending.order') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Pending Order</span>
+                  <span class="badge bg-warning text-dark" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $pendingCount }}</span>
+               </a>
             </li>
-            <li> <a href="{{ route('admin.confirmed.order') }}"><i class="bx bx-right-arrow-alt"></i>Confirmed Order</a>
+            <li> 
+               <a href="{{ route('admin.confirmed.order') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Confirmed Order</span>
+                  <span class="badge bg-info text-dark" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $confirmedCount }}</span>
+               </a>
             </li>
-            <li> <a href="{{ route('admin.processing.order') }}"><i class="bx bx-right-arrow-alt"></i>Processing Order</a>
+            <li> 
+               <a href="{{ route('admin.processing.order') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Processing Order</span>
+                  <span class="badge bg-primary text-white" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $processingCount }}</span>
+               </a>
             </li>
-            <li> <a href="{{ route('admin.delivered.order') }}"><i class="bx bx-right-arrow-alt"></i>Delivered Order</a>
+            <li> 
+               <a href="{{ route('admin.delivering.order') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Delivering Order</span>
+                  <span class="badge bg-warning text-dark" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $deliveringCount }}</span>
+               </a>
+            </li>
+            <li> 
+               <a href="{{ route('admin.delivered.order') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Delivered Order</span>
+                  <span class="badge bg-success text-white" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $deliveredCount }}</span>
+               </a>
             </li>
          </ul>
       </li>
@@ -140,9 +172,24 @@
             <div class="menu-title">Return Order </div>
          </a>
          <ul>
-            <li> <a href="{{ route('return.request') }}"><i class="bx bx-right-arrow-alt"></i>Return Request</a></li>
-            <li> <a href="{{ route('complete.return.request') }}"><i class="bx bx-right-arrow-alt"></i>Approved Request</a></li>
-            <li> <a href="{{ route('uncomplete.return.request') }}"><i class="bx bx-right-arrow-alt"></i>Unapproved Request</a></li>
+            <li> 
+               <a href="{{ route('return.request') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Return Request</span>
+                  <span class="badge bg-warning text-dark" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $returnRequestCount }}</span>
+               </a>
+            </li>
+            <li> 
+               <a href="{{ route('complete.return.request') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Approved Request</span>
+                  <span class="badge bg-success text-white" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $returnApprovedCount }}</span>
+               </a>
+            </li>
+            <li> 
+               <a href="{{ route('uncomplete.return.request') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Unapproved Request</span>
+                  <span class="badge bg-danger text-white" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $returnUnapprovedCount }}</span>
+               </a>
+            </li>
          </ul>
       </li>
       {{-- @endif --}}

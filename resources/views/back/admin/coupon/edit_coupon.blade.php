@@ -45,6 +45,19 @@
                         </div>
                         <div class="row mb-3">
                            <div class="col-sm-3">
+                              <h6 class="mb-0">Assign to Customer (Optional)</h6>
+                           </div>
+                           <div class="form-group col-sm-9 text-secondary">
+                              <select name="user_id" class="form-select">
+                                 <option value="">-- Global Coupon (All Customers) --</option>
+                                 @foreach(\App\Models\User::where('role', 'user')->orderBy('name', 'ASC')->get() as $user)
+                                     <option value="{{ $user->id }}" {{ $coupon->user_id == $user->id ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div>
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
                               <h6 class="mb-0">Coupon Validity Date</h6>
                            </div>
                            <div class="form-group col-sm-9 text-secondary">

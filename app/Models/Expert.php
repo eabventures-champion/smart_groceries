@@ -23,11 +23,24 @@ class Expert extends Model
         'is_active',
     ];
 
-    protected $appends = ['availability_details'];
+    protected $appends = ['availability_details', 'photo'];
 
     public function category()
     {
         return $this->belongsTo(ExpertCategory::class, 'expert_category_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function getPhotoAttribute()
+    {
+        if ($this->user && $this->user->photo) {
+            return url('back/assets/images/admin/' . $this->user->photo);
+        }
+        return null;
     }
 
     /**

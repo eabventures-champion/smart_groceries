@@ -48,9 +48,29 @@ class ExpertDashboardController extends Controller
             'whatsapp_message' => 'nullable|string',
             'avatar_bg_color' => 'required|string|max:15',
             'avatar_text_color' => 'required|string|max:15',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'new_password' => 'nullable|min:6|confirmed',
         ]);
 
         $user = Auth::user();
+
+        // Handle Photo Upload
+        if($request->file('photo')){
+            $file = $request->file('photo');
+            if ($user->photo) {
+                @unlink(public_path('back/assets/images/admin/'.$user->photo));
+            }
+            $filename = date('YmdHi').$file->getClientOriginalName();
+            $file->move(public_path('back/assets/images/admin'), $filename);
+            $user->photo = $filename;
+        }
+
+        // Handle Password Reset
+        if($request->filled('new_password')){
+            $user->password = \Illuminate\Support\Facades\Hash::make($request->new_password);
+        }
+
+        $user->save();
         
         // Auto-calculate initials from user name
         $words = explode(' ', $user->name);

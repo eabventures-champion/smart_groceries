@@ -1030,9 +1030,9 @@
             cardsHtml += `
                 <div class="sg-card expert-card" data-category="${catCode}">
                     <div style="display: flex; gap: 12px;">
-                        <div style="position: relative; width: 44px; height: 44px; background: ${expert.avatar_bg_color}; border: 1px solid rgba(0,0,0,0.08); color: ${expert.avatar_text_color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; flex-shrink: 0;">
-                            ${expert.initials}
-                            <span class="sg-pulse-dot" style="position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background: #10b981; border: 2px solid white; border-radius: 50%;"></span>
+                        <div style="position: relative; width: 44px; height: 44px; background: ${expert.avatar_bg_color}; border: 1px solid rgba(0,0,0,0.08); color: ${expert.avatar_text_color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; flex-shrink: 0; overflow: hidden;">
+                            ${expert.photo ? `<img src="${expert.photo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` : expert.initials}
+                            <span class="sg-pulse-dot" style="position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background: #10b981; border: 2px solid white; border-radius: 50%; z-index: 10;"></span>
                         </div>
                         <div style="flex: 1; min-width: 0; width: 100%;">
                             <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
