@@ -371,6 +371,15 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('recognition/tier/delete/{id}', 'delete_tier')->name('admin.delete.recognition.tier');
         });
 
+        Route::get('/admin/run-migrations-secure', function() {
+            try {
+                \Illuminate\Support\Facades\Artisan::call('migrate');
+                return "Migrations run successfully!<br><pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
+            } catch (\Exception $e) {
+                return "Failed to run migrations: " . $e->getMessage();
+            }
+        });
+
         Route::controller(RoleController::class)->group(function(){
             Route::get('all/permission', 'all_permission')->name('all.permission');
             Route::get('add/permission', 'add_permission')->name('add.permission');

@@ -10,6 +10,11 @@ class RecognitionTierController extends Controller
 {
     public function all_tiers()
     {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('recognition_tiers')) {
+            $tiers = collect([]);
+            $migration_missing = true;
+            return view('back.admin.setting.recognition_tiers', compact('tiers', 'migration_missing'));
+        }
         $tiers = RecognitionTier::orderBy('min_spent', 'desc')->get();
         return view('back.admin.setting.recognition_tiers', compact('tiers'));
     }

@@ -1,6 +1,22 @@
 @extends('back.admin.master')
 @section('content')
 <div class="page-content">
+   @if(isset($migration_missing) && $migration_missing)
+      <div class="alert alert-danger border-0 bg-danger alert-dismissible fade show py-3 mb-4" style="border-radius: 8px;">
+         <div class="d-flex align-items-center">
+            <div class="font-30 text-white" style="font-size: 24px; margin-right: 12px;"><i class="bx bx-error-circle"></i></div>
+            <div class="ms-3">
+               <h6 class="mb-1 text-white fw-bold">Database Migration Pending</h6>
+               <div class="text-white" style="font-size: 13px;">
+                  The <code>recognition_tiers</code> table does not exist in your database yet.
+                  To fix this, please click this link to execute migrations online:
+                  <a href="/admin/run-migrations-secure" class="text-white fw-bold" style="text-decoration: underline;" target="_blank">Run Database Migrations Now</a>
+               </div>
+            </div>
+         </div>
+      </div>
+   @endif
+
    <!--breadcrumb-->
    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
       <div class="breadcrumb-title pe-3">Site Settings</div>
