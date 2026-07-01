@@ -50,6 +50,15 @@ class WishListController extends Controller
         return $this->wishlistResponse('Product Successfully Removed');
     }
 
+    public function wish_list_bulk_delete(Request $request){
+        $ids = $request->ids;
+        if (is_array($ids) && count($ids) > 0) {
+            WishList::where('user_id', Auth::id())->whereIn('id', $ids)->delete();
+            return $this->wishlistResponse('Selected Products Successfully Removed');
+        }
+        return response()->json(['error' => 'Please select products to remove']);
+    }
+
     private function wishlistResponse($successMessage) {
         $wishlist = WishList::with('product')->where('user_id', Auth::id())->latest()->get();
         $wishQty = $wishlist->count(); 

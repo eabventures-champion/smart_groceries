@@ -103,6 +103,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
             Route::get('wishlist', 'all_wish_list')->name('wishlist');
             Route::get('get-wishlist-product', 'get_wish_list_product');
             Route::get('wishlist-remove/{id}', 'wish_list_remove');
+            Route::post('wishlist-bulk-delete', 'wish_list_bulk_delete');
         });
 
         Route::controller(CompareController::class)->group(function(){

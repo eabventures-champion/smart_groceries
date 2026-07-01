@@ -452,10 +452,17 @@
          function renderWishlist(response){
             $('#wishQty').text(response.wishQty);
             $('#wishQty-mobile').text(response.wishQty);
+            
+            // Reset Select All checkbox and hide Bulk Delete button
+            $('#selectAllWishlist').prop('checked', false);
+            $('#bulkDeleteWishlistBtn').addClass('d-none');
+
             var rows = ""
             $.each(response.wishlist, function(key,value){
                rows += `<tr class="pt-30">
-                            <td class="custome-checkbox start"></td>
+                            <td style="width: 50px; text-align: center; vertical-align: middle;">
+                               <input class="form-check-input wishlist-checkbox" type="checkbox" value="${value.id}" onchange="checkWishlistSelection()" style="display: block !important; margin: 0 auto;">
+                            </td>
                             <td class="image product-thumbnail pt-40">
                               <a class="product-name mb-10" href="/product/details/${value.product.id}/${value.product.product_slug}">
                                <img src="/${value.product.product_thumbnail}" alt="#" />
@@ -496,7 +503,82 @@
          // Delay wishlist load until after page renders
          setTimeout(function(){ wishlist(); }, 1200);
 
-         // / End Load Wishlist Data -->
+         // Wishlist Selection Helper Functions
+         function toggleSelectAllWishlist(masterCheckbox) {
+            $('.wishlist-checkbox').prop('checked', $(masterCheckbox).is(':checked'));
+            checkWishlistSelection();
+         }
+
+         function checkWishlistSelection() {
+            var totalCheckboxes = $('.wishlist-checkbox').length;
+            var checkedCheckboxes = $('.wishlist-checkbox:checked').length;
+
+            // Update Master Select All checkbox state
+            if (totalCheckboxes > 0 && checkedCheckboxes === totalCheckboxes) {
+               $('#selectAllWishlist').prop('checked', true);
+            } else {
+               $('#selectAllWishlist').prop('checked', false);
+            }
+
+            // Show or hide Bulk Delete button
+            if (checkedCheckboxes > 0) {
+               $('#bulkDeleteWishlistBtn').removeClass('d-none');
+            } else {
+               $('#bulkDeleteWishlistBtn').addClass('d-none');
+            }
+         }
+
+         function bulkDeleteWishlist() {
+            var selectedIds = [];
+            $('.wishlist-checkbox:checked').each(function() {
+               selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length === 0) return;
+
+            Swal.fire({
+               title: 'Are you sure?',
+               text: "You won't be able to revert this!",
+               icon: 'warning',
+               showCancelButton: true,
+               confirmButtonColor: '#3085d6',
+               cancelButtonColor: '#d33',
+               confirmButtonText: 'Yes, delete selected!'
+            }).then((result) => {
+               if (result.isConfirmed) {
+                  $.ajax({
+                     type: "POST",
+                     dataType: 'json',
+                     url: "/wishlist-bulk-delete",
+                     data: { ids: selectedIds },
+                     success: function(data) {
+                        wishlist(data);
+                        // Start Message
+                        const Toast = Swal.mixin({
+                              toast: true,
+                              position: 'top-end',
+                              showConfirmButton: false,
+                              timer: 3000
+                        })
+                        if ($.isEmptyObject(data.error)) {
+                              Toast.fire({
+                                 type: 'success',
+                                 icon: 'success',
+                                 title: data.success,
+                              })
+                        } else {
+                              Toast.fire({
+                                 type: 'error',
+                                 icon: 'error',
+                                 title: data.error,
+                              })
+                        }
+                        // End Message
+                     }
+                  });
+               }
+            })
+         }
 
          // Wishlist Remove Start
          function wishlistRemove(id){
