@@ -11646,10 +11646,23 @@ footer .hotline img {
 
 @media only screen and (max-width: 576px){
  .product-image-slider{
-  width: 80%;
+  width: 100%;
  }
  .slider-nav-thumbnails{
-  width: 60%;
+  width: 100%;
+  overflow: hidden;
+ }
+ .slider-nav-thumbnails .slick-list {
+  margin: 0 -4px !important;
+  overflow: hidden !important;
+ }
+ .slider-nav-thumbnails div.slick-slide {
+  margin: 0 4px !important;
+ }
+ .slider-nav-thumbnails .slick-slide img {
+  border-radius: 8px;
+  width: 100%;
+  height: auto;
  }
  .detail-info .product-price .current-price {
   font-size: 20px;
@@ -11657,10 +11670,15 @@ footer .hotline img {
  .detail-info .product-price .old-price {
   font-size: 15px;
  }
+ .detail-gallery {
+  overflow: hidden;
+ }
 }
 
-.product-image-slider, .slider-nav-thumbnails{
-  width: 80%;
+@media only screen and (min-width: 577px) {
+  .product-image-slider, .slider-nav-thumbnails{
+    width: 80%;
+  }
 }
 
 /*Mobile landscape*/

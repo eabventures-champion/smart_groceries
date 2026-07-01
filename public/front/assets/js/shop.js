@@ -7,6 +7,7 @@
             slidesToScroll: 1,
             arrows: false,
             fade: false,
+            infinite: false,
             asNavFor: '.slider-nav-thumbnails',
         });
 
@@ -16,6 +17,7 @@
             asNavFor: '.product-image-slider',
             dots: false,
             focusOnSelect: true,
+            infinite: false,
             prevArrow: '<button type="button" class="slick-prev"><i class="fi-rs-arrow-small-left"></i></button>',
             nextArrow: '<button type="button" class="slick-next"><i class="fi-rs-arrow-small-right"></i></button>',
             responsive: [
@@ -23,14 +25,20 @@
                     breakpoint: 768,
                     settings: {
                         slidesToShow: 3,
-                        slidesToScroll: 1
+                        slidesToScroll: 1,
+                        infinite: false,
+                        centerMode: false,
+                        variableWidth: false
                     }
                 },
                 {
                     breakpoint: 480,
                     settings: {
                         slidesToShow: 3,
-                        slidesToScroll: 1
+                        slidesToScroll: 1,
+                        infinite: false,
+                        centerMode: false,
+                        variableWidth: false
                     }
                 }
             ]
