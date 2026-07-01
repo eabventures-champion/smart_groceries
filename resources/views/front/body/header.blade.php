@@ -458,7 +458,7 @@
                        <div class="header-action-2">
 
                            {{-- Wishlist --}}
-                           <div class="header-action-icon-2">
+                           <div class="header-action-icon-2" style="margin-right: 25px !important;">
                                <a href="{{ route('wishlist') }}">
                                    <img class="svgInject" alt="SmartGroceries&Deliveries"
                                        src="{{ asset('front/assets/imgs/theme/icons/icon-heart.svg') }}" />

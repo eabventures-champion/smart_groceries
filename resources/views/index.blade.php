@@ -214,7 +214,22 @@
 
 @media (max-width: 768px) {
    .stats-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px !important;
+   }
+   .stat-card {
+      padding: 12px 6px !important;
+   }
+   .stat-card .stat-icon {
+      font-size: 20px !important;
+      margin-bottom: 4px !important;
+   }
+   .stat-card .stat-value {
+      font-size: 20px !important;
+   }
+   .stat-card .stat-label {
+      font-size: 11px !important;
+      margin-top: 2px !important;
    }
    .academic-row {
       flex-direction: column;

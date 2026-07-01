@@ -3,6 +3,29 @@
 @section('title')
    Payment...
 @endsection
+
+<style>
+@media (max-width: 767px) {
+    /* Center the figures/amounts in the table */
+    .order_table.checkout table tbody tr td.cart_total_amount h4, 
+    .order_table.checkout table tbody tr td.cart_total_amount h6,
+    .order_table.checkout table tbody tr td.cart_total_amount .text-brand {
+        text-align: center !important;
+    }
+    .order_table.checkout table tbody tr td.cart_total_label h6 {
+        text-align: center !important;
+    }
+    
+    /* Center the input fields under Delivery Details */
+    .checkout input[type="text"] {
+        text-align: center !important;
+    }
+    /* Center the Pay and Cancel buttons */
+    .checkout form div {
+        text-align: center !important;
+    }
+}
+</style>
 <div class="page-header breadcrumb-wrap">
    <div class="container">
       <div class="breadcrumb">

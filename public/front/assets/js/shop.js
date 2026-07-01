@@ -16,22 +16,24 @@
             asNavFor: '.product-image-slider',
             dots: false,
             focusOnSelect: true,
-            
             prevArrow: '<button type="button" class="slick-prev"><i class="fi-rs-arrow-small-left"></i></button>',
-            nextArrow: '<button type="button" class="slick-next"><i class="fi-rs-arrow-small-right"></i></button>'
-        });
-
-        // Remove active class from all thumbnail slides
-        $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
-
-        // Set active class to first thumbnail slides
-        $('.slider-nav-thumbnails .slick-slide').eq(0).addClass('slick-active');
-
-        // On before slide change match active thumbnail to current slide
-        $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
-            var mySlideNumber = nextSlide;
-            $('.slider-nav-thumbnails .slick-slide').removeClass('slick-active');
-            $('.slider-nav-thumbnails .slick-slide').eq(mySlideNumber).addClass('slick-active');
+            nextArrow: '<button type="button" class="slick-next"><i class="fi-rs-arrow-small-right"></i></button>',
+            responsive: [
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 1
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 1
+                    }
+                }
+            ]
         });
 
         $('.product-image-slider').on('beforeChange', function (event, slick, currentSlide, nextSlide) {
