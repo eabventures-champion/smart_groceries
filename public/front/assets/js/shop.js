@@ -73,6 +73,63 @@
                 $(this).parents('.attr-detail').find('.current-color').text($(this).attr('data-color'));
             });
         });
+        // Exported state watcher for global access
+        window.updateQuantityState = function($container) {
+            if (!$container || !$container.length) return;
+            var $input = $container.find(".qty-val");
+            if (!$input.length) return;
+            
+            // Skip validation on shopping cart page
+            if ($container.closest('.shopping-summery').length) {
+                return;
+            }
+
+            var $sizeSelect = $container.find('select[name="size"], select#dsize, select#getPrice, select#getPrice_modal');
+            var sizeRequired = $sizeSelect.length && $sizeSelect.is(':visible') && $sizeSelect.find('option').length > 1;
+            
+            var $colorSelect = $container.find('select[name="color"], select#dcolor, select#color');
+            var colorRequired = $colorSelect.length && $colorSelect.is(':visible') && $colorSelect.find('option').length > 1;
+
+            var sizeSelected = true;
+            if (sizeRequired) {
+                var sizeVal = $sizeSelect.val();
+                if (!sizeVal || sizeVal === '' || sizeVal.indexOf('--select') !== -1 || sizeVal.indexOf('--Choose') !== -1) {
+                    sizeSelected = false;
+                }
+            }
+
+            var colorSelected = true;
+            if (colorRequired) {
+                var colorVal = $colorSelect.val();
+                if (!colorVal || colorVal === '' || colorVal.indexOf('--select') !== -1) {
+                    colorSelected = false;
+                }
+            }
+
+            var $qtyContainer = $container.find('.detail-qty');
+
+            if (!sizeSelected || !colorSelected) {
+                // Disable quantity controls
+                $qtyContainer.addClass('disabled-qty-control').css({
+                    'opacity': '0.5',
+                    'pointer-events': 'none',
+                    'cursor': 'not-allowed'
+                });
+                if (parseInt($input.val(), 10) !== 1) {
+                    $input.val(1).trigger('change');
+                }
+                $input.prop('disabled', true);
+            } else {
+                // Enable quantity controls
+                $qtyContainer.removeClass('disabled-qty-control').css({
+                    'opacity': '',
+                    'pointer-events': '',
+                    'cursor': ''
+                });
+                $input.prop('disabled', false);
+            }
+        };
+
         function validatePropertiesSelected($input) {
             if ($input.closest('.shopping-summery').length) {
                 return true;
@@ -86,7 +143,7 @@
             var $sizeSelect = $container.find('select[name="size"], select#dsize, select#getPrice, select#getPrice_modal');
             if ($sizeSelect.length && $sizeSelect.is(':visible')) {
                 var sizeVal = $sizeSelect.val();
-                if (!sizeVal || sizeVal === '' || sizeVal.indexOf('--select') !== -1) {
+                if (!sizeVal || sizeVal === '' || sizeVal.indexOf('--select') !== -1 || sizeVal.indexOf('--Choose') !== -1) {
                     toastr.error('Please select a size first');
                     return false;
                 }
@@ -104,50 +161,67 @@
             return true;
         }
 
-        //Qty Up-Down
-        $('.detail-qty').each(function () {
-            var $this = $(this);
+        // Delegated Qty Up-Down for dynamic and static components
+        $(document).on('click', '.detail-qty .qty-up', function (event) {
+            event.preventDefault();
+            var $button = $(this);
+            var $this = $button.closest('.detail-qty');
             var $input = $this.find(".qty-val");
 
-            $this.find('.qty-up').on('click', function (event) {
-                event.preventDefault();
-                if (!validatePropertiesSelected($input)) {
-                    return false;
-                }
-                var qtyval = parseInt($input.val(), 10) || 1;
-                var maxStock = parseInt($input.attr('max'), 10) || 99999;
-                qtyval = qtyval + 1;
-                if (qtyval > maxStock) {
-                    qtyval = maxStock;
-                    toastr.warning('Maximum available stock is ' + maxStock);
-                }
-                $input.val(qtyval).trigger('change');
-            });
+            if (!validatePropertiesSelected($input)) {
+                return false;
+            }
+            var qtyval = parseInt($input.val(), 10) || 1;
+            var maxStock = parseInt($input.attr('max'), 10) || 99999;
+            qtyval = qtyval + 1;
+            if (qtyval > maxStock) {
+                qtyval = maxStock;
+                toastr.warning('Maximum available stock is ' + maxStock);
+            }
+            $input.val(qtyval).trigger('change');
+        });
 
-            $this.find('.qty-down').on('click', function (event) {
-                event.preventDefault();
-                var qtyval = parseInt($input.val(), 10) || 1;
-                qtyval = qtyval - 1;
-                if (qtyval < 1) {
-                    qtyval = 1;
-                }
-                $input.val(qtyval).trigger('change');
-            });
+        $(document).on('click', '.detail-qty .qty-down', function (event) {
+            event.preventDefault();
+            var $button = $(this);
+            var $this = $button.closest('.detail-qty');
+            var $input = $this.find(".qty-val");
 
-            $input.on('change blur', function() {
-                if (parseInt($(this).val(), 10) > 1 && !validatePropertiesSelected($input)) {
-                    $(this).val(1).trigger('change');
-                    return false;
-                }
-                var maxStock = parseInt($(this).attr('max'), 10) || 99999;
-                var val = parseInt($(this).val(), 10) || 1;
-                if (val > maxStock) {
-                    $(this).val(maxStock);
-                    toastr.warning('Maximum available stock is ' + maxStock);
-                } else if (val < 1) {
-                    $(this).val(1);
-                }
-            });
+            if (!validatePropertiesSelected($input)) {
+                return false;
+            }
+            var qtyval = parseInt($input.val(), 10) || 1;
+            qtyval = qtyval - 1;
+            if (qtyval < 1) {
+                qtyval = 1;
+            }
+            $input.val(qtyval).trigger('change');
+        });
+
+        $(document).on('change blur', '.detail-qty .qty-val', function() {
+            var $input = $(this);
+            if (parseInt($input.val(), 10) > 1 && !validatePropertiesSelected($input)) {
+                $input.val(1).trigger('change');
+                return false;
+            }
+            var maxStock = parseInt($input.attr('max'), 10) || 99999;
+            var val = parseInt($input.val(), 10) || 1;
+            if (val > maxStock) {
+                $input.val(maxStock);
+                toastr.warning('Maximum available stock is ' + maxStock);
+            } else if (val < 1) {
+                $input.val(1);
+            }
+        });
+
+        // Watch for property changes to dynamically enable/disable quantity inputs
+        $(document).on('change', 'select[name="size"], select#dsize, select#getPrice, select#getPrice_modal, select[name="color"], select#dcolor, select#color', function() {
+            var $select = $(this);
+            var $container = $select.closest('.detail-info, .product-info');
+            if (!$container.length) {
+                $container = $select.closest('.modal-content, .row');
+            }
+            window.updateQuantityState($container);
         });
 
         $('.dropdown-menu .cart_list').on('click', function (event) {
@@ -158,6 +232,11 @@
     //Load functions
     $(document).ready(function () {
         productDetails();
+        
+        // Initial state watch on page load
+        $('.detail-info, .product-info').each(function() {
+            window.updateQuantityState($(this));
+        });
     });
 
 })(jQuery);

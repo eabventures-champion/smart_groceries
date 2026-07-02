@@ -270,6 +270,11 @@
                      }
                  });
              }
+             
+             // Trigger state watch instantly on modal load
+             if (typeof window.updateQuantityState === 'function') {
+                 window.updateQuantityState($('#quickViewModal'));
+             }
 
             }
          })
