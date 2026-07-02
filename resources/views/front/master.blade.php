@@ -301,6 +301,30 @@
              font-weight: 700 !important;
              margin-left: 5px !important;
           }
+
+          /* Mini-cart dropdown mobile centering and width optimization */
+          @media (max-width: 768px) {
+             .header-action-icon-2 .cart-dropdown-wrap.cart-dropdown-hm2 {
+                position: fixed !important;
+                top: 75px !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 92% !important;
+                max-width: 380px !important;
+                margin: 0 auto !important;
+                border-radius: 16px !important;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+                z-index: 1100 !important;
+                padding: 20px 15px !important;
+             }
+             .shopping-cart-title h4 {
+                font-size: 13px !important;
+             }
+             .shopping-cart-title h3 {
+                font-size: 12px !important;
+                white-space: nowrap !important;
+             }
+          }
        </style>
    </head>
    <body>
