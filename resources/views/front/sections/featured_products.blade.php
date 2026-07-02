@@ -136,17 +136,7 @@
                                                     </div>
                                                     </div> --}}
                                                     {{-- <a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}" class="btn w-100 hover-up"><i class="fi-rs-shopping-cart mr-5"></i>Add</a> --}}
-                                                    <div class="product-action-1-mobile d-block d-lg-none">
-                                                        <a aria-label="Add To Wishlist" class="action-btn"
-                                                            id="{{ $product->id }}"
-                                                            onclick="addToWishList(this.id)"><i
-                                                                class="fi-rs-heart"></i></a>
-                                                        {{-- <a aria-label="Compare" class="action-btn" id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>                            --}}
-                                                        <a aria-label="Quick view" class="action-btn"
-                                                            data-bs-toggle="modal" data-bs-target="#quickViewModal"
-                                                            id="{{ $product->id }}" onclick="productView(this.id)"><i
-                                                                class="fi-rs-eye"></i></a>
-                                                    </div>
+
                                                     <div class="add-cart">
                                                         <a class="add"
                                                             href="{{ url('product/details/' . $product->id . '/' . $product->product_slug) }}"><i
