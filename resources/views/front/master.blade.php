@@ -104,65 +104,97 @@
              }
           }
 
-          /* Enhance quantity selector layout and sizing on mobile for easy tap-ability */
+          /* Premium horizontal quantity selector layout for all screen sizes (Desktop & Mobile) */
+          .detail-qty {
+             max-width: 120px !important;
+             height: 40px !important;
+             display: inline-flex !important;
+             align-items: center !important;
+             justify-content: space-between !important;
+             position: relative !important;
+             padding: 0 !important;
+             border-radius: 8px !important;
+             border: 1.5px solid #ececec !important;
+             overflow: hidden !important;
+             background: #fff !important;
+          }
+
+          /* On mobile, make it slightly larger for better tap-ability */
           @media (max-width: 768px) {
              .detail-qty {
                 max-width: 140px !important;
                 height: 48px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                position: relative !important;
-                padding: 0 !important;
                 border-radius: 12px !important;
-                border: 1.5px solid #ececec !important;
-                overflow: hidden !important;
              }
+          }
+
+          /* Centered Input field */
+          .detail-qty input.qty-val {
+             order: 2 !important;
+             width: 36px !important;
+             height: 100% !important;
+             margin: 0 !important;
+             text-align: center !important;
+             font-size: 15px !important;
+             font-weight: 700 !important;
+             color: #253D4E !important;
+             background: transparent !important;
+             z-index: 1 !important;
+             border: none !important;
+             padding: 0 !important;
+          }
+          @media (max-width: 768px) {
              .detail-qty input.qty-val {
-                order: 2 !important;
                 width: 44px !important;
-                height: 100% !important;
-                margin: 0 !important;
-                text-align: center !important;
                 font-size: 16px !important;
-                font-weight: 700 !important;
-                background: transparent !important;
-                z-index: 1 !important;
-                border: none !important;
              }
+          }
+
+          /* Side buttons */
+          .detail-qty > a {
+             position: static !important;
+             width: 36px !important;
+             height: 100% !important;
+             display: flex !important;
+             align-items: center !important;
+             justify-content: center !important;
+             font-size: 16px !important;
+             color: #253D4E !important;
+             background: #f7f8fa !important;
+             transition: all 0.2s ease !important;
+             cursor: pointer !important;
+             text-decoration: none !important;
+          }
+          @media (max-width: 768px) {
              .detail-qty > a {
-                position: static !important;
                 width: 44px !important;
-                height: 100% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
                 font-size: 18px !important;
-                color: #253D4E !important;
-                background: #f7f8fa !important;
-                transition: background 0.2s ease !important;
-                cursor: pointer !important;
              }
-             .detail-qty > a:hover {
-                background: #f1f2f4 !important;
-                color: #3bb77e !important;
-             }
-             .detail-qty > a.qty-down {
-                order: 1 !important;
-             }
-             .detail-qty > a.qty-up {
-                order: 3 !important;
-             }
-             .detail-qty > a.qty-up i::before {
-                content: "+" !important;
-                font-family: inherit !important;
-                font-weight: 700 !important;
-             }
-             .detail-qty > a.qty-down i::before {
-                content: "-" !important;
-                font-family: inherit !important;
-                font-weight: 700 !important;
-             }
+          }
+
+          .detail-qty > a:hover {
+             background: #f1f2f4 !important;
+             color: #3bb77e !important;
+          }
+
+          .detail-qty > a.qty-down {
+             order: 1 !important;
+          }
+
+          .detail-qty > a.qty-up {
+             order: 3 !important;
+          }
+
+          /* Custom text characters for plus and minus */
+          .detail-qty > a.qty-up i::before {
+             content: "+" !important;
+             font-family: inherit !important;
+             font-weight: 700 !important;
+          }
+          .detail-qty > a.qty-down i::before {
+             content: "-" !important;
+             font-family: inherit !important;
+             font-weight: 700 !important;
           }
        </style>
    </head>
