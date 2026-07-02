@@ -280,6 +280,41 @@
    .related-products-section .product-cart-wrap:hover .product-img-action-wrap img {
        transform: scale(1.05);
    }
+    
+    /* Mobile Responsive Optimizations for Details Page */
+    @media (max-width: 768px) {
+        .premium-details-container .product-price-cover {
+            padding: 12px 16px !important;
+            border-radius: 12px !important;
+            margin-bottom: 15px !important;
+            background: rgba(59, 183, 126, 0.04) !important;
+            border-color: rgba(59, 183, 126, 0.15) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            width: auto !important;
+        }
+        .premium-details-container .product-price .current-price {
+            font-size: 26px !important;
+        }
+        .premium-details-container .product-price .old-price {
+            font-size: 15px !important;
+            margin-left: 10px !important;
+        }
+        .premium-details-container .product-price .save-price {
+            font-size: 11px !important;
+            padding: 3px 8px !important;
+            margin-left: 10px !important;
+        }
+        .premium-details-container .detail-info {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-top: 25px !important;
+        }
+        .premium-details-container h2.title-detail {
+            font-size: 24px !important;
+            margin-bottom: 12px !important;
+        }
+    }
 </style>
 
 <div class="page-header breadcrumb-wrap">
@@ -295,7 +330,7 @@
       <div class="col-xl-10 col-lg-12 m-auto">
          <div class="product-detail accordion-detail">
             <div class="row mb-50 mt-30">
-               <div class="col-md-5 col-6">
+               <div class="col-md-5 col-12">
                 {{-- <div class="col-md-4 col-sm-9 col-6 col-xs-12 mb-md-0 mb-sm-5"> --}}
                   <div class="detail-gallery">
                      {{-- <span class="zoom-icon"><i class="fi-rs-search"></i></span> --}}
@@ -340,7 +375,7 @@
                   <!-- End Gallery -->
                </div>
 
-               <div class="col-md-7 col-6">
+               <div class="col-md-7 col-12">
                {{-- <div class="col-md-8 col-sm-12 col-6 col-xs-12"> --}}
                   <div class="detail-info pr-30 pl-30">
                      @if($total_stock > 0)
