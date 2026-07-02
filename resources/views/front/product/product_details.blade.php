@@ -350,6 +350,14 @@
             font-size: 24px !important;
             margin-bottom: 12px !important;
         }
+        .premium-details-container .product-detail {
+            padding: 15px !important;
+            margin-top: 10px !important;
+        }
+        .premium-details-container .product-detail .row.mb-50.mt-30 {
+            margin-top: 0 !important;
+            margin-bottom: 20px !important;
+        }
     }
 </style>
 
