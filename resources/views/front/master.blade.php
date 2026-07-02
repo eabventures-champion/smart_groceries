@@ -131,7 +131,7 @@
       <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}" defer></script>
       <!-- Template JS -->
       <script src="{{ asset('front/assets/js/main.js?v=5.5') }}" defer></script>
-      <script src="{{ asset('front/assets/js/shop.js?v=6.1') }}" defer></script>
+      <script src="{{ asset('front/assets/js/shop.js?v=6.2') }}" defer></script>
       <script src="{{ asset('front/assets/js/script.js') }}" defer></script>
       <script src="{{ asset('back/assets/plugins/datatable/js/jquery.dataTables.min.js') }}" defer></script>
       <script>

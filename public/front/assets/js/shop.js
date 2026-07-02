@@ -85,10 +85,12 @@
             }
 
             var $sizeSelect = $container.find('select[name="size"], select#dsize, select#getPrice, select#getPrice_modal');
-            var sizeRequired = $sizeSelect.length && $sizeSelect.is(':visible') && $sizeSelect.find('option').length > 1;
+            var $sizeWrapper = $sizeSelect.closest('#sizeArea, .attr-size');
+            var sizeRequired = $sizeSelect.length && $sizeWrapper.length && $sizeWrapper.is(':visible') && $sizeSelect.find('option').length > 1;
             
             var $colorSelect = $container.find('select[name="color"], select#dcolor, select#color');
-            var colorRequired = $colorSelect.length && $colorSelect.is(':visible') && $colorSelect.find('option').length > 1;
+            var $colorWrapper = $colorSelect.closest('#colorArea, .attr-size');
+            var colorRequired = $colorSelect.length && $colorWrapper.length && $colorWrapper.is(':visible') && $colorSelect.find('option').length > 1;
 
             var sizeSelected = true;
             if (sizeRequired) {
@@ -126,20 +128,26 @@
             }
             
             var $sizeSelect = $container.find('select[name="size"], select#dsize, select#getPrice, select#getPrice_modal');
-            if ($sizeSelect.length && $sizeSelect.is(':visible')) {
-                var sizeVal = $sizeSelect.val();
-                if (!sizeVal || sizeVal === '' || sizeVal.indexOf('--select') !== -1 || sizeVal.indexOf('--Choose') !== -1) {
-                    toastr.error('Please select a size first');
-                    return false;
+            if ($sizeSelect.length) {
+                var $sizeWrapper = $sizeSelect.closest('#sizeArea, .attr-size');
+                if ($sizeWrapper.length && $sizeWrapper.is(':visible')) {
+                    var sizeVal = $sizeSelect.val();
+                    if (!sizeVal || sizeVal === '' || sizeVal.indexOf('--select') !== -1 || sizeVal.indexOf('--Choose') !== -1) {
+                        toastr.error('Please select a size first');
+                        return false;
+                    }
                 }
             }
             
             var $colorSelect = $container.find('select[name="color"], select#dcolor, select#color');
-            if ($colorSelect.length && $colorSelect.is(':visible')) {
-                var colorVal = $colorSelect.val();
-                if (!colorVal || colorVal === '' || colorVal.indexOf('--select') !== -1) {
-                    toastr.error('Please select a variant first');
-                    return false;
+            if ($colorSelect.length) {
+                var $colorWrapper = $colorSelect.closest('#colorArea, .attr-size');
+                if ($colorWrapper.length && $colorWrapper.is(':visible')) {
+                    var colorVal = $colorSelect.val();
+                    if (!colorVal || colorVal === '' || colorVal.indexOf('--select') !== -1) {
+                        toastr.error('Please select a variant first');
+                        return false;
+                    }
                 }
             }
             
