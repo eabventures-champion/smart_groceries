@@ -268,6 +268,39 @@
                 white-space: nowrap !important;
              }
           }
+
+          /* Premium theme button styling overrides for dynamic modal in-stock badge */
+          #modal-qty-stock h4 {
+             margin: 0 !important;
+             text-align: left !important;
+             display: inline-block !important;
+          }
+          @media (max-width: 768px) {
+             #modal-qty-stock h4 {
+                text-align: center !important;
+                margin-top: 10px !important;
+                margin-bottom: 5px !important;
+                display: block !important;
+             }
+          }
+          #modal-qty-stock button.btn-primary {
+             background-color: #3bb77e !important;
+             border: none !important;
+             border-radius: 8px !important;
+             padding: 6px 12px !important;
+             font-family: 'Outfit', sans-serif !important;
+             font-weight: 600 !important;
+             font-size: 13px !important;
+             color: #fff !important;
+             box-shadow: 0 4px 12px rgba(59, 183, 126, 0.15) !important;
+             cursor: default !important;
+          }
+          #modal-qty-stock button.btn-primary span.badge {
+             background-color: #253D4E !important;
+             color: #fff !important;
+             font-weight: 700 !important;
+             margin-left: 5px !important;
+          }
        </style>
    </head>
    <body>

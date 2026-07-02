@@ -72,8 +72,8 @@
                            <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1" style="width: 30px; text-align: center; border: none; font-weight: 700; color: #253D4E; margin: 0 5px; font-size: 14px;">
                            <a href="#" class="qty-up" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-up"></i></a>
                         </div>
-                        <div id="modal-qty-stock" style="font-size: 13px; color: #e74c3c; font-weight: 600;"></div>
                      </div>
+                     <div id="modal-qty-stock" style="font-size: 13px; color: #e74c3c; font-weight: 600; margin-bottom: 15px;"></div>
                      
                      <div class="product-extra-link2 mt-15">
                         <button type="submit" class="btn" onclick="addToCart()" style="background-color: #3bb77e !important; border: none; color: #fff; padding: 12px 35px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 30px; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(59, 183, 126, 0.25); cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 25px rgba(59, 183, 126, 0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 20px rgba(59, 183, 126, 0.25)';">
