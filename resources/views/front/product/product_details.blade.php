@@ -307,13 +307,18 @@
             font-size: 11px !important;
             margin-left: 4px !important;
         }
-        .related-products-section .product-card-bottom {
-            margin-top: 6px !important;
-        }
         .related-products-section .product-card-bottom .add-cart a {
             padding: 4px 8px !important;
             font-size: 11px !important;
             border-radius: 4px !important;
+        }
+        .related-products-section {
+            margin-left: -6px !important;
+            margin-right: -6px !important;
+        }
+        .related-products-section > div[class*="col-"] {
+            padding-left: 6px !important;
+            padding-right: 6px !important;
         }
     }
     
