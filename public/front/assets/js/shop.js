@@ -109,24 +109,9 @@
             var $qtyContainer = $container.find('.detail-qty');
 
             if (!sizeSelected || !colorSelected) {
-                // Disable quantity controls
-                $qtyContainer.addClass('disabled-qty-control').css({
-                    'opacity': '0.5',
-                    'pointer-events': 'none',
-                    'cursor': 'not-allowed'
-                });
                 if (parseInt($input.val(), 10) !== 1) {
                     $input.val(1).trigger('change');
                 }
-                $input.prop('disabled', true);
-            } else {
-                // Enable quantity controls
-                $qtyContainer.removeClass('disabled-qty-control').css({
-                    'opacity': '',
-                    'pointer-events': '',
-                    'cursor': ''
-                });
-                $input.prop('disabled', false);
             }
         };
 
