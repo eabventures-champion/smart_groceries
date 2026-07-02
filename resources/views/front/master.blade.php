@@ -196,6 +196,78 @@
              font-family: inherit !important;
              font-weight: 700 !important;
           }
+          
+          /* Mobile side-by-side layout for quantity selector and add to cart button */
+          @media (max-width: 768px) {
+             .detail-info {
+                display: flex !important;
+                flex-direction: column !important;
+             }
+
+             .detail-extralink {
+                display: inline-flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                width: auto !important;
+                margin-bottom: 15px !important;
+                margin-top: 10px !important;
+                float: left !important;
+                vertical-align: middle !important;
+             }
+
+             .product-extra-link2 {
+                display: inline-flex !important;
+                align-items: center !important;
+                vertical-align: middle !important;
+                margin-top: 10px !important;
+                margin-bottom: 15px !important;
+                float: left !important;
+             }
+
+             /* Quick View Modal layout specific */
+             .detail-info .detail-extralink {
+                width: 140px !important;
+                margin-right: 12px !important;
+                margin-bottom: 0 !important;
+             }
+             .detail-info .product-extra-link2 {
+                width: calc(100% - 152px) !important;
+                margin-top: 10px !important;
+             }
+             .detail-info .product-extra-link2 button.btn {
+                width: 100% !important;
+                height: 48px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 0 15px !important;
+                font-size: 15px !important;
+                font-weight: 700 !important;
+                border-radius: 12px !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+             }
+
+             /* Details page layout specific */
+             .detail-extralink .product-extra-link2 {
+                flex: 1 !important;
+                width: auto !important;
+                margin: 0 !important;
+             }
+             .detail-extralink .product-extra-link2 button.button-add-to-cart {
+                width: 100% !important;
+                height: 48px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 0 15px !important;
+                font-size: 15px !important;
+                font-weight: 700 !important;
+                border-radius: 12px !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+             }
+          }
        </style>
    </head>
    <body>
