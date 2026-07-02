@@ -244,7 +244,7 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
          </div>
 
          <!-- SG Features Horizontal Promo Ads Banner -->
-         <div class="container mt-20 mb-30">
+         <div class="container-fluid p-0 mt-20 mb-30">
              <div class="sg-promo-banner-container">
                  <h4 class="sg-promo-title">✨ Smart Groceries Campus Hub</h4>
                  <div class="sg-promo-slider">
@@ -287,7 +287,7 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
          <style>
          .sg-promo-banner-container {
              background: linear-gradient(135deg, #3BB77E 0%, #2fa56f 100%);
-             border-radius: 20px;
+             border-radius: 0;
              padding: 24px 30px;
              box-shadow: 0 10px 30px rgba(59, 183, 126, 0.15);
              margin-top: 15px;
