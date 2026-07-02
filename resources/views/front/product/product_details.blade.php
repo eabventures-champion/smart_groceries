@@ -884,7 +884,7 @@
                <div class="col-12">
                   <div class="row related-products related-products-section">
                      @foreach($relatedProduct as $product)
-                     <div class="col-lg-3 col-md-4 col-6 col-sm-6">
+                     <div class="col-lg-3 col-md-4 col-6 col-sm-6 mb-30">
                         <div class="product-cart-wrap hover-up">
                            <div class="product-img-action-wrap">
                               <div class="product-img product-img-zoom">
@@ -910,9 +910,6 @@
                               </div>
                            </div>
                            <div class="product-content-wrap">
-                              <div class="product-category">
-                                 <a href="{{ url('product/category/'.$product['category']['id'].'/'.$product['category']['category_slug']) }}">{{ $product['category']['category_name'] }}</a>
-                              </div>
                               <h2><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}" tabindex="0">{{ $product->product_name }}</a></h2>
                               <div class="product-action-1-mobile d-block d-lg-none">
                                  <a aria-label="Add To Wishlist" class="action-btn" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>
