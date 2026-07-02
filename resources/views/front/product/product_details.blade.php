@@ -363,6 +363,14 @@
             margin-top: 0 !important;
             margin-bottom: 20px !important;
         }
+        .detail-gallery .product-image-slider {
+            max-width: 100% !important;
+            margin: 0 auto !important;
+        }
+        .detail-gallery .slider-nav-thumbnails {
+            max-width: 100% !important;
+            margin: 15px auto 0 !important;
+        }
     }
 </style>
 
