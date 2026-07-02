@@ -26,29 +26,57 @@
        margin-top: 20px;
    }
    /* Gallery Styles */
-   .premium-details-container .detail-gallery {
-       position: relative;
-   }
-   .premium-details-container .product-image-slider {
-       border-radius: 16px;
-       border: 1px solid #f1f2f4;
-       background: #fafbfc;
-       overflow: hidden;
-       margin-bottom: 20px;
-   }
-   .premium-details-container .slider-nav-thumbnails {
-       margin-top: 15px;
-   }
-   .premium-details-container .slider-nav-thumbnails div {
-       border-radius: 10px;
-       overflow: hidden;
-       border: 2px solid transparent;
-       cursor: pointer;
-       transition: border-color 0.2s ease;
-   }
-   .premium-details-container .slider-nav-thumbnails div.slick-current {
-       border-color: #3bb77e;
-   }
+    .premium-details-container .detail-gallery {
+        position: relative;
+    }
+    .premium-details-container .product-image-slider {
+        border-radius: 16px;
+        border: 1px solid #f1f2f4;
+        background: #fafbfc;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    .premium-details-container .product-image-slider figure {
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        aspect-ratio: 1 / 1 !important;
+        background: #fafbfc !important;
+        width: 100% !important;
+    }
+    .premium-details-container .product-image-slider img {
+        max-height: 100% !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+        margin: auto !important;
+        display: block !important;
+    }
+    .premium-details-container .slider-nav-thumbnails {
+        margin-top: 15px;
+    }
+    .premium-details-container .slider-nav-thumbnails div {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+        aspect-ratio: 1 / 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #fafbfc !important;
+    }
+    .premium-details-container .slider-nav-thumbnails img {
+        max-height: 100% !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+        margin: auto !important;
+        display: block !important;
+    }
+    .premium-details-container .slider-nav-thumbnails div.slick-current {
+        border-color: #3bb77e;
+    }
    /* Stock Badge */
    .premium-details-container .stock-status {
        display: inline-block !important;
