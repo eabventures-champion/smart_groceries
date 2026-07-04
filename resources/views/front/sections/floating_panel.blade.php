@@ -744,7 +744,7 @@
             <div id="affiliate-guest" style="display: none; text-align: center; padding: 30px 10px; flex-direction: column; align-items: center; gap: 12px;">
                 <div style="font-size: 44px; margin: 0;">🎁</div>
                 <h3 style="margin: 0; font-size: 14px; font-weight: 800; color: #2d3748;">Earn Referrals Cash!</h3>
-                <p style="margin: 0; font-size: 11px; color: #718096; line-height: 1.5; padding: 0 10px;">Help friends shop smart. You earn Gh 15.00 cash directly in your wallet for every successful sign-up referral!</p>
+                <p style="margin: 0; font-size: 11px; color: #718096; line-height: 1.5; padding: 0 10px;">Help friends shop smart. You earn Gh {{ number_format($setting->referral_flat_amount ?? 15.00, 2) }} cash directly in your wallet for every successful sign-up referral!</p>
                 <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 14px;">
                     <a href="/login" class="sg-btn-primary" style="text-decoration: none;">Log In to Account</a>
                     <a href="/register" class="sg-btn-outline" style="text-decoration: none;">Create Student Account</a>

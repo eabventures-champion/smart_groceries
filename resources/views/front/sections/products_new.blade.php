@@ -256,7 +256,7 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
                          <div class="sg-promo-icon">🎁</div>
                          <div class="sg-promo-info">
                              <h5>Affiliate Program</h5>
-                             <p>Share your link & earn Gh 15.00 cash for each sign-up.</p>
+                             <p>Share your link & earn Gh {{ number_format($setting->referral_flat_amount ?? 15.00, 2) }} cash for each sign-up.</p>
                          </div>
                          <span class="sg-promo-arrow">→</span>
                      </div>
