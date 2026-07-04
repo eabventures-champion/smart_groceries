@@ -19,6 +19,7 @@ class SiteSettingController extends Controller
     public function site_setting_update(Request $request){
 
         $setting_id = $request->id; 
+        $setting = SiteSetting::findOrFail($setting_id);
 
         if ($request->file('logo')) {
 
@@ -28,7 +29,7 @@ class SiteSettingController extends Controller
         $save_url = 'back/assets/images/logo/'.$name_gen;
 
 
-        SiteSetting::findOrFail($setting_id)->update([
+        $setting->update([
             'support_phone' => $request->support_phone,
             'phone_one' => $request->phone_one,
             'email' => $request->email,
@@ -45,9 +46,9 @@ class SiteSettingController extends Controller
             'student_percent_fee' => $request->student_percent_fee,
             'non_student_flat_fee' => $request->non_student_flat_fee,
             'non_student_percent_fee' => $request->non_student_percent_fee,
-            'recognition_platinum_min' => $request->recognition_platinum_min,
-            'recognition_gold_min' => $request->recognition_gold_min,
-            'recognition_silver_min' => $request->recognition_silver_min,
+            'recognition_platinum_min' => $request->recognition_platinum_min ?? ($setting->recognition_platinum_min ?? 500.00),
+            'recognition_gold_min' => $request->recognition_gold_min ?? ($setting->recognition_gold_min ?? 300.00),
+            'recognition_silver_min' => $request->recognition_silver_min ?? ($setting->recognition_silver_min ?? 100.00),
         ]);
 
         $notification = array(
@@ -55,11 +56,11 @@ class SiteSettingController extends Controller
              'alert-type' => 'success'
          );
 
-         return redirect()->back()->with($notification); 
+          return redirect()->back()->with($notification); 
 
         } else {
 
-            SiteSetting::findOrFail($setting_id)->update([
+            $setting->update([
             'support_phone' => $request->support_phone,
             'phone_one' => $request->phone_one,
             'email' => $request->email,
@@ -75,9 +76,9 @@ class SiteSettingController extends Controller
             'student_percent_fee' => $request->student_percent_fee,
             'non_student_flat_fee' => $request->non_student_flat_fee,
             'non_student_percent_fee' => $request->non_student_percent_fee,
-            'recognition_platinum_min' => $request->recognition_platinum_min,
-            'recognition_gold_min' => $request->recognition_gold_min,
-            'recognition_silver_min' => $request->recognition_silver_min,
+            'recognition_platinum_min' => $request->recognition_platinum_min ?? ($setting->recognition_platinum_min ?? 500.00),
+            'recognition_gold_min' => $request->recognition_gold_min ?? ($setting->recognition_gold_min ?? 300.00),
+            'recognition_silver_min' => $request->recognition_silver_min ?? ($setting->recognition_silver_min ?? 100.00),
         ]);
 
        $notification = array(
