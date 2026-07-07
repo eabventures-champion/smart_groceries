@@ -526,4 +526,10 @@ Route::get('/sync-assets-hostinger', function() {
     return "Sync completed! Copied " . $syncCount . " files to public_html.";
 });
 
+// Test route to preview the custom 419 error page
+Route::get('/error-419', function () {
+    return view('errors.419');
+});
+
+
 
