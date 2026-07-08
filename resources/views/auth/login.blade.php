@@ -247,6 +247,16 @@
        @endphp
 
        <!-- Embed Smart Chat Live Support Widget -->
-       <script src="{{ $chatServerUrl }}/widget.js" data-site-id="smart_groceries" async></script>
+       <script>
+           window.addEventListener('load', function() {
+               setTimeout(function() {
+                   const script = document.createElement('script');
+                   script.src = "{{ $chatServerUrl }}/widget.js";
+                   script.async = true;
+                   script.setAttribute('data-site-id', 'smart_groceries');
+                   document.head.appendChild(script);
+               }, 100);
+           });
+       </script>
    </body>
 </html>
