@@ -98,7 +98,9 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
 
     // Route::get('page-contact', 'UserController@page_contact')->name('page_contact');
 
-        // User All Route
+        Route::get('chat-analytics/update', [App\Http\Controllers\Front\UserController::class, 'update_chat_analytics']);
+
+    // User All Route
     Route::middleware(['auth','role:user'])->group(function() {
 
         Route::controller(WishListController::class)->group(function(){
@@ -150,6 +152,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
             Route::post('user/mark-notification-as-read/{id}', 'markNotificationAsRead')->name('user.mark.notification.read');
 
             Route::post('order/tracking' , 'order_tracking')->name('order.tracking');
+            Route::get('check-phone-unique', 'check_phone_unique');
         });
 
         Route::controller(ReviewController::class)->group(function(){
@@ -350,6 +353,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('/all/clients' , 'all_user')->name('all.users');
             Route::get('/client/detail/{id}', 'client_detail')->name('admin.client.detail');
             Route::get('/all/affiliates', 'all_affiliates')->name('all.affiliates');
+            Route::get('/admin/live-chat', 'admin_live_chat')->name('admin.live.chat');
         });
 
         Route::controller(ReviewController::class)->group(function(){

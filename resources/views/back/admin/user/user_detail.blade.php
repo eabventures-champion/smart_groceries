@@ -227,6 +227,14 @@
                               {{ $user->institution ?? 'N/A' }}
                            </div>
                         </div>
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0 font-weight-semibold text-muted">Residence Hall</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary font-weight-bold">
+                              {{ $user->hall ?? 'Not Provided' }}
+                           </div>
+                        </div>
                         @if($user->student_id)
                         <div class="row mb-3">
                            <div class="col-sm-3">
@@ -307,26 +315,26 @@
                      <div class="row g-3">
                         <!-- Total Orders -->
                         <div class="col-md-4">
-                           <div class="p-3 border text-center" style="border-radius: 10px; background-color: #fafafa;">
+                           <div class="p-3 border text-center order-stat-card" style="border-radius: 10px; background-color: #fafafa; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" data-bs-toggle="modal" data-bs-target="#totalOrdersModal">
                               <div style="font-size: 24px;">📦</div>
                               <h3 class="mb-0 mt-2 font-weight-bold">{{ $totalOrders }}</h3>
-                              <span class="text-muted" style="font-size: 13px;">Total Orders</span>
+                              <span class="text-muted" style="font-size: 13px; font-weight: 600;">Total Orders</span>
                            </div>
                         </div>
                         <!-- Pending Orders -->
                         <div class="col-md-4">
-                           <div class="p-3 border text-center" style="border-radius: 10px; background-color: #fafafa;">
+                           <div class="p-3 border text-center order-stat-card" style="border-radius: 10px; background-color: #fafafa; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" data-bs-toggle="modal" data-bs-target="#pendingOrdersModal">
                               <div style="font-size: 24px;">⏳</div>
                               <h3 class="mb-0 mt-2 font-weight-bold" style="color: #fd7e14;">{{ $pendingOrders }}</h3>
-                              <span class="text-muted" style="font-size: 13px;">Pending Orders</span>
+                              <span class="text-muted" style="font-size: 13px; font-weight: 600;">Pending Orders</span>
                            </div>
                         </div>
                         <!-- Completed Orders -->
                         <div class="col-md-4">
-                           <div class="p-3 border text-center" style="border-radius: 10px; background-color: #fafafa;">
+                           <div class="p-3 border text-center order-stat-card" style="border-radius: 10px; background-color: #fafafa; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" data-bs-toggle="modal" data-bs-target="#deliveredOrdersModal">
                               <div style="font-size: 24px;">✅</div>
                               <h3 class="mb-0 mt-2 font-weight-bold" style="color: #198754;">{{ $completedOrders }}</h3>
-                              <span class="text-muted" style="font-size: 13px;">Delivered Orders</span>
+                              <span class="text-muted" style="font-size: 13px; font-weight: 600;">Delivered Orders</span>
                            </div>
                         </div>
                      </div>
@@ -334,6 +342,222 @@
                </div>
 
             </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Styles for Order Statistics -->
+<style>
+   .order-stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border-color: #fd7e14 !important;
+      background-color: #ffffff !important;
+   }
+</style>
+
+<!-- Total Orders Modal -->
+<div class="modal fade" id="totalOrdersModal" tabindex="-1" aria-labelledby="totalOrdersModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+         <div class="modal-header bg-light" style="border-bottom: 1px solid #eef0f2; border-radius: 16px 16px 0 0; padding: 16px 24px;">
+            <h5 class="modal-title font-weight-bold" id="totalOrdersModalLabel" style="color: #253D4E;">📦 Total Orders ({{ $totalOrders }})</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body" style="padding: 24px; max-height: 70vh; overflow-y: auto;">
+            @if(count($orders) > 0)
+               <div class="table-responsive">
+                  <table class="table align-middle table-hover">
+                     <thead class="table-light">
+                        <tr>
+                           <th>Invoice No</th>
+                           <th>Order Placed</th>
+                           <th>Order Delivered</th>
+                           <th>Amount</th>
+                           <th>Status</th>
+                           <th style="width: 250px;">Items Ordered</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach($orders as $order)
+                           <tr>
+                              <td class="font-weight-bold" style="color: #333;">#{{ $order->invoice_no }}</td>
+                              <td>{{ $order->created_at->format('d M Y, h:i A') }}</td>
+                              <td>
+                                 @if($order->status == 'delivered' || $order->delivered_date)
+                                    {{ Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A') }}
+                                 @else
+                                    <span class="text-muted">—</span>
+                                 @endif
+                              </td>
+                              <td class="font-weight-bold">Gh {{ number_format($order->amount, 2) }}</td>
+                              <td>
+                                 @if($order->status == 'pending')
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                 @elseif($order->status == 'delivered' || $order->status == 'deliverd')
+                                    <span class="badge bg-success">Delivered</span>
+                                 @else
+                                    <span class="badge bg-info">{{ ucfirst($order->status) }}</span>
+                                 @endif
+                              </td>
+                              <td>
+                                 <ul class="list-unstyled mb-0" style="font-size: 13px; color: #555; line-height: 1.5;">
+                                    @foreach($order->orderItems as $item)
+                                       <li class="mb-1 d-flex justify-content-between align-items-center">
+                                          <span>• {{ $item->product->product_name ?? 'Product' }}</span>
+                                          <span class="text-muted ms-2">x{{ $item->qty }}</span>
+                                       </li>
+                                    @endforeach
+                                 </ul>
+                              </td>
+                           </tr>
+                        @endforeach
+                     </tbody>
+                  </table>
+               </div>
+            @else
+               <div class="text-center py-4">
+                  <span style="font-size: 40px;">📭</span>
+                  <p class="text-muted mt-2">No orders found for this client.</p>
+               </div>
+            @endif
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Pending Orders Modal -->
+<div class="modal fade" id="pendingOrdersModal" tabindex="-1" aria-labelledby="pendingOrdersModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+         <div class="modal-header bg-light" style="border-bottom: 1px solid #eef0f2; border-radius: 16px 16px 0 0; padding: 16px 24px;">
+            <h5 class="modal-title font-weight-bold" id="pendingOrdersModalLabel" style="color: #253D4E;">⏳ Pending Orders ({{ $pendingOrders }})</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body" style="padding: 24px; max-height: 70vh; overflow-y: auto;">
+            @php
+               $hasPending = $orders->contains('status', 'pending');
+            @endphp
+            @if($hasPending)
+               <div class="table-responsive">
+                  <table class="table align-middle table-hover">
+                     <thead class="table-light">
+                        <tr>
+                           <th>Invoice No</th>
+                           <th>Order Placed</th>
+                           <th>Order Delivered</th>
+                           <th>Amount</th>
+                           <th>Status</th>
+                           <th style="width: 250px;">Items Ordered</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach($orders as $order)
+                           @if($order->status == 'pending')
+                              <tr>
+                                 <td class="font-weight-bold" style="color: #333;">#{{ $order->invoice_no }}</td>
+                                 <td>{{ $order->created_at->format('d M Y, h:i A') }}</td>
+                                 <td>
+                                    @if($order->status == 'delivered' || $order->delivered_date)
+                                       {{ Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A') }}
+                                    @else
+                                       <span class="text-muted">—</span>
+                                    @endif
+                                 </td>
+                                 <td class="font-weight-bold">Gh {{ number_format($order->amount, 2) }}</td>
+                                 <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                 <td>
+                                    <ul class="list-unstyled mb-0" style="font-size: 13px; color: #555; line-height: 1.5;">
+                                       @foreach($order->orderItems as $item)
+                                          <li class="mb-1 d-flex justify-content-between align-items-center">
+                                             <span>• {{ $item->product->product_name ?? 'Product' }}</span>
+                                             <span class="text-muted ms-2">x{{ $item->qty }}</span>
+                                          </li>
+                                       @endforeach
+                                    </ul>
+                                 </td>
+                              </tr>
+                           @endif
+                        @endforeach
+                     </tbody>
+                  </table>
+               </div>
+            @else
+               <div class="text-center py-4">
+                  <span style="font-size: 40px;">⏳</span>
+                  <p class="text-muted mt-2">No pending orders found for this client.</p>
+               </div>
+            @endif
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Delivered Orders Modal -->
+<div class="modal fade" id="deliveredOrdersModal" tabindex="-1" aria-labelledby="deliveredOrdersModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+         <div class="modal-header bg-light" style="border-bottom: 1px solid #eef0f2; border-radius: 16px 16px 0 0; padding: 16px 24px;">
+            <h5 class="modal-title font-weight-bold" id="deliveredOrdersModalLabel" style="color: #253D4E;">✅ Delivered Orders ({{ $completedOrders }})</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body" style="padding: 24px; max-height: 70vh; overflow-y: auto;">
+            @php
+               $hasDelivered = $orders->contains(function ($o) {
+                   return $o->status == 'delivered' || $o->status == 'deliverd';
+               });
+            @endphp
+            @if($hasDelivered)
+               <div class="table-responsive">
+                  <table class="table align-middle table-hover">
+                     <thead class="table-light">
+                        <tr>
+                           <th>Invoice No</th>
+                           <th>Order Placed</th>
+                           <th>Order Delivered</th>
+                           <th>Amount</th>
+                           <th>Status</th>
+                           <th style="width: 250px;">Items Ordered</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        @foreach($orders as $order)
+                           @if($order->status == 'delivered' || $order->status == 'deliverd')
+                              <tr>
+                                 <td class="font-weight-bold" style="color: #333;">#{{ $order->invoice_no }}</td>
+                                 <td>{{ $order->created_at->format('d M Y, h:i A') }}</td>
+                                 <td>
+                                    @if($order->status == 'delivered' || $order->delivered_date)
+                                       {{ Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A') }}
+                                    @else
+                                       <span class="text-muted">—</span>
+                                    @endif
+                                 </td>
+                                 <td class="font-weight-bold">Gh {{ number_format($order->amount, 2) }}</td>
+                                 <td><span class="badge bg-success">Delivered</span></td>
+                                 <td>
+                                    <ul class="list-unstyled mb-0" style="font-size: 13px; color: #555; line-height: 1.5;">
+                                       @foreach($order->orderItems as $item)
+                                          <li class="mb-1 d-flex justify-content-between align-items-center">
+                                             <span>• {{ $item->product->product_name ?? 'Product' }}</span>
+                                             <span class="text-muted ms-2">x{{ $item->qty }}</span>
+                                          </li>
+                                       @endforeach
+                                    </ul>
+                                 </td>
+                              </tr>
+                           @endif
+                        @endforeach
+                     </tbody>
+                  </table>
+               </div>
+            @else
+               <div class="text-center py-4">
+                  <span style="font-size: 40px;">✅</span>
+                  <p class="text-muted mt-2">No delivered orders found for this client.</p>
+               </div>
+            @endif
          </div>
       </div>
    </div>

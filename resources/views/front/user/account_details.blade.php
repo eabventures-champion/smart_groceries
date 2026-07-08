@@ -78,20 +78,60 @@
                                  <label class="account-label">Phone Number <span class="account-required">*</span></label>
                                  <div class="account-input-wrap">
                                     <span class="account-input-icon"><i class="fi-rs-phone-call"></i></span>
-                                    <input required class="account-input" name="phone" type="text" value="{{ $userData->phone }}" placeholder="Enter phone number" />
+                                    <input required class="account-input" id="account_phone" name="phone" type="text" value="{{ $userData->phone }}" placeholder="Enter phone number" />
+                                 </div>
+                                 <div id="account_phone_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
+                                    This phone number is already registered by another user.
                                  </div>
                               </div>
                            </div>
 
+                           @if($userData->status_identity === 'student')
                            <div class="row">
-                              <div class="form-group col-md-12">
-                                 <label class="account-label">Address <span class="account-required">*</span></label>
+                              <div class="form-group col-md-6">
+                                 <label class="account-label">Institution <span class="account-required">*</span></label>
                                  <div class="account-input-wrap">
-                                    <span class="account-input-icon"><i class="fi-rs-marker"></i></span>
-                                    <input required class="account-input" name="address" type="text" value="{{ $userData->address }}" placeholder="Enter your address" />
+                                    <span class="account-input-icon"><i class="fi fi-rs-graduation-cap"></i></span>
+                                    <select name="institution" id="account_institution" class="account-input" style="padding-left: 45px !important;" required>
+                                       <option value="" disabled>-- Select Institution --</option>
+                                       @foreach($institutions as $inst)
+                                          <option value="{{ $inst->district_name }}" data-id="{{ $inst->id }}" {{ $userData->institution == $inst->district_name ? 'selected' : '' }}>
+                                             {{ $inst->district_name }}
+                                          </option>
+                                       @endforeach
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="form-group col-md-6">
+                                 <label class="account-label">Hall <span class="account-required">*</span></label>
+                                 <div class="account-input-wrap">
+                                    <span class="account-input-icon"><i class="fi fi-rs-marker"></i></span>
+                                    <select name="hall" id="account_hall" class="account-input" style="padding-left: 45px !important;" required>
+                                       @if(count($halls) > 0)
+                                          <option value="" disabled {{ empty($userData->hall) ? 'selected' : '' }}>-- Select Hall --</option>
+                                          @foreach($halls as $hall)
+                                             <option value="{{ $hall->city }}" {{ $userData->hall == $hall->city ? 'selected' : '' }}>
+                                                {{ $hall->city }}
+                                             </option>
+                                          @endforeach
+                                       @else
+                                          <option value="" disabled selected>No halls available for this institution</option>
+                                       @endif
+                                    </select>
                                  </div>
                               </div>
                            </div>
+                           @endif
+
+                            <div class="row">
+                               <div class="form-group col-md-12">
+                                  <label class="account-label">Address <span class="text-muted" style="font-weight: normal; font-size: 11px;">(Optional)</span></label>
+                                  <div class="account-input-wrap">
+                                     <span class="account-input-icon"><i class="fi-rs-marker"></i></span>
+                                     <input class="account-input" name="address" type="text" value="{{ $userData->address }}" placeholder="Enter your address" />
+                                  </div>
+                               </div>
+                            </div>
 
                            <!-- Hidden file input -->
                            <input class="d-none" name="photo" type="file" id="image" accept="image/*" />
@@ -272,7 +312,7 @@
    }
    .account-input {
       width: 100%;
-      padding: 12px 14px 12px 42px;
+      padding: 12px 14px 12px 45px !important;
       border: 1px solid #e5e7eb;
       border-radius: 12px;
       font-size: 14px;
@@ -352,6 +392,65 @@
            }
            reader.readAsDataURL(e.target.files['0']);
        });
+
+       $('select[name="institution"]').on('change', function() {
+           var district_id = $(this).find(':selected').data('id');
+           if (district_id) {
+               $.ajax({
+                   url: "{{ url('/hall-get/ajax') }}/" + district_id,
+                   type: "GET",
+                   dataType: "json",
+                   success: function(data) {
+                       var hallSelect = $('select[name="hall"]');
+                       if (data.length > 0) {
+                           hallSelect.html('<option value="" disabled selected>-- Select Hall --</option>');
+                           $.each(data, function(key, value) {
+                               hallSelect.append('<option value="' + value.city + '">' + value.city + '</option>');
+                           });
+                       } else {
+                           hallSelect.html('<option value="" disabled selected>No halls available for this institution</option>');
+                       }
+                   },
+                   error: function() {
+                       $('select[name="hall"]').html('<option value="" disabled selected>No halls available for this institution</option>');
+                   }
+               });
+           } else {
+               $('select[name="hall"]').html('<option value="" disabled selected>-- Select Hall --</option>');
+           }
+       });
+
+       var phoneInput = $('#account_phone');
+       var feedback = $('#account_phone_feedback');
+       var submitBtn = $('.account-save-btn');
+
+       function checkPhoneUnique() {
+           var phoneVal = phoneInput.val().trim();
+           if (phoneVal.length > 0) {
+               $.ajax({
+                   url: "{{ url('/check-phone-unique') }}",
+                   data: { phone: phoneVal },
+                   dataType: 'json',
+                   success: function(data) {
+                       if (data.unique) {
+                           phoneInput.css('border-color', '');
+                           feedback.hide();
+                           submitBtn.prop('disabled', false);
+                       } else {
+                           phoneInput.css('border-color', '#d9534f');
+                           feedback.show();
+                           submitBtn.prop('disabled', true);
+                       }
+                   }
+               });
+           } else {
+               phoneInput.css('border-color', '');
+               feedback.hide();
+               submitBtn.prop('disabled', false);
+           }
+       }
+
+       phoneInput.on('input change', checkPhoneUnique);
    });
 </script>
 @endsection

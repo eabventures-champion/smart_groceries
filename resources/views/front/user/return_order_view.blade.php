@@ -62,6 +62,8 @@
     /* ── Desktop Table ────────────────────────────── */
     .returns-table-wrap {
         padding: 8px 0 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .returns-table {
         width: 100%;

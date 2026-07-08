@@ -63,6 +63,8 @@
     /* ── Desktop Table ────────────────────────────── */
     .orders-table-wrap {
         padding: 8px 0 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .orders-table {
         width: 100%;
@@ -420,11 +422,11 @@
                                         <thead>
                                             <tr>
                                                 <th>S/N</th>
-                                                <th>Date</th>
+                                                <th>Order Placed</th>
                                                 <th>Total</th>
                                                 <th>Invoice</th>
                                                 <th>Status</th>
-                                                <th>Time</th>
+                                                <th>Order Delivered</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -432,7 +434,7 @@
                                             @foreach($orders as $key => $order)
                                             <tr>
                                                 <td class="sn-cell">{{ $key + 1 }}</td>
-                                                <td class="date-cell">{{ $order->order_date }}</td>
+                                                <td class="date-cell">{{ $order->created_at->format('d M Y, h:i A') }}</td>
                                                 <td class="amount-cell">Gh {{ number_format($order->amount, 2) }}</td>
                                                 <td><span class="invoice-cell">{{ $order->invoice_no }}</span></td>
                                                 <td>
@@ -458,16 +460,10 @@
                                                     @endif
                                                 </td>
                                                 <td class="time-cell">
-                                                    @if($order->status == 'queued' || $order->status == 'pending')
-                                                        {{ ($order->created_at)->diffForHumans() }}
-                                                    @elseif($order->status == 'confirmed')
-                                                        {{ Carbon\Carbon::parse($order->confirmed_date)->diffForHumans() }}
-                                                    @elseif($order->status == 'processing')
-                                                        {{ Carbon\Carbon::parse($order->processing_date)->diffForHumans() }}
-                                                    @elseif($order->status == 'delivering')
-                                                        {{ $order->shipped_date ? Carbon\Carbon::parse($order->shipped_date)->diffForHumans() : 'Just now' }}
+                                                    @if($order->status == 'delivered' || $order->delivered_date)
+                                                        {{ Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A') }}
                                                     @else
-                                                        {{ Carbon\Carbon::parse($order->delivered_date)->diffForHumans() }}
+                                                        <span class="text-muted">—</span>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -500,25 +496,18 @@
                                     <div class="mobile-order-card">
                                         <div class="mobile-card-header">
                                             <span class="mobile-card-invoice">#{{ $order->invoice_no }}</span>
-                                            <span class="mobile-card-time">
-                                                @if($order->status == 'queued' || $order->status == 'pending')
-                                                    {{ ($order->created_at)->diffForHumans() }}
-                                                @elseif($order->status == 'confirmed')
-                                                    {{ Carbon\Carbon::parse($order->confirmed_date)->diffForHumans() }}
-                                                @elseif($order->status == 'processing')
-                                                    {{ Carbon\Carbon::parse($order->processing_date)->diffForHumans() }}
-                                                @elseif($order->status == 'delivering')
-                                                    {{ $order->shipped_date ? Carbon\Carbon::parse($order->shipped_date)->diffForHumans() : 'Just now' }}
-                                                @else
-                                                    {{ Carbon\Carbon::parse($order->delivered_date)->diffForHumans() }}
-                                                @endif
-                                            </span>
                                         </div>
                                         <div class="mobile-card-body">
                                             <div class="mobile-card-row">
-                                                <span class="mobile-card-label">Date</span>
-                                                <span class="mobile-card-value">{{ $order->order_date }}</span>
+                                                <span class="mobile-card-label">Order Placed</span>
+                                                <span class="mobile-card-value">{{ $order->created_at->format('d M Y, h:i A') }}</span>
                                             </div>
+                                            @if($order->status == 'delivered' || $order->delivered_date)
+                                            <div class="mobile-card-row">
+                                                <span class="mobile-card-label">Order Delivered</span>
+                                                <span class="mobile-card-value">{{ Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A') }}</span>
+                                            </div>
+                                            @endif
                                             <div class="mobile-card-row">
                                                 <span class="mobile-card-label">Total Amount</span>
                                                 <span class="mobile-card-amount">Gh {{ number_format($order->amount, 2) }}</span>

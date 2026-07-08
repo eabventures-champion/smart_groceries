@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Chat Agent Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar: Navigation & Visitor List -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">🟢</span>
+                <span class="logo-text">Smart Chat</span>
+            </div>
+            
+            <div class="agent-profile">
+                <div class="agent-avatar">SA</div>
+                <div class="agent-info">
+                    <div class="agent-name">Support Agent</div>
+                    <div class="agent-status"><span class="status-dot"></span> Online</div>
+                </div>
+            </div>
+
+            <div class="visitor-section-title">Active Visitors (<span id="visitors-count">0</span>)</div>
+            <div id="visitors-list" class="visitors-list">
+                <!-- Dynamically populated -->
+                <div class="no-visitors">No visitors online</div>
+            </div>
+        </div>
+
+        <!-- Main Panel: Chat Window -->
+        <div class="chat-main">
+            <!-- Chat Active Window -->
+            <div id="chat-active-window" style="display: none;">
+                <div class="chat-main-header">
+                    <div>
+                        <h4 id="active-visitor-name" class="active-chat-title">Visitor Name</h4>
+                        <p id="active-visitor-status" class="active-chat-subtitle">Online</p>
+                    </div>
+                    <button class="join-chat-btn" id="join-chat-action">Join Conversation</button>
+                </div>
+
+                <div id="dashboard-messages-list" class="dashboard-messages">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <div class="chat-main-footer">
+                    <input type="text" id="dashboard-chat-input" placeholder="Type your reply here..." disabled />
+                    <button id="dashboard-send-btn" class="dashboard-send-btn" disabled>Send</button>
+                </div>
+            </div>
+
+            <!-- Chat Empty State -->
+            <div id="chat-empty-window" class="chat-empty-state">
+                <div class="empty-icon"><i class="fa-regular fa-comments"></i></div>
+                <h3>Select a visitor to start chatting</h3>
+                <p>Monitor active website visitors and click "Join Conversation" to reply.</p>
+            </div>
+        </div>
+
+        <!-- Right Panel: Visitor details metadata -->
+        <div class="details-panel">
+            <div class="panel-header">Visitor Information</div>
+            
+            <div id="visitor-details-content" style="display: none;">
+                <div class="detail-avatar" id="detail-avatar-text">VI</div>
+                
+                <div class="detail-section">
+                    <div class="detail-label">Name</div>
+                    <div class="detail-value" id="detail-name">Martha Fiawoyi</div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value" id="detail-email">fiawoyimartha@gmail.com</div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-label">Current Page</div>
+                    <div class="detail-value" id="detail-url"><a href="#" target="_blank">http://localhost:8000/</a></div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-label">IP Address</div>
+                    <div class="detail-value" id="detail-ip">127.0.0.1</div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-label">Browser / User Agent</div>
+                    <div class="detail-value" id="detail-ua">Chrome / Windows</div>
+                </div>
+            </div>
+
+            <div id="visitor-details-empty" class="visitor-details-empty">
+                Select an active visitor to view metadata details.
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

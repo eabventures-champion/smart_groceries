@@ -35,6 +35,18 @@ class UserController extends Controller
 
     public function user_profile_update(Request $request){
         $id = Auth::user()->id;
+
+        if ($request->has('phone') && !empty($request->phone)) {
+            $existingUser = User::where('phone', $request->phone)->where('id', '!=', $id)->first();
+            if ($existingUser) {
+                $notification = array(
+                    'message' => 'This phone number is already registered by another user.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification)->withInput();
+            }
+        }
+
         $data = User::find($id);
 
         $data->username = $request->username;
@@ -42,6 +54,13 @@ class UserController extends Controller
         $data->email = $request->email;
         $data->phone = $request->phone;
         $data->address = $request->address;
+
+        if ($request->has('institution')) {
+            $data->institution = $request->institution;
+        }
+        if ($request->has('hall')) {
+            $data->hall = $request->hall;
+        }
 
         if($request->file('photo')){
             $file = $request->file('photo');
@@ -57,7 +76,62 @@ class UserController extends Controller
             'message' => 'User Profile Updated Successfully',
             'alert-type' => 'success'
         );
+
+        if ($request->is_modal == 1) {
+            session()->flash('welcome_notice', true);
+            $notification = array(
+                'message' => 'Welcome to your Dashboard!',
+                'alert-type' => 'success'
+            );
+        }
+
         return redirect()->back()->with($notification);
+    }
+
+    public function check_phone_unique(Request $request) {
+        $phone = $request->phone;
+        $id = Auth::check() ? Auth::user()->id : null;
+        
+        $exists = User::where('phone', $phone);
+        if ($id) {
+            $exists->where('id', '!=', $id);
+        }
+        $exists = $exists->exists();
+        return response()->json(['unique' => !$exists]);
+    }
+
+    public function update_chat_analytics(Request $request) {
+        $type = $request->input('type');
+        $sessionId = session()->getId();
+        
+        if ($type === 'started') {
+            \Illuminate\Support\Facades\DB::table('chat_visitor_logs')
+                ->where('session_id', $sessionId)
+                ->orderBy('id', 'desc')
+                ->limit(1)
+                ->update([
+                    'chat_started' => true,
+                    'updated_at' => now()
+                ]);
+        } elseif ($type === 'answered') {
+            $visitorIp = $request->input('ip');
+            \Illuminate\Support\Facades\DB::table('chat_visitor_logs')
+                ->where('chat_started', true)
+                ->where('chat_answered', false)
+                ->where(function($query) use ($visitorIp) {
+                    if ($visitorIp) {
+                        $query->where('ip_address', $visitorIp);
+                    }
+                })
+                ->orderBy('id', 'desc')
+                ->limit(1)
+                ->update([
+                    'chat_answered' => true,
+                    'updated_at' => now()
+                ]);
+        }
+        
+        return response()->json(['success' => true]);
     }
 
     public function user_logout(Request $request){
@@ -149,7 +223,16 @@ class UserController extends Controller
         $id = Auth::user()->id;
         $userData = User::find($id);
 
-        return view('front.user.account_details', compact('userData'));
+        $institutions = \App\Models\DeliveryDistrict::where('district_name', '!=', '.select institution')->orderBy('district_name', 'ASC')->get();
+        $halls = [];
+        if ($userData->institution) {
+            $district = \App\Models\DeliveryDistrict::where('district_name', $userData->institution)->first();
+            if ($district) {
+                $halls = \App\Models\DeliveryCity::where('district_id', $district->id)->orderBy('city', 'ASC')->get();
+            }
+        }
+
+        return view('front.user.account_details', compact('userData', 'institutions', 'halls'));
     }
 
     public function user_change_password(){

@@ -260,7 +260,13 @@
                        $('select[name="city_id"]').html('');
                        var d =$('select[name="city_id"]').empty();
                        $.each(data, function(key, value){
-                           $('select[name="city_id"]').append('<option value="'+ value.id + '">' + value.city + '</option>');
+                           var selected = '';
+                           @if(Auth::check() && Auth::user()->hall)
+                               if (value.city == "{{ Auth::user()->hall }}") {
+                                   selected = 'selected';
+                               }
+                           @endif
+                           $('select[name="city_id"]').append('<option value="'+ value.id + '" ' + selected + '>' + value.city + '</option>');
                        });
                    },
                });

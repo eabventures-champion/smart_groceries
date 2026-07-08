@@ -163,7 +163,7 @@
    }
    .account-input {
       width: 100%;
-      padding: 12px 14px 12px 42px;
+      padding: 12px 14px 12px 45px !important;
       border: 1px solid #e5e7eb;
       border-radius: 12px;
       font-size: 14px;

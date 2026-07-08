@@ -105,7 +105,33 @@
       <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}"></script>
       <!-- Template  JS -->
       <script src="{{ asset('front/assets/js/main.js?v=5.3') }}"></script>
-      <script src="{{ asset('front/assets/js/shop.js?v=5.3') }}"></script>
-</body>
+      @php
+          try {
+              $ip = request()->ip();
+              $sessionId = session()->getId();
+              $url = request()->fullUrl();
+              
+              $recentVisitExists = \Illuminate\Support\Facades\DB::table('chat_visitor_logs')
+                  ->where('session_id', $sessionId)
+                  ->where('url', $url)
+                  ->where('created_at', '>=', now()->subMinutes(5))
+                  ->exists();
+                  
+              if (!$recentVisitExists) {
+                  \Illuminate\Support\Facades\DB::table('chat_visitor_logs')->insert([
+                      'ip_address' => $ip,
+                      'session_id' => $sessionId,
+                      'url' => $url,
+                      'chat_started' => false,
+                      'chat_answered' => false,
+                      'created_at' => now(),
+                      'updated_at' => now(),
+                  ]);
+              }
+          } catch (\Exception $e) {}
+      @endphp
 
+      <!-- Embed Smart Chat Live Support Widget -->
+      <script src="http://localhost:3000/widget.js" data-site-id="smart_groceries" async></script>
+</body>
 </html>

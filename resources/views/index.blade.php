@@ -294,31 +294,52 @@
 /* ── Quick Links ── */
 .quick-links-grid {
    display: grid;
-   grid-template-columns: 1fr;
-   gap: 10px;
+   grid-template-columns: repeat(5, 1fr);
+   gap: 15px;
 }
 
 .quick-link-item {
    display: flex;
    align-items: center;
-   gap: 15px;
-   padding: 14px 20px;
+   gap: 12px;
+   padding: 14px 16px;
    border-radius: 12px;
    color: #475569;
    text-decoration: none;
    transition: all 0.25s ease;
    font-weight: 600;
    font-size: 14px;
-   border: 1px solid transparent;
+   border: 1px solid #f1f2f4;
+   background: #ffffff;
 }
 
 .quick-link-item:hover {
    background: #fafbfc;
-   border-color: #e5e7eb;
+   border-color: #3BB77E;
    color: #3BB77E;
    text-decoration: none;
-   transform: translateX(4px);
+   transform: translateY(-3px);
+   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
+
+@media (max-width: 1200px) {
+   .quick-links-grid {
+      grid-template-columns: repeat(3, 1fr);
+   }
+}
+
+@media (max-width: 768px) {
+   .quick-links-grid {
+      grid-template-columns: repeat(2, 1fr);
+   }
+}
+
+@media (max-width: 480px) {
+   .quick-links-grid {
+      grid-template-columns: 1fr;
+   }
+}
+
 
 .quick-link-item .link-icon {
    width: 38px;
@@ -561,27 +582,27 @@
                         {{-- ═══ QUICK LINKS ═══ --}}
                         <div class="premium-dashboard-card">
                            <div class="premium-card-title">
-                              <i class="fa-solid fa-bolt" style="color: #eab308;"></i> Quick Actions
+                              <i class="fi fi-rs-lightning" style="color: #eab308;"></i> Quick Actions
                            </div>
                            <div class="quick-links-grid">
                               <a href="{{ route('user.order.page') }}" class="quick-link-item">
-                                 <div class="link-icon green"><i class="fa-solid fa-list-check"></i></div>
+                                 <div class="link-icon green"><i class="fi fi-rs-order-history"></i></div>
                                  <span>View My Orders</span>
                               </a>
                               <a href="{{ route('user.track.order') }}" class="quick-link-item">
-                                 <div class="link-icon blue"><i class="fa-solid fa-map-pin"></i></div>
+                                 <div class="link-icon blue"><i class="fi fi-rs-map-location-track"></i></div>
                                  <span>Track an Order</span>
                               </a>
                               <a href="{{ route('user.account.page') }}" class="quick-link-item">
-                                 <div class="link-icon orange"><i class="fa-solid fa-user-gear"></i></div>
+                                 <div class="link-icon orange"><i class="fi-rs-user"></i></div>
                                  <span>Account Details</span>
                               </a>
                               <a href="{{ route('user.change.password') }}" class="quick-link-item">
-                                 <div class="link-icon purple"><i class="fa-solid fa-key"></i></div>
+                                 <div class="link-icon purple"><i class="fi fi-rr-lock"></i></div>
                                  <span>Change Password</span>
                               </a>
                               <a href="{{ route('return.order.page') }}" class="quick-link-item">
-                                 <div class="link-icon red"><i class="fa-solid fa-arrow-rotate-left"></i></div>
+                                 <div class="link-icon red"><i class="fi fi-rr-truck-arrow-left"></i></div>
                                  <span>Return Orders</span>
                               </a>
                            </div>

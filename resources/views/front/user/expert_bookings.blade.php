@@ -62,6 +62,8 @@
     /* ── Desktop Table ────────────────────────────── */
     .bookings-table-wrap {
         padding: 8px 0 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .bookings-table {
         width: 100%;
