@@ -679,11 +679,15 @@
 
 <!-- Chart.js and Socket.io Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+@php
+    $chatServerUrl = env('CHAT_SERVER_URL', request()->getScheme() . '://' . request()->getHost() . ':3000');
+    $chatServerUrl = rtrim($chatServerUrl, '/');
+@endphp
+<script src="{{ $chatServerUrl }}/socket.io/socket.io.js"></script>
 
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        const socket = io('http://localhost:3000');
+        const socket = io('{{ $chatServerUrl }}');
 
         let visitorsList = [];
         let activeChats = {};

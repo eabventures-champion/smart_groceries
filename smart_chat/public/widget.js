@@ -1,5 +1,7 @@
 (function() {
-    const SERVER_URL = 'http://localhost:3000';
+    // Automatically detect the script's source origin to use as the SERVER_URL
+    const currentScript = document.currentScript || document.querySelector('script[src*="widget.js"]');
+    const SERVER_URL = currentScript ? new URL(currentScript.src).origin : 'http://localhost:3000';
     
     // 1. Inject Stylesheet
     const link = document.createElement('link');

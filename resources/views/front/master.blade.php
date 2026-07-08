@@ -1778,10 +1778,15 @@
           } catch (\Exception $e) {}
       @endphp
 
-      <!-- Embed Smart Chat Live Support Widget -->
-      <script src="http://localhost:3000/widget.js" data-site-id="smart_groceries" async></script>
+       @php
+           $chatServerUrl = env('CHAT_SERVER_URL', request()->getScheme() . '://' . request()->getHost() . ':3000');
+           $chatServerUrl = rtrim($chatServerUrl, '/');
+       @endphp
 
-      @include('front.sections.floating_panel')
+       <!-- Embed Smart Chat Live Support Widget -->
+       <script src="{{ $chatServerUrl }}/widget.js" data-site-id="smart_groceries" async></script>
+
+       @include('front.sections.floating_panel')
 
    </body>
 </html>
