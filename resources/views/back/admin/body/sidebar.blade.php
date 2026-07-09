@@ -93,7 +93,7 @@
             </li>
             <li> <a href="{{ route('all.affiliates') }}"><i class="bx bx-right-arrow-alt"></i>All Affiliates</a>
             </li>
-            <li> <a href="{{ route('admin.live.chat') }}"><i class="bx bx-right-arrow-alt"></i>Support Live Chat</a>
+            <li> <a href="{{ route('admin.live.chat') }}"><i class="bx bx-right-arrow-alt"></i>Tawk.to Live Chat</a>
             </li>
          </ul>
       </li>

@@ -144,81 +144,6 @@
       <script src="{{ asset('front/assets/js/plugins/waypoints.js') }}"></script>
       <script src="{{ asset('front/assets/js/plugins/counterup.js') }}"></script>
       <script src="{{ asset('front/assets/js/plugins/jquery.countdown.min.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/images-loaded.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/isotope.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/scrollup.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.vticker-min.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.theia.sticky.js') }}"></script>
-      <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}"></script>
-      <!-- Template  JS -->
-      <script src="{{ asset('front/assets/js/main.js?v=5.3') }}"></script>
-      @php
-          try {
-              $ip = request()->ip();
-              $sessionId = session()->getId();
-              $url = request()->fullUrl();
-              
-              $recentVisitExists = \Illuminate\Support\Facades\DB::table('chat_visitor_logs')
-                  ->where('session_id', $sessionId)
-                  ->where('url', $url)
-                  ->where('created_at', '>=', now()->subMinutes(5))
-                  ->exists();
-                  
-              if (!$recentVisitExists) {
-                  \Illuminate\Support\Facades\DB::table('chat_visitor_logs')->insert([
-                      'ip_address' => $ip,
-                      'session_id' => $sessionId,
-                      'url' => $url,
-                      'chat_started' => false,
-                      'chat_answered' => false,
-                      'created_at' => now(),
-                      'updated_at' => now(),
-                  ]);
-              }
-          } catch (\Exception $e) {}
-      @endphp
-{{-- <x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
-
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout> --}}
-
-
-
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -357,22 +282,18 @@
           } catch (\Exception $e) {}
       @endphp
 
-       @php
-           $chatServerUrl = env('CHAT_SERVER_URL', request()->getScheme() . '://' . request()->getHost() . ':3000');
-           $chatServerUrl = rtrim($chatServerUrl, '/');
-       @endphp
-
-       <!-- Embed Smart Chat Live Support Widget -->
-       <script>
-           window.addEventListener('load', function() {
-               setTimeout(function() {
-                   const script = document.createElement('script');
-                   script.src = "{{ $chatServerUrl }}/widget.js";
-                   script.async = true;
-                   script.setAttribute('data-site-id', 'smart_groceries');
-                   document.head.appendChild(script);
-               }, 100);
-           });
-       </script>
+        <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/6a4fa09ba6558f1d451fdc7b/1jt3gmors';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+        </script>
+        <!--End of Tawk.to Script-->
 </body>
 </html>
