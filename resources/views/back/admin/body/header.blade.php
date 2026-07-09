@@ -76,28 +76,41 @@
                     </a>
                     <div class="header-notifications-list">
                        
-                       @php
-                       $user = Auth::user();
-                       @endphp
+                        @php
+                        $user = Auth::user();
+                        @endphp
 
-                       @forelse($user->notifications as $notification)
-                       <a class="dropdown-item" href="javascript:;" onclick="markNotificationRead('{{ $notification->id }}')">
-                          <div class="d-flex align-items-center">
-                             <div class="notify bg-light-warning text-warning"><i class="bx bx-send"></i>
-                             </div>
-                             <div class="flex-grow-1">
-                                <h6 class="msg-name">Message 
-                                   <span class="msg-time float-end">
-                                      {{ Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
-                                   </span>
-                                </h6>
-                                <p class="msg-info">{{ $notification->data['message'] }}</p>
-                             </div>
-                          </div>
-                       </a>
-                       @empty
-
-                       @endforelse
+                        @forelse($user->notifications as $notification)
+                        @php
+                           $isUnread = is_null($notification->read_at);
+                        @endphp
+                        <a class="dropdown-item" href="javascript:;" onclick="markNotificationRead('{{ $notification->id }}')" style="{{ $isUnread ? 'background-color: rgba(59, 183, 126, 0.05);' : '' }} border-bottom: 1px solid #f1f2f4; padding: 12px 16px;">
+                           <div class="d-flex align-items-start gap-2">
+                              <div class="notify {{ $isUnread ? 'bg-light-success text-success' : 'bg-light-secondary text-secondary' }}" style="width: 32px; height: 32px; line-height: 32px; font-size: 16px; margin-right: 0; flex-shrink: 0; margin-top: 2px;">
+                                 <i class="bx {{ $isUnread ? 'bx-bell' : 'bx-envelope-open' }}"></i>
+                              </div>
+                              <div class="flex-grow-1" style="min-width: 0;">
+                                 <h6 class="msg-name {{ $isUnread ? 'fw-bold text-dark' : 'text-secondary' }}" style="font-size: 13px; line-height: 1.2; margin-bottom: 3px; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <span>{{ $isUnread ? 'New Message' : 'Message' }}</span>
+                                    <span class="msg-time text-muted fw-normal" style="font-size: 10px; margin-left: 8px; flex-shrink: 0;">
+                                       {{ Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
+                                    </span>
+                                 </h6>
+                                 <p class="msg-info" style="font-size: 12px; line-height: 1.4; color: {{ $isUnread ? '#212529' : '#6c757d' }}; white-space: normal !important; word-wrap: break-word !important; overflow: visible !important; text-overflow: clip !important; margin-bottom: 0;">
+                                    {{ $notification->data['message'] }}
+                                 </p>
+                              </div>
+                              @if($isUnread)
+                              <div style="width: 8px; height: 8px; background-color: #3bb77e; border-radius: 50%; margin-top: 14px; flex-shrink: 0;"></div>
+                              @endif
+                           </div>
+                        </a>
+                        @empty
+                        <div class="text-center py-4 text-muted">
+                           <i class="bx bx-bell-off" style="font-size: 24px; color: #a0aec0;"></i>
+                           <p class="mb-0 mt-1" style="font-size: 12px;">No notifications found</p>
+                        </div>
+                        @endforelse
                     </div>
                     <a href="{{ route('admin.delete.notifications') }}">
                        <div class="text-center msg-footer">Clear All Notifications</div>

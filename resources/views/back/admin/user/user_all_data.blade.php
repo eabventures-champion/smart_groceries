@@ -3,7 +3,7 @@
 <div class="page-content">
    <!--breadcrumb-->
    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-      <div class="breadcrumb-title pe-3">All User Data </div>
+      <div class="breadcrumb-title pe-3">All User Data <span class="badge bg-success ms-2" style="font-size: 13px;">{{ count($users) }}</span></div>
       {{-- <div class="ps-3">
          <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 p-0">

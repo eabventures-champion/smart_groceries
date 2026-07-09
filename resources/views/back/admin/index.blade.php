@@ -443,11 +443,20 @@
                     </thead>
                     <tbody>
                         @forelse(App\Models\User::where('role', 'user')->whereNotNull('referral_code')->get()->map(function($user) {
-                            $user->referrals_count = 0;
+                            $user->active_referrals = 0;
+                            $user->total_referrals = 0;
+                            $user->total_earned = 0;
+                            $user->displayed_balance = 0;
                             if ($user->status === 'active') {
-                                $user->referrals_count = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->count();
+                                $user->active_referrals = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->count();
+                                $user->total_referrals = App\Models\User::where('referred_by', $user->id)->count();
+                                $user->total_earned = App\Models\AffiliateReferral::where('referrer_id', $user->id)
+                                    ->whereHas('referred', function($q) {
+                                        $q->where('status', 'active');
+                                    })->sum('commission_earned');
+                                $user->displayed_balance = $user->referral_balance;
                             }
-                            $user->total_earned = App\Models\AffiliateReferral::where('referrer_id', $user->id)->sum('commission_earned');
+                            $user->referrals_count = $user->active_referrals;
                             return $user;
                         })->sortByDesc('referrals_count')->take(5) as $affiliate)
                         <tr>
@@ -463,9 +472,9 @@
                                 </div>
                             </td>
                             <td><code style="font-size: 12px; font-weight: bold; color: #7B2828;">{{ $affiliate->referral_code }}</code></td>
-                            <td><span class="badge bg-info text-dark" style="font-size: 11px; font-weight: 600;">{{ $affiliate->referrals_count }} referrals</span></td>
+                            <td><span class="badge bg-info text-dark" style="font-size: 11px; font-weight: 600;">{{ $affiliate->active_referrals }}/{{ $affiliate->total_referrals }} referrals</span></td>
                             <td style="font-weight: 600; color: #2e8b5e;">Gh {{ number_format($affiliate->total_earned, 2) }}</td>
-                            <td style="font-weight: 600; color: #7B2828;">Gh {{ number_format($affiliate->referral_balance, 2) }}</td>
+                            <td style="font-weight: 600; color: #7B2828;">Gh {{ number_format($affiliate->displayed_balance ?? 0, 2) }}</td>
                             <td>
                                 <a href="{{ route('admin.client.detail', $affiliate->id) }}" class="btn btn-sm text-white" style="background-color: #3bb77e; border-color: #3bb77e; border-radius: 6px; font-size: 11px; padding: 4px 8px;">
                                     View Details
