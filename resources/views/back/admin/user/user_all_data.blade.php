@@ -48,8 +48,12 @@
                         @if(!empty($item->phone))
                         <span class="badge bg-light text-secondary border mt-1" style="font-weight: 500; font-size: 11px;">{{ $item->phone }}</span>
                         @endif
+                     <td> 
+                        <div>{{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('M d, Y h:i A') : 'N/A' }}</div>
+                        @if($item->created_at)
+                        <span class="badge badge-pill bg-success mt-1" style="font-weight: 500; font-size: 11px;">{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</span>
+                        @endif
                      </td>
-                     <td> {{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('M d, Y h:i A') : 'N/A' }} </td>
                      <td>
                         @if($item->user_online())
                         <span class="badge badge-pill bg-success">Active Now </span>
