@@ -27,10 +27,9 @@
                <thead>
                   <tr>
                      <th>S/N</th>
-                     <th>Image </th>
                      <th>Name </th>
                      <th>Email </th>
-                     <th>Phone </th>
+                     <th>Joined </th>
                      <th>Last seen </th>
                      <th>Action</th>
                   </tr>
@@ -39,19 +38,23 @@
                   @foreach($users as $key => $item)		
                   <tr>
                      <td> {{ $key+1 }} </td>
-                     <td> <img src="{{ (!empty($item->photo)) ? url('front/assets/imgs/users/'.$item->photo):url('front/assets/imgs/users/no_image.jpg') }}" alt="Admin" class="rounded-circle p-1 bg-primary" width="60" height="60"></td>
                      <td> 
                         <a href="{{ route('admin.client.detail', $item->id) }}" style="font-weight: 600; color: #212529; text-decoration: none;" class="hover-primary">
                            {{ $item->name }} 
                         </a> 
                      </td>
-                     <td> {{ $item->email }}  </td>
-                     <td> {{ $item->phone }}  </td>
+                     <td> 
+                        <div>{{ $item->email }}</div>
+                        @if(!empty($item->phone))
+                        <span class="badge bg-light text-secondary border mt-1" style="font-weight: 500; font-size: 11px;">{{ $item->phone }}</span>
+                        @endif
+                     </td>
+                     <td> {{ $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('M d, Y h:i A') : 'N/A' }} </td>
                      <td>
                         @if($item->user_online())
                         <span class="badge badge-pill bg-success">Active Now </span>
                         @else
-                        <span class="badge badge-pill bg-danger"> {{ Carbon\Carbon::parse($item->last_seen)->diffForHumans() }} </span>
+                        <span class="badge badge-pill bg-danger"> {{ $item->last_seen ? Carbon\Carbon::parse($item->last_seen)->diffForHumans() : 'Never' }} </span>
                         @endif
                      </td>
                      <td>
