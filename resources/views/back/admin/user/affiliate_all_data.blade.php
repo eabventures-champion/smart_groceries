@@ -36,7 +36,10 @@
                <tbody>
                   @foreach($affiliates as $key => $item)		
                   @php
-                      $referralsCount = \App\Models\User::where('referred_by', $item->id)->count();
+                      $referralsCount = 0;
+                      if ($item->status === 'active') {
+                          $referralsCount = \App\Models\User::where('referred_by', $item->id)->where('status', 'active')->count();
+                      }
                       $totalEarned = \App\Models\AffiliateReferral::where('referrer_id', $item->id)->sum('commission_earned');
                   @endphp
                   <tr>
@@ -49,7 +52,11 @@
                      </td>
                      <td> {{ $item->email }} </td>
                      <td> <code style="font-size: 13px; font-weight: bold; color: #7B2828;">{{ $item->referral_code }}</code> </td>
-                     <td> <span class="badge bg-info text-dark" style="font-size: 12px; font-weight: 600;">{{ $referralsCount }} referrals</span> </td>
+                     <td>
+                        <a href="javascript:void(0);" onclick="showReferralDetails({{ $item->id }}, '{{ addslashes($item->name) }}')" class="badge bg-info text-dark hover-shadow" style="font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; display: inline-block;">
+                           {{ $referralsCount }} referrals
+                        </a>
+                     </td>
                      <td style="font-weight: 600; color: #2e8b5e;"> Gh {{ number_format($totalEarned, 2) }} </td>
                      <td style="font-weight: 600; color: #7B2828;"> Gh {{ number_format($item->referral_balance, 2) }} </td>
                      <td>
@@ -65,4 +72,108 @@
       </div>
    </div>
 </div>
+
+<!-- Referral Details Modal -->
+<div class="modal fade" id="referralDetailsModal" tabindex="-1" aria-labelledby="referralDetailsModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+         <div class="modal-header text-white" style="background: linear-gradient(135deg, #3bb77e 0%, #2fa56f 100%); border-radius: 16px 16px 0 0; padding: 18px 24px;">
+            <h5 class="modal-title text-white fw-bold" id="referralDetailsModalLabel">
+               <i class="bx bx-group me-2" style="font-size: 20px;"></i>Referred Users
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body p-4" style="max-height: 450px; overflow-y: auto;">
+            <div id="referrals-modal-loader" class="text-center py-4">
+               <div class="spinner-border text-success" role="status">
+                  <span class="visually-hidden">Loading...</span>
+               </div>
+               <p class="text-muted mt-2">Loading referred user list...</p>
+            </div>
+            
+            <div id="referrals-table-wrapper" style="display: none;">
+               <div class="table-responsive">
+                  <table class="table table-hover align-middle">
+                     <thead class="table-light">
+                        <tr>
+                           <th>Name</th>
+                           <th>Email</th>
+                           <th>Phone</th>
+                           <th>Joined</th>
+                           <th>Status</th>
+                        </tr>
+                     </thead>
+                     <tbody id="referrals-list-tbody">
+                        <!-- Dynamic referred users here -->
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+
+            <div id="referrals-empty-state" class="text-center py-4" style="display: none;">
+               <i class="bx bx-info-circle text-muted" style="font-size: 48px;"></i>
+               <p class="text-muted mt-2 mb-0">No active referred users found for this affiliate partner.</p>
+            </div>
+         </div>
+         <div class="modal-footer border-0" style="padding: 16px 24px;">
+            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 8px;">Close</button>
+         </div>
+      </div>
+   </div>
+</div>
+
+<script>
+function showReferralDetails(referrerId, referrerName) {
+    // Set referrer name in modal title
+    document.getElementById('referralDetailsModalLabel').innerHTML = `<i class="bx bx-group me-2" style="font-size: 20px;"></i>Referred by ${referrerName}`;
+    
+    // Reset modal display states
+    document.getElementById('referrals-modal-loader').style.display = 'block';
+    document.getElementById('referrals-table-wrapper').style.display = 'none';
+    document.getElementById('referrals-empty-state').style.display = 'none';
+    document.getElementById('referrals-list-tbody').innerHTML = '';
+    
+    // Show modal
+    const referralModal = new bootstrap.Modal(document.getElementById('referralDetailsModal'));
+    referralModal.show();
+    
+    // Fetch referred users via AJAX
+    fetch(`/admin/affiliate/referrals/${referrerId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('referrals-modal-loader').style.display = 'none';
+            
+            if (data && data.length > 0) {
+                let rowsHtml = '';
+                data.forEach(user => {
+                    const statusBadge = user.status === 'active' 
+                        ? `<span class="badge bg-success">Active</span>` 
+                        : `<span class="badge bg-danger">Inactive</span>`;
+                        
+                    const phoneText = user.phone ? user.phone : '<span class="text-muted">N/A</span>';
+                    
+                    rowsHtml += `
+                        <tr>
+                            <td><strong>${user.name}</strong></td>
+                            <td>${user.email}</td>
+                            <td>${phoneText}</td>
+                            <td>${user.date_joined}</td>
+                            <td>${statusBadge}</td>
+                        </tr>
+                    `;
+                });
+                
+                document.getElementById('referrals-list-tbody').innerHTML = rowsHtml;
+                document.getElementById('referrals-table-wrapper').style.display = 'block';
+            } else {
+                document.getElementById('referrals-empty-state').style.display = 'block';
+            }
+        })
+        .catch(err => {
+            console.error('Error fetching referrals:', err);
+            document.getElementById('referrals-modal-loader').style.display = 'none';
+            document.getElementById('referrals-empty-state').style.display = 'block';
+        });
+}
+</script>
 @endsection

@@ -353,6 +353,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('/all/clients' , 'all_user')->name('all.users');
             Route::get('/client/detail/{id}', 'client_detail')->name('admin.client.detail');
             Route::get('/all/affiliates', 'all_affiliates')->name('all.affiliates');
+            Route::get('/affiliate/referrals/{id}', 'get_referral_details')->name('admin.affiliate.referrals');
             Route::get('/admin/live-chat', 'admin_live_chat')->name('admin.live.chat');
         });
 

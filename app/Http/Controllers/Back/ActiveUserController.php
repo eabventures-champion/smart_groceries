@@ -69,6 +69,20 @@ class ActiveUserController extends Controller
         return view('back.admin.user.affiliate_all_data', compact('affiliates'));
     }
 
+    public function get_referral_details($id){
+        $referredUsers = User::where('referred_by', $id)
+            ->select('id', 'name', 'email', 'phone', 'status', 'created_at')
+            ->orderBy('id', 'desc')
+            ->get();
+            
+        $referredUsers->transform(function($user) {
+            $user->date_joined = $user->created_at ? \Carbon\Carbon::parse($user->created_at)->format('M d, Y h:i A') : 'N/A';
+            return $user;
+        });
+
+        return response()->json($referredUsers);
+    }
+
     public function admin_live_chat(){
         return view('back.admin.support_chat');
     }

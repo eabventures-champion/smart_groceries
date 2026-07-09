@@ -779,7 +779,7 @@
                         <span style="font-size: 9px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px;">Share referral link</span>
                         <div style="display: flex; gap: 6px;">
                             <input type="text" id="aff-ref-link" readonly value="" class="sg-input" style="padding: 8px; font-size: 10px; font-weight: 500; font-family: monospace; background: #f7fafc; flex: 1;">
-                            <button onclick="copyAffRefLink()" class="sg-btn-primary" style="width: auto; padding: 8px 14px;">Copy</button>
+                            <button id="aff-copy-btn" onclick="copyAffRefLink()" class="sg-btn-primary" style="width: auto; padding: 8px 14px;">Copy</button>
                         </div>
                     </div>
                 </div>
@@ -1540,6 +1540,20 @@
         copyText.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(copyText.value);
 
+        // Update button feedback
+        const copyBtn = document.getElementById("aff-copy-btn");
+        if (copyBtn) {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "Copied!";
+            copyBtn.style.backgroundColor = "#2fa56f"; // Soft feedback green
+            copyBtn.style.borderColor = "#2fa56f";
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.style.backgroundColor = "";
+                copyBtn.style.borderColor = "";
+            }, 2000);
+        }
+
         // Show SweetAlert2 toast if available
         if (typeof Swal !== 'undefined') {
             Swal.fire({
@@ -1550,8 +1564,6 @@
                 showConfirmButton: false,
                 timer: 2000
             });
-        } else {
-            alert("Referral link copied to clipboard!");
         }
     }
 

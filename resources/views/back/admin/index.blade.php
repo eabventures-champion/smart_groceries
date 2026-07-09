@@ -443,7 +443,10 @@
                     </thead>
                     <tbody>
                         @forelse(App\Models\User::where('role', 'user')->whereNotNull('referral_code')->get()->map(function($user) {
-                            $user->referrals_count = App\Models\User::where('referred_by', $user->id)->count();
+                            $user->referrals_count = 0;
+                            if ($user->status === 'active') {
+                                $user->referrals_count = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->count();
+                            }
                             $user->total_earned = App\Models\AffiliateReferral::where('referrer_id', $user->id)->sum('commission_earned');
                             return $user;
                         })->sortByDesc('referrals_count')->take(5) as $affiliate)
