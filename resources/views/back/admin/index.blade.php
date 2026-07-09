@@ -454,7 +454,7 @@
                                     ->whereHas('referred', function($q) {
                                         $q->where('status', 'active');
                                     })->sum('commission_earned');
-                                $user->displayed_balance = $user->referral_balance;
+                                $user->displayed_balance = $user->total_earned; // For now equal to total earned (no withdrawals made yet)
                             }
                             $user->referrals_count = $user->active_referrals;
                             return $user;
