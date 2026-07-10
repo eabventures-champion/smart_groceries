@@ -450,11 +450,14 @@
                             if ($user->status === 'active') {
                                 $user->active_referrals = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->count();
                                 $user->total_referrals = App\Models\User::where('referred_by', $user->id)->count();
-                                $user->total_earned = App\Models\AffiliateReferral::where('referrer_id', $user->id)
-                                    ->whereHas('referred', function($q) {
-                                        $q->where('status', 'active');
-                                    })->sum('commission_earned');
-                                $user->displayed_balance = $user->total_earned; // For now equal to total earned (no withdrawals made yet)
+                                
+                                $flatAmount = App\Models\SiteSetting::find(1)->referral_flat_amount ?? 2.00;
+                                $referredUserIds = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->pluck('id');
+                                $qualifyingReferralsCount = App\Models\Order::whereIn('user_id', $referredUserIds)->where('status', 'delivered')->distinct('user_id')->count('user_id');
+                                
+                                $user->total_earned = $qualifyingReferralsCount * $flatAmount;
+                                $totalRedrawal = App\Models\AffiliatePayout::where('user_id', $user->id)->where('status', 'completed')->sum('amount');
+                                $user->displayed_balance = max(0, $user->total_earned - $totalRedrawal);
                             }
                             $user->referrals_count = $user->active_referrals;
                             return $user;

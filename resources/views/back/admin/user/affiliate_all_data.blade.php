@@ -24,10 +24,10 @@
                   <tr>
                      <th>S/N</th>
                      <th>Name</th>
-                     <th>Email</th>
                      <th>Referral Code</th>
                      <th>Referrals Count</th>
                      <th>Total Earned</th>
+                     <th>Total Redrawal</th>
                      <th>Current Balance</th>
                      <th>Action</th>
                   </tr>
@@ -38,15 +38,20 @@
                       $activeCount = 0;
                       $totalCount = 0;
                       $totalEarned = 0;
+                      $totalRedrawal = 0;
                       $displayedBalance = 0;
                       if ($item->status === 'active') {
                           $activeCount = \App\Models\User::where('referred_by', $item->id)->where('status', 'active')->count();
                           $totalCount = \App\Models\User::where('referred_by', $item->id)->count();
-                          $totalEarned = \App\Models\AffiliateReferral::where('referrer_id', $item->id)
-                              ->whereHas('referred', function($q) {
-                                  $q->where('status', 'active');
-                              })->sum('commission_earned');
-                          $displayedBalance = $totalEarned; // For now equal to total earned (no withdrawals made yet)
+                          
+                          // Calculated dynamically: flat bonus only on first delivered order of active referred users
+                          $flatAmount = \App\Models\SiteSetting::find(1)->referral_flat_amount ?? 2.00;
+                          $referredUserIds = \App\Models\User::where('referred_by', $item->id)->where('status', 'active')->pluck('id');
+                          $qualifyingReferralsCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->where('status', 'delivered')->distinct('user_id')->count('user_id');
+                          
+                          $totalEarned = $qualifyingReferralsCount * $flatAmount;
+                          $totalRedrawal = \App\Models\AffiliatePayout::where('user_id', $item->id)->where('status', 'completed')->sum('amount');
+                          $displayedBalance = max(0, $totalEarned - $totalRedrawal);
                       }
                   @endphp
                   <tr>
@@ -62,22 +67,27 @@
                                <span class="badge bg-light-danger text-danger" style="font-size: 10px; font-weight: 600;">Inactive</span>
                            @endif
                         </div>
-                        @if($item->referrer)
-                        <div class="mt-1">
-                           <span class="badge bg-success text-white" style="font-size: 10px; font-weight: 500; text-transform: none;">
-                              Referred by: {{ $item->referrer->name }}
+                        <div class="d-flex flex-wrap gap-1 mt-1">
+                           <span class="badge bg-light text-secondary border" style="font-size: 10px; font-weight: 500; text-transform: none;">
+                              {{ $item->email }}
                            </span>
                         </div>
-                        @endif
                      </td>
-                     <td> {{ $item->email }} </td>
                      <td> <code style="font-size: 13px; font-weight: bold; color: #7B2828;">{{ $item->referral_code }}</code> </td>
                      <td>
                         <a href="javascript:void(0);" onclick="showReferralDetails({{ $item->id }}, '{{ addslashes($item->name) }}')" class="badge bg-info text-dark hover-shadow" style="font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; display: inline-block;">
                            {{ $activeCount }}/{{ $totalCount }} referrals
                         </a>
+                        @if($item->referrer)
+                        <div class="mt-1">
+                           <span class="badge bg-success text-white" style="font-size: 10px; font-weight: 500; text-transform: none; display: inline-block;">
+                              Referred by: {{ $item->referrer->name }}
+                           </span>
+                        </div>
+                        @endif
                      </td>
                      <td style="font-weight: 600; color: #2e8b5e;"> Gh {{ number_format($totalEarned, 2) }} </td>
+                     <td style="font-weight: 600; color: #17a2b8;"> Gh {{ number_format($totalRedrawal, 2) }} </td>
                      <td style="font-weight: 600; color: #7B2828;"> Gh {{ number_format($displayedBalance, 2) }} </td>
                      <td>
                         <a href="{{ route('admin.client.detail', $item->id) }}" class="btn btn-sm text-white" style="background-color: #3bb77e; border-color: #3bb77e; border-radius: 6px;">

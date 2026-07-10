@@ -755,8 +755,8 @@
             <div id="affiliate-member" style="display: none; flex-direction: column; gap: 16px;">
                 <!-- Stats Dashboard Grid -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
-                    <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px;">
-                        <span style="font-size: 9px; font-weight: 700; color: #718096; text-transform: uppercase;">Referred</span>
+                    <div onclick="toggleReferredFriendsSection()" style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#edf2f7'; this.style.borderColor='#cbd5e0';" onmouseout="this.style.background='#f7fafc'; this.style.borderColor='#e2e8f0';">
+                        <span style="font-size: 9px; font-weight: 700; color: #718096; text-transform: uppercase; border-bottom: 1px dashed #a0aec0; padding-bottom: 1px;">Referred</span>
                         <div id="aff-stat-count" style="font-size: 15px; font-weight: 900; color: #2d3748; margin-top: 4px;">0</div>
                     </div>
                     <div style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 12px; padding: 10px;">
@@ -766,6 +766,17 @@
                     <div style="background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 12px; padding: 10px;">
                         <span style="font-size: 9px; font-weight: 700; color: #0f766e; text-transform: uppercase;">Total Paid</span>
                         <div style="font-size: 12px; font-weight: 900; color: #0f766e; margin-top: 4px;">Gh <span id="aff-stat-total">0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- Referred Friends List (Collapsible) -->
+                <div id="referred-friends-section" style="display: none; background: #ffffff; border: 1px solid #edf2f7; border-radius: 12px; padding: 12px; flex-direction: column; gap: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; padding-bottom: 6px;">
+                        <h4 style="margin: 0; font-size: 10px; font-weight: 900; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px;">Referred Friends Details</h4>
+                        <button onclick="toggleReferredFriendsSection()" style="background: none; border: none; color: #a0aec0; cursor: pointer; font-size: 16px; font-weight: 700; padding: 0; line-height: 1;">&times;</button>
+                    </div>
+                    <div id="referred-friends-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto; padding-right: 4px;" class="sg-scrollbar">
+                        <!-- Loaded dynamically -->
                     </div>
                 </div>
 
@@ -1477,10 +1488,50 @@
     }
 
     // Affiliate operations
+    let cachedReferredUsers = [];
+
+    function toggleReferredFriendsSection() {
+        const section = $('#referred-friends-section');
+        if (section.css('display') === 'none') {
+            renderReferredUsersList();
+            section.css('display', 'flex');
+        } else {
+            section.css('display', 'none');
+        }
+    }
+
+    function renderReferredUsersList() {
+        let html = '';
+        if (cachedReferredUsers && cachedReferredUsers.length > 0) {
+            $.each(cachedReferredUsers, function(i, friend) {
+                const statusBadge = friend.status === 'active' 
+                    ? `<span style="font-size: 8px; font-weight: 700; background-color: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;">Active</span>`
+                    : `<span style="font-size: 8px; font-weight: 700; background-color: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px;">Inactive</span>`;
+                
+                html += `
+                    <div style="display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 11px; font-weight: 800; color: #2d3748;">${friend.name}</span>
+                            ${statusBadge}
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 9px; color: #718096; font-weight: 600;">
+                            <span>${friend.email}</span>
+                            <span>Joined: ${friend.joined}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#referred-friends-list').html(html);
+        } else {
+            $('#referred-friends-list').html('<p style="font-size: 10px; color: #a0aec0; text-align: center; padding: 12px 0;">No referred users found.</p>');
+        }
+    }
+
     function loadAffStats() {
         $('#affiliate-loader').css('display', 'block');
         $('#affiliate-guest').css('display', 'none');
         $('#affiliate-member').css('display', 'none');
+        $('#referred-friends-section').css('display', 'none'); // Close list on reload
 
         $.ajax({
             url: '/floating-panel/affiliate-stats',
@@ -1497,6 +1548,9 @@
                     $('#aff-stat-total').text(response.total_earned);
                     $('#aff-ref-code').text(response.referral_code);
                     $('#aff-ref-link').val(response.referral_link);
+                    
+                    // Cache referred users
+                    cachedReferredUsers = response.referred_users || [];
 
                     // Load payouts
                     let payoutsHtml = '';

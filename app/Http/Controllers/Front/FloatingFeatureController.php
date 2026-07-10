@@ -166,26 +166,51 @@ class FloatingFeatureController extends Controller
             $user->save();
         }
 
-        $referralsCount = User::where('referred_by', $user->id)->count();
+        $activeCount = User::where('referred_by', $user->id)->where('status', 'active')->count();
+        $totalCount = User::where('referred_by', $user->id)->count();
+        $referralCountFormatted = $activeCount . '/' . $totalCount;
+
         $payouts = AffiliatePayout::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $totalEarned = AffiliateReferral::where('referrer_id', $user->id)->sum('commission_earned');
-        // Let's fallback to referral_balance + total payouts completed as total earned
-        if ($totalEarned == 0) {
-            $payoutsSum = AffiliatePayout::where('user_id', $user->id)->where('status', 'completed')->sum('amount');
-            $totalEarned = $user->referral_balance + $payoutsSum;
+        // Calculate dynamic earnings based on first delivered order
+        $flatAmount = \App\Models\SiteSetting::find(1)->referral_flat_amount ?? 2.00;
+        $referredUserIds = User::where('referred_by', $user->id)->where('status', 'active')->pluck('id');
+        $qualifyingReferralsCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->where('status', 'delivered')->distinct('user_id')->count('user_id');
+        
+        $totalEarned = $qualifyingReferralsCount * $flatAmount;
+        $payoutsSum = AffiliatePayout::where('user_id', $user->id)->where('status', 'completed')->sum('amount');
+        $currentBalance = max(0, $totalEarned - $payoutsSum);
+
+        // Sync with the database
+        if ($user->referral_balance != $currentBalance) {
+            $user->referral_balance = $currentBalance;
+            $user->save();
         }
+
+        $referredUsers = User::where('referred_by', $user->id)
+            ->select('name', 'email', 'status', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($u) {
+                return [
+                    'name' => $u->name,
+                    'email' => $u->email,
+                    'status' => $u->status,
+                    'joined' => $u->created_at ? $u->created_at->format('M d, Y h:i A') : 'N/A'
+                ];
+            });
 
         return response()->json([
             'authenticated' => true,
             'referral_code' => $user->referral_code,
             'referral_link' => url('/register?ref=' . $user->referral_code),
-            'referral_count' => $referralsCount,
-            'referral_balance' => number_format($user->referral_balance, 2),
+            'referral_count' => $referralCountFormatted,
+            'referral_balance' => number_format($currentBalance, 2),
             'total_earned' => number_format($totalEarned, 2),
-            'payouts' => $payouts
+            'payouts' => $payouts,
+            'referred_users' => $referredUsers
         ]);
     }
 
