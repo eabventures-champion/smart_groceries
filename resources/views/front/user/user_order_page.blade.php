@@ -426,6 +426,7 @@
                                                 <th>Total</th>
                                                 <th>Invoice</th>
                                                 <th>Status</th>
+                                                <th>Est. Delivery Date</th>
                                                 <th>Order Delivered</th>
                                                 <th>Action</th>
                                             </tr>
@@ -459,9 +460,42 @@
                                                         @endif
                                                     @endif
                                                 </td>
+                                                <td class="date-cell">
+                                                    @php
+                                                        $estDateStr = '—';
+                                                        if (!empty($order->estimated_delivery_date)) {
+                                                            $estDateStr = \Carbon\Carbon::parse($order->estimated_delivery_date)->format('d M Y');
+                                                        } else {
+                                                            try {
+                                                                $estimation = \App\Models\Order::getDeliveryEstimation($order->created_at);
+                                                                $estDateStr = \Carbon\Carbon::parse($estimation['next_delivery_date'])->format('d M Y');
+                                                            } catch (\Exception $e) {}
+                                                        }
+                                                    @endphp
+                                                    {{ $estDateStr }}
+                                                </td>
                                                 <td class="time-cell">
                                                     @if($order->status == 'delivered' || $order->delivered_date)
-                                                        {{ Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A') }}
+                                                        @php
+                                                            $deliveredDateStr = \Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A');
+                                                            $hasEstimation = !empty($order->estimated_delivery_date);
+                                                            $isEarlyOrOnTime = true;
+                                                            if ($hasEstimation) {
+                                                                $delivered = \Carbon\Carbon::parse($order->delivered_date)->startOfDay();
+                                                                $estimated = \Carbon\Carbon::parse($order->estimated_delivery_date)->startOfDay();
+                                                                $isEarlyOrOnTime = $delivered->lte($estimated);
+                                                            }
+                                                        @endphp
+                                                        <div>{{ $deliveredDateStr }}</div>
+                                                        @if($hasEstimation)
+                                                            <div class="mt-1">
+                                                                @if($isEarlyOrOnTime)
+                                                                    <span class="badge bg-success text-white" style="font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 4px; display: inline-block;">On Time</span>
+                                                                @else
+                                                                    <span class="badge bg-danger text-white" style="font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 4px; display: inline-block;">Delayed</span>
+                                                                @endif
+                                                            </div>
+                                                        @endif
                                                     @else
                                                         <span class="text-muted">—</span>
                                                     @endif
@@ -502,10 +536,48 @@
                                                 <span class="mobile-card-label">Order Placed</span>
                                                 <span class="mobile-card-value">{{ $order->created_at->format('d M Y, h:i A') }}</span>
                                             </div>
+                                            <div class="mobile-card-row">
+                                                <span class="mobile-card-label">Est. Delivery Date</span>
+                                                <span class="mobile-card-value">
+                                                    @php
+                                                        $estDateStr = '—';
+                                                        if (!empty($order->estimated_delivery_date)) {
+                                                            $estDateStr = \Carbon\Carbon::parse($order->estimated_delivery_date)->format('d M Y');
+                                                        } else {
+                                                            try {
+                                                                $estimation = \App\Models\Order::getDeliveryEstimation($order->created_at);
+                                                                $estDateStr = \Carbon\Carbon::parse($estimation['next_delivery_date'])->format('d M Y');
+                                                            } catch (\Exception $e) {}
+                                                        }
+                                                    @endphp
+                                                    {{ $estDateStr }}
+                                                </span>
+                                            </div>
                                             @if($order->status == 'delivered' || $order->delivered_date)
                                             <div class="mobile-card-row">
                                                 <span class="mobile-card-label">Order Delivered</span>
-                                                <span class="mobile-card-value">{{ Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A') }}</span>
+                                                <span class="mobile-card-value">
+                                                    @php
+                                                        $deliveredDateStr = \Carbon\Carbon::parse($order->delivered_date)->format('d M Y, h:i A');
+                                                        $hasEstimation = !empty($order->estimated_delivery_date);
+                                                        $isEarlyOrOnTime = true;
+                                                        if ($hasEstimation) {
+                                                            $delivered = \Carbon\Carbon::parse($order->delivered_date)->startOfDay();
+                                                            $estimated = \Carbon\Carbon::parse($order->estimated_delivery_date)->startOfDay();
+                                                            $isEarlyOrOnTime = $delivered->lte($estimated);
+                                                        }
+                                                    @endphp
+                                                    <div>{{ $deliveredDateStr }}</div>
+                                                    @if($hasEstimation)
+                                                        <div style="margin-top: 4px; text-align: right;">
+                                                            @if($isEarlyOrOnTime)
+                                                                <span class="badge bg-success text-white" style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-block;">On Time</span>
+                                                            @else
+                                                                <span class="badge bg-danger text-white" style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-block;">Delayed</span>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                </span>
                                             </div>
                                             @endif
                                             <div class="mobile-card-row">

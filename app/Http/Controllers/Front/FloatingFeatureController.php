@@ -190,14 +190,19 @@ class FloatingFeatureController extends Controller
         }
 
         $referredUsers = User::where('referred_by', $user->id)
-            ->select('name', 'email', 'status', 'created_at')
+            ->select('id', 'name', 'email', 'status', 'created_at')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function($u) {
+                $hasOrdered = \App\Models\Order::where('user_id', $u->id)
+                    ->whereIn('status', ['confirmed', 'processing', 'delivering', 'delivered'])
+                    ->exists();
+
                 return [
                     'name' => $u->name,
                     'email' => $u->email,
                     'status' => $u->status,
+                    'has_ordered' => $hasOrdered,
                     'joined' => $u->created_at ? $u->created_at->format('M d, Y h:i A') : 'N/A'
                 ];
             });

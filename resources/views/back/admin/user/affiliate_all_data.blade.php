@@ -182,9 +182,16 @@ function showReferralDetails(referrerId, referrerName) {
                         
                     const phoneText = user.phone ? user.phone : '<span class="text-muted">N/A</span>';
                     
+                    const orderedBadge = user.has_ordered
+                        ? `<span class="badge bg-info text-dark ms-2" style="font-size: 9px; font-weight: 600;">Ordered Successfully</span>`
+                        : '';
+                    
                     rowsHtml += `
                         <tr>
-                            <td><strong>${user.name}</strong></td>
+                            <td>
+                                <strong>${user.name}</strong>
+                                ${orderedBadge}
+                            </td>
                             <td>${user.email}</td>
                             <td>${phoneText}</td>
                             <td>${user.date_joined}</td>

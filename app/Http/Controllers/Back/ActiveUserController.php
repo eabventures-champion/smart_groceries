@@ -77,6 +77,9 @@ class ActiveUserController extends Controller
             
         $referredUsers->transform(function($user) {
             $user->date_joined = $user->created_at ? \Carbon\Carbon::parse($user->created_at)->format('M d, Y h:i A') : 'N/A';
+            $user->has_ordered = \App\Models\Order::where('user_id', $user->id)
+                ->whereIn('status', ['confirmed', 'processing', 'delivering', 'delivered'])
+                ->exists();
             return $user;
         });
 

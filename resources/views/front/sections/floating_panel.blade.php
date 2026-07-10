@@ -1508,10 +1508,17 @@
                     ? `<span style="font-size: 8px; font-weight: 700; background-color: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;">Active</span>`
                     : `<span style="font-size: 8px; font-weight: 700; background-color: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px;">Inactive</span>`;
                 
+                const orderedBadge = friend.has_ordered
+                    ? `<span style="font-size: 8px; font-weight: 700; background-color: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; margin-left: 4px; display: inline-block;">Ordered Successfully</span>`
+                    : '';
+                
                 html += `
                     <div style="display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px;">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <span style="font-size: 11px; font-weight: 800; color: #2d3748;">${friend.name}</span>
+                            <div>
+                                <span style="font-size: 11px; font-weight: 800; color: #2d3748;">${friend.name}</span>
+                                ${orderedBadge}
+                            </div>
                             ${statusBadge}
                         </div>
                         <div style="display: flex; align-items: center; justify-content: space-between; font-size: 9px; color: #718096; font-weight: 600;">

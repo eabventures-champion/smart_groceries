@@ -28,8 +28,8 @@
       @csrf
       <div class="row">
          <!-- Billing Details Card -->
-         <div class="col-lg-5 mb-4">
-            <div class="card border-0 p-4" style="background: #ffffff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); border: 1px solid #f1f2f4;">
+         <div class="col-lg-7 mb-4">
+            <div class="card p-4" style="background: #ffffff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0 !important;">
                <div class="d-flex align-items-center mb-4">
                   <div style="background: rgba(59, 183, 126, 0.1); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #3bb77e; font-size: 20px;">
                      <i class="fi-rs-user"></i>
@@ -38,23 +38,23 @@
                </div>
 
                <div class="row g-3" style="font-family: 'Inter', sans-serif;">
-                  <div class="col-md-12 mb-3">
+                  <div class="col-md-6 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Full Name</label>
                      <input type="text" required name="delivery_name" value="{{ Auth::user()->name }}" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
                   </div>
-                  <div class="col-md-12 mb-3">
+                  <div class="col-md-6 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Email Address</label>
                      <input type="email" required name="delivery_email" value="{{ Auth::user()->email }}" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
                   </div>
-                  <div class="col-md-12 mb-3">
+                  <div class="col-md-6 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Phone Number</label>
                      <input required type="text" name="delivery_phone" value="{{ Auth::user()->phone }}" class="form-control" placeholder="e.g. 0553989190" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
                   </div>
-                  <div class="col-md-12 mb-3">
+                  <div class="col-md-6 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Specific Address</label>
                      <input required type="text" name="delivery_address" value="{{ Auth::user()->address }}" class="form-control" placeholder="e.g. Adenta, Block A Room 204" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
                   </div>
-                  <div class="col-md-12 mb-3">
+                  <div class="col-md-4 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Region</label>
                      <div class="custom_select">
                         <select required name="region_id" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; height: auto;">
@@ -65,14 +65,14 @@
                         </select>
                      </div>
                   </div>
-                  <div class="col-md-12 mb-3">
-                     <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">District / Institution</label>
+                  <div class="col-md-4 mb-3">
+                     <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Institution</label>
                      <div class="custom_select">
                         <select required name="district_id" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; height: auto;"></select>
                      </div>
                   </div>
-                  <div class="col-md-12 mb-3">
-                     <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">City / Hall</label>
+                  <div class="col-md-4 mb-3">
+                     <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Hall</label>
                      <div class="custom_select">
                         <select required name="city_id" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; height: auto;"></select>
                      </div>
@@ -86,8 +86,8 @@
          </div>
 
          <!-- Order Details & Payment Option Card -->
-         <div class="col-lg-7 mb-4">
-            <div class="card border-0 p-4 mb-4" style="background: #ffffff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); border: 1px solid #f1f2f4;">
+         <div class="col-lg-5 mb-4">
+            <div class="card p-4 mb-4" style="background: #ffffff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0 !important;">
                <div class="d-flex align-items-center mb-4">
                   <div style="background: rgba(59, 183, 126, 0.1); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #3bb77e; font-size: 20px;">
                      <i class="fi-rs-shopping-cart"></i>
@@ -176,7 +176,7 @@
             </div>
 
             <!-- Payment Option Card -->
-            <div class="card border-0 p-4" style="background: #ffffff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); border: 1px solid #f1f2f4;">
+            <div class="card p-4" style="background: #ffffff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0 !important;">
                <div class="d-flex align-items-center mb-4">
                   <div style="background: rgba(59, 183, 126, 0.1); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #3bb77e; font-size: 20px;">
                      <i class="fi-rs-credit-card"></i>
