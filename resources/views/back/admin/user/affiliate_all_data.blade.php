@@ -64,7 +64,7 @@
                         </div>
                         @if($item->referrer)
                         <div class="mt-1">
-                           <span class="badge bg-light text-secondary border" style="font-size: 10px; font-weight: 500; text-transform: none;">
+                           <span class="badge bg-success text-white" style="font-size: 10px; font-weight: 500; text-transform: none;">
                               Referred by: {{ $item->referrer->name }}
                            </span>
                         </div>
