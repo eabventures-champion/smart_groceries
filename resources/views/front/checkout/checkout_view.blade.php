@@ -1,6 +1,10 @@
 @extends('front.master')
 @section('needs_stripe', true)
 @section('content')
+<script>
+    window.checkoutCartQty = {{ (int)Cart::count() }};
+    window.checkoutCartTotal = {{ (float)str_replace(',', '', Cart::total()) }};
+</script>
 @section('title')
    Checkout Page
 @endsection

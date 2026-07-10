@@ -1,4 +1,5 @@
 <!-- Static Vertical Floating SG Panel -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
     /* Premium Design System Overrides */
     #sg-floating-dock {
@@ -1570,13 +1571,18 @@
                             if (payout.status === 'completed') statusClass = 'sg-badge-success';
                             else if (payout.status === 'pending') statusClass = 'sg-badge-warning';
                             
+                            const receiptButton = `<a href="/affiliate/payout/receipt/${payout.id}" target="_blank" style="color: #718096; background: #f7f8f9; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#dcfce7'; this.style.color='#166534';" onmouseout="this.style.background='#f7f8f9'; this.style.color='#718096';" title="Print Receipt"><i class="fa-solid fa-print" style="font-size: 10px;"></i></a>`;
+                            
                             payoutsHtml += `
                                 <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #edf2f7; padding-bottom: 8px;">
                                     <div>
                                         <div style="font-size: 11px; font-weight: 800; color: #2d3748;">Gh ${parseFloat(payout.amount).toFixed(2)}</div>
                                         <div style="font-size: 9px; color: #a0aec0; font-weight: 600;">${payout.payment_method} • ${date}</div>
                                     </div>
-                                    <span class="sg-badge ${statusClass}" style="font-size: 8px;">${payout.status}</span>
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="sg-badge ${statusClass}" style="font-size: 8px; text-transform: uppercase;">${payout.status}</span>
+                                        ${receiptButton}
+                                    </div>
                                 </div>
                             `;
                         });
@@ -1889,6 +1895,7 @@
                     submitBtn.prop('disabled', false).text('Request Cashout');
                     $('#payout-amount').val('');
                     loadAffStats(); // Refresh stats and transaction logs
+                    closeSgDrawer();
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({

@@ -86,6 +86,74 @@ class ActiveUserController extends Controller
         return response()->json($referredUsers);
     }
 
+    public function all_payouts(){
+        $payoutUsers = User::whereHas('affiliatePayouts')
+            ->withCount(['affiliatePayouts as total_requests'])
+            ->withCount(['affiliatePayouts as pending_requests' => function($query) {
+                $query->where('status', 'pending');
+            }])
+            ->get()
+            ->map(function($user) {
+                $user->total_amount = \App\Models\AffiliatePayout::where('user_id', $user->id)->sum('amount');
+                $user->pending_amount = \App\Models\AffiliatePayout::where('user_id', $user->id)->where('status', 'pending')->sum('amount');
+                return $user;
+            });
+            
+        return view('back.admin.user.affiliate_payouts', compact('payoutUsers'));
+    }
+
+    public function get_user_payouts($id){
+        $payouts = \App\Models\AffiliatePayout::where('user_id', $id)
+            ->orderBy('id', 'desc')
+            ->get();
+            
+        $payouts->transform(function($p) {
+            $p->date_requested = $p->created_at ? \Carbon\Carbon::parse($p->created_at)->format('d M Y, h:i A') : 'N/A';
+            return $p;
+        });
+        
+        return response()->json($payouts);
+    }
+
+    public function approve_payout($id){
+        $payout = \App\Models\AffiliatePayout::findOrFail($id);
+        $payout->status = 'completed';
+        $payout->save();
+
+        $notification = array(
+            'message' => 'Payout request approved successfully.',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function reject_payout($id){
+        $payout = \App\Models\AffiliatePayout::findOrFail($id);
+        $payout->status = 'rejected';
+        $payout->save();
+
+        // Refund the user's referral balance
+        $user = $payout->user;
+        $user->referral_balance += $payout->amount;
+        $user->save();
+
+        $notification = array(
+            'message' => 'Payout request rejected and amount refunded successfully.',
+            'alert-type' => 'info'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function payout_receipt($id){
+        $payout = \App\Models\AffiliatePayout::with('user')->findOrFail($id);
+
+        if (\Illuminate\Support\Facades\Auth::user()->role !== 'admin' && $payout->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('back.admin.user.payout_receipt', compact('payout'));
+    }
+
     public function admin_live_chat(){
         return view('back.admin.support_chat');
     }

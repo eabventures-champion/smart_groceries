@@ -627,6 +627,26 @@
                });
             }
          }
+         // Sync checkout page on focus if cart updated in another tab/window
+         $(window).on('focus', function() {
+            if (window.location.pathname === '/checkout') {
+               $.ajax({
+                  type: 'GET',
+                  url: '/product/mini/cart',
+                  dataType: 'json',
+                  success: function(response) {
+                     if (response && response.cartQty !== undefined) {
+                        const currentQty = parseInt(response.cartQty);
+                        const currentTotal = parseFloat(response.cartTotal.replace(/,/g, ''));
+                        if (window.checkoutCartQty !== undefined && (window.checkoutCartQty !== currentQty || window.checkoutCartTotal !== currentTotal)) {
+                           window.location.reload();
+                        }
+                     }
+                  }
+               });
+            }
+         });
+
          // Delay miniCart load until after page renders
          setTimeout(function(){ miniCart(); }, 800);
 
@@ -638,6 +658,10 @@
                dataType:'json',
                success:function(data){
                   miniCart(data);
+                  if (window.location.pathname === '/checkout') {
+                      window.location.reload();
+                      return;
+                  }
                   // Start Message
                   const Toast = Swal.mixin({
                         toast: true,
@@ -699,6 +723,10 @@
          url: "/details-cart/data/store/"+id,
          success:function(data){
             miniCart(data);
+            if (window.location.pathname === '/checkout') {
+                window.location.reload();
+                return;
+            }
             $('.qty-stock').html(" ");
 
             // console.log(data)

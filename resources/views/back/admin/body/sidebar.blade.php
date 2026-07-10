@@ -93,6 +93,17 @@
             </li>
             <li> <a href="{{ route('all.affiliates') }}"><i class="bx bx-right-arrow-alt"></i>All Affiliates</a>
             </li>
+            @php
+               $pendingPayoutsCount = \App\Models\AffiliatePayout::where('status', 'pending')->count();
+            @endphp
+            <li> 
+               <a href="{{ route('admin.all.payouts') }}" class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                  <span><i class="bx bx-right-arrow-alt"></i>Payout Requests</span>
+                  @if($pendingPayoutsCount > 0)
+                     <span class="badge bg-warning text-dark" style="font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-right: 15px;">{{ $pendingPayoutsCount }}</span>
+                  @endif
+               </a>
+            </li>
             <li> <a href="{{ route('admin.live.chat') }}"><i class="bx bx-right-arrow-alt"></i>Tawk.to Live Chat</a>
             </li>
          </ul>

@@ -355,6 +355,12 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('/all/affiliates', 'all_affiliates')->name('all.affiliates');
             Route::get('/affiliate/referrals/{id}', 'get_referral_details')->name('admin.affiliate.referrals');
             Route::get('/admin/live-chat', 'admin_live_chat')->name('admin.live.chat');
+            
+            // Affiliate Payout Requests
+            Route::get('/all/payouts', 'all_payouts')->name('admin.all.payouts');
+            Route::get('/payout/user-details/{id}', 'get_user_payouts')->name('admin.payout.user-details');
+            Route::post('/payout/approve/{id}', 'approve_payout')->name('admin.payout.approve');
+            Route::post('/payout/reject/{id}', 'reject_payout')->name('admin.payout.reject');
         });
 
         Route::controller(ReviewController::class)->group(function(){
@@ -534,6 +540,10 @@ Route::get('/sync-assets-hostinger', function() {
 // Test route to preview the custom 419 error page
 Route::get('/error-419', function () {
     return view('errors.419');
+});
+
+Route::middleware(['auth'])->group(function() {
+    Route::get('/affiliate/payout/receipt/{id}', [App\Http\Controllers\Back\ActiveUserController::class, 'payout_receipt'])->name('affiliate.payout.receipt');
 });
 
 
