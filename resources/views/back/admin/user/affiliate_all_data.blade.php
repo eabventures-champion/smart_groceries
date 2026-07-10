@@ -23,7 +23,6 @@
                <thead>
                   <tr>
                      <th>S/N</th>
-                     <th>Image</th>
                      <th>Name</th>
                      <th>Email</th>
                      <th>Referral Code</th>
@@ -52,11 +51,24 @@
                   @endphp
                   <tr>
                      <td> {{ $key+1 }} </td>
-                     <td> <img src="{{ (!empty($item->photo)) ? url('front/assets/imgs/users/'.$item->photo):url('front/assets/imgs/users/no_image.jpg') }}" alt="User" class="rounded-circle p-1 bg-primary" width="55" height="55"></td>
                      <td> 
-                        <a href="{{ route('admin.client.detail', $item->id) }}" style="font-weight: 600; color: #212529; text-decoration: none;" class="hover-primary">
-                           {{ $item->name }} 
-                        </a> 
+                        <div class="d-flex align-items-center gap-2">
+                           <a href="{{ route('admin.client.detail', $item->id) }}" style="font-weight: 600; color: #212529; text-decoration: none;" class="hover-primary">
+                              {{ $item->name }} 
+                           </a> 
+                           @if($item->status === 'active')
+                               <span class="badge bg-light-success text-success" style="font-size: 10px; font-weight: 600;">Active</span>
+                           @else
+                               <span class="badge bg-light-danger text-danger" style="font-size: 10px; font-weight: 600;">Inactive</span>
+                           @endif
+                        </div>
+                        @if($item->referrer)
+                        <div class="mt-1">
+                           <span class="badge bg-light text-secondary border" style="font-size: 10px; font-weight: 500; text-transform: none;">
+                              Referred by: {{ $item->referrer->name }}
+                           </span>
+                        </div>
+                        @endif
                      </td>
                      <td> {{ $item->email }} </td>
                      <td> <code style="font-size: 13px; font-weight: bold; color: #7B2828;">{{ $item->referral_code }}</code> </td>
