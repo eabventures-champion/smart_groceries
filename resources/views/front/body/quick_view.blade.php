@@ -7,22 +7,24 @@
          <div class="modal-body" style="padding: 0;">
             <div class="row">
                <div class="col-md-5 col-sm-12 col-xs-12">
-                  <div class="detail-gallery quickview" style="border: 1px solid #f1f2f4; border-radius: 16px; background: #fafbfc; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 260px; margin-bottom: 20px;">
-                     <img src=" " alt="product image" id="pimage" style="max-height: 100%; max-width: 100%; object-fit: contain; padding: 15px;" />
-                  </div>
-                  {{-- properties --}}
-                  <div style="font-family: 'Inter', sans-serif; font-size: 13px; color: #7e7e7e; background: #f8f9fa; padding: 12px; border-radius: 12px; border: 1px solid #f1f2f4;">
-                     <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
-                        <span>Brand:</span>
-                        <strong class="text-dark" id="pbrand"></strong>
+                  <div class="quickview-columns-wrap">
+                     <div class="detail-gallery quickview" style="border: 1px solid #f1f2f4; border-radius: 16px; background: #fafbfc; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 260px; margin-bottom: 20px;">
+                        <img src=" " alt="product image" id="pimage" style="max-height: 100%; max-width: 100%; object-fit: contain; padding: 15px;" />
                      </div>
-                     <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
-                        <span>Category:</span>
-                        <strong class="text-dark" id="pcategory"></strong>
-                     </div>
-                     <div style="display: flex; justify-content: space-between;">
-                        <span>Code:</span>
-                        <strong class="text-dark" id="pcode"></strong>
+                     {{-- properties --}}
+                     <div class="quickview-info-wrap" style="font-family: 'Inter', sans-serif; font-size: 13px; color: #7e7e7e; background: #f8f9fa; padding: 12px; border-radius: 12px; border: 1px solid #f1f2f4; width: 100%;">
+                        <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
+                           <span>Brand:</span>
+                           <strong class="text-dark" id="pbrand"></strong>
+                        </div>
+                        <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
+                           <span>Category:</span>
+                           <strong class="text-dark" id="pcategory"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                           <span>Code:</span>
+                           <strong class="text-dark" id="pcode"></strong>
+                        </div>
                      </div>
                   </div>
                </div>

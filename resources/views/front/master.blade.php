@@ -229,19 +229,34 @@
                 border-radius: 20px !important;
                 padding: 20px 15px !important;
              }
-             /* Resize image gallery container */
-             #quickViewModal .detail-gallery.quickview {
-                height: 180px !important;
-                margin-top: 15px !important;
-                margin-bottom: 20px !important;
-                padding: 10px !important;
-             }
-             #quickViewModal .detail-gallery.quickview img {
-                max-height: 90% !important;
-                max-width: 90% !important;
-                object-fit: contain !important;
-                padding: 0 !important;
-             }
+              /* 2-column columns wrap for quick view image and properties */
+              #quickViewModal .quickview-columns-wrap {
+                 display: flex !important;
+                 flex-direction: row !important;
+                 align-items: center !important;
+                 justify-content: space-between !important;
+                 gap: 15px !important;
+                 margin-bottom: 20px !important;
+                 width: 100% !important;
+              }
+              #quickViewModal .detail-gallery.quickview {
+                 flex: 0 0 150px !important;
+                 max-width: 150px !important;
+                 height: 150px !important;
+                 margin-top: 0 !important;
+                 margin-bottom: 0 !important;
+                 padding: 8px !important;
+              }
+              #quickViewModal .detail-gallery.quickview img {
+                 max-height: 100% !important;
+                 max-width: 100% !important;
+                 object-fit: contain !important;
+                 padding: 0 !important;
+              }
+              #quickViewModal .quickview-info-wrap {
+                 flex: 1 1 auto !important;
+                 width: auto !important;
+              }
              /* Resize price cover container */
              #quickViewModal .product-price-cover {
                 padding: 8px 12px !important;
