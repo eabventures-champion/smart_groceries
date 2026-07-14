@@ -264,6 +264,14 @@
                 flex-wrap: wrap !important;
                 gap: 12px !important;
              }
+
+             /* Shift Tawk.to iframe to align its bubble with the Suggestion icon */
+             iframe[src*="tawk.to"],
+             iframe[id*="tawk"],
+             div[id*="tawk"],
+             .tawk-min-container {
+                right: 8px !important;
+             }
           }
           
           /* Hide SG floating panel and Tawk.to chat widget when a modal is open */
@@ -1910,7 +1918,7 @@
                 },
                 mobile : {
                     position : 'br',
-                    xOffset : 15,
+                    xOffset : 8,
                     yOffset : 225
                 }
             }
