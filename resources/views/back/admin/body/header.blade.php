@@ -84,7 +84,7 @@
                         @php
                            $isUnread = is_null($notification->read_at);
                         @endphp
-                        <a class="dropdown-item" href="javascript:;" onclick="markNotificationRead('{{ $notification->id }}')" style="background-color: {{ $isUnread ? '#edfbf4' : '#ffffff' }} !important; border-bottom: 1px solid #f1f2f4; padding: 12px 16px;">
+                        <a class="dropdown-item" id="notification-item-{{ $notification->id }}" href="javascript:;" onclick="markNotificationRead('{{ $notification->id }}')" style="background-color: {{ $isUnread ? '#edfbf4' : '#ffffff' }} !important; border-bottom: 1px solid #f1f2f4; padding: 12px 16px;">
                            <div class="d-flex align-items-start gap-2">
                               <div class="notify {{ $isUnread ? 'bg-light-success text-success' : 'bg-light-secondary text-secondary' }}" style="width: 32px; height: 32px; line-height: 32px; font-size: 16px; margin-right: 0; flex-shrink: 0; margin-top: 2px;">
                                  <i class="bx {{ $isUnread ? 'bx-bell' : 'bx-envelope-open' }}"></i>
@@ -101,7 +101,7 @@
                                  </p>
                               </div>
                               @if($isUnread)
-                              <div style="width: 8px; height: 8px; background-color: #3bb77e; border-radius: 50%; margin-top: 14px; flex-shrink: 0;"></div>
+                              <div class="unread-dot" style="width: 8px; height: 8px; background-color: #3bb77e; border-radius: 50%; margin-top: 14px; flex-shrink: 0;"></div>
                               @endif
                            </div>
                         </a>
@@ -330,6 +330,50 @@
        .then(response => response.json())
        .then(data => {
            document.getElementById('notification-count').textContent = data.count;
+           
+           // Dynamically transition the clicked notification item to "read" state instantly in UI
+           const item = document.getElementById('notification-item-' + notificationId);
+           if (item) {
+               // Update background color to white
+               item.style.setProperty('background-color', '#ffffff', 'important');
+               
+               // Update icon styling classes and icon tag itself
+               const notify = item.querySelector('.notify');
+               if (notify) {
+                   notify.classList.remove('bg-light-success', 'text-success');
+                   notify.classList.add('bg-light-secondary', 'text-secondary');
+                   
+                   const icon = notify.querySelector('i');
+                   if (icon) {
+                       icon.classList.remove('bx-bell');
+                       icon.classList.add('bx-envelope-open');
+                   }
+               }
+               
+               // Update title text and classes
+               const msgName = item.querySelector('.msg-name');
+               if (msgName) {
+                   msgName.classList.remove('fw-bold', 'text-dark');
+                   msgName.classList.add('text-secondary');
+                   
+                   const titleSpan = msgName.querySelector('span:first-child');
+                   if (titleSpan) {
+                       titleSpan.textContent = 'Message';
+                   }
+               }
+               
+               // Update message detail text color
+               const msgInfo = item.querySelector('.msg-info');
+               if (msgInfo) {
+                   msgInfo.style.color = '#6c757d';
+               }
+               
+               // Remove unread dot indicator
+               const dot = item.querySelector('.unread-dot');
+               if (dot) {
+                   dot.remove();
+               }
+           }
        })
        .catch(error => {
            console.log('Error',error)
