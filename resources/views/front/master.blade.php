@@ -1871,6 +1871,7 @@
          </script>
       @endif
 
+      @if(!request()->is('user/complaints*'))
         @php
           try {
               $ip = request()->ip();
@@ -1895,54 +1896,55 @@
                   ]);
               }
           } catch (\Exception $e) {}
-      @endphp
+        @endphp
 
-      <!--Start of Tawk.to Script-->
-      <script type="text/javascript">
-      var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-      Tawk_API.customStyle = {
-          visibility : {
-              desktop : {
-                  position : 'br',
-                  xOffset : 15,
-                  yOffset : 15
-              },
-              mobile : {
-                  position : 'br',
-                  xOffset : 15,
-                  yOffset : 225
-              }
-          }
-      };
-      (function(){
-      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-      s1.async=true;
-      s1.src='https://embed.tawk.to/6a4fa09ba6558f1d451fdc7b/1jt3gmors';
-      s1.charset='UTF-8';
-      s1.setAttribute('crossorigin','*');
-      s0.parentNode.insertBefore(s1,s0);
-      })();
-      </script>
-      <!--End of Tawk.to Script-->
+        <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        Tawk_API.customStyle = {
+            visibility : {
+                desktop : {
+                    position : 'br',
+                    xOffset : 15,
+                    yOffset : 15
+                },
+                mobile : {
+                    position : 'br',
+                    xOffset : 15,
+                    yOffset : 225
+                }
+            }
+        };
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/6a4fa09ba6558f1d451fdc7b/1jt3gmors';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+        </script>
+        <!--End of Tawk.to Script-->
 
-      <script type="text/javascript">
-         $(document).ready(function() {
-            // Hide Tawk.to widget via JS API when any modal opens
-            $(document).on('show.bs.modal', '.modal', function () {
-               if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
-                  try { window.Tawk_API.hideWidget(); } catch(e) {}
-               }
-            });
-            // Show Tawk.to widget via JS API when any modal closes
-            $(document).on('hidden.bs.modal', '.modal', function () {
-               if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
-                  try { window.Tawk_API.showWidget(); } catch(e) {}
-               }
-            });
-         });
-      </script>
+        <script type="text/javascript">
+           $(document).ready(function() {
+              // Hide Tawk.to widget via JS API when any modal opens
+              $(document).on('show.bs.modal', '.modal', function () {
+                 if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
+                    try { window.Tawk_API.hideWidget(); } catch(e) {}
+                 }
+              });
+              // Show Tawk.to widget via JS API when any modal closes
+              $(document).on('hidden.bs.modal', '.modal', function () {
+                 if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
+                    try { window.Tawk_API.showWidget(); } catch(e) {}
+                 }
+              });
+           });
+        </script>
 
-      @include('front.sections.floating_panel')
+        @include('front.sections.floating_panel')
+      @endif
 
    </body>
 </html>

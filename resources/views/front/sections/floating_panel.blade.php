@@ -453,37 +453,6 @@
         }
     }
 
-    /* Spacing & arrangement for Tawk.to, SG Panel, and Suggestion float button on all mobile screens */
-    @media (max-width: 991.98px) {
-        #sg-restore-handle {
-            top: auto !important;
-            bottom: 95px !important;
-            right: 15px !important;
-            left: auto !important;
-            transform: none !important;
-            padding: 10px 18px !important;
-            border-radius: 9999px !important;
-            flex-direction: row !important;
-            gap: 8px !important;
-            box-shadow: 0 4px 18px rgba(59, 183, 126, 0.3) !important;
-            z-index: 9998 !important;
-        }
-        #sg-restore-handle.sg-restore-hidden {
-            transform: translateX(150%) !important;
-        }
-        #complaint-floating-btn {
-            bottom: 160px !important;
-            right: 15px !important;
-            width: 46px !important;
-            height: 46px !important;
-            z-index: 9999 !important;
-        }
-        #complaint-floating-btn svg {
-            width: 20px !important;
-            height: 20px !important;
-        }
-    }
-
     /* Global Interactive suggestion & complaint floating button styles */
     #complaint-floating-btn {
         position: fixed !important;
@@ -563,6 +532,37 @@
     .sg-hide-scrollbar {
         -ms-overflow-style: none !important;
         scrollbar-width: none !important;
+    }
+    
+    /* Spacing & arrangement for Tawk.to, SG Panel, and Suggestion float button on all mobile screens */
+    @media (max-width: 991.98px) {
+        #sg-restore-handle {
+            top: auto !important;
+            bottom: 95px !important;
+            right: 15px !important;
+            left: auto !important;
+            transform: none !important;
+            padding: 10px 18px !important;
+            border-radius: 9999px !important;
+            flex-direction: row !important;
+            gap: 8px !important;
+            box-shadow: 0 4px 18px rgba(59, 183, 126, 0.3) !important;
+            z-index: 9998 !important;
+        }
+        #sg-restore-handle.sg-restore-hidden {
+            transform: translateX(150%) !important;
+        }
+        #complaint-floating-btn {
+            bottom: 160px !important;
+            right: 15px !important;
+            width: 46px !important;
+            height: 46px !important;
+            z-index: 9999 !important;
+        }
+        #complaint-floating-btn svg {
+            width: 20px !important;
+            height: 20px !important;
+        }
     }
 </style>
 
