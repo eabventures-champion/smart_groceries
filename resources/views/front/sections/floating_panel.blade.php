@@ -454,10 +454,10 @@
         
         #sg-restore-handle {
             top: auto !important;
-            bottom: 90px !important;
-            left: 50% !important;
-            right: auto !important;
-            transform: translateX(-50%) !important;
+            bottom: 105px !important;
+            right: 15px !important;
+            left: auto !important;
+            transform: none !important;
             padding: 12px 18px !important;
             border-radius: 9999px !important;
             flex-direction: row !important;
@@ -465,8 +465,66 @@
             box-shadow: 0 4px 18px rgba(59, 183, 126, 0.4) !important;
         }
         #sg-restore-handle.sg-restore-hidden {
-            transform: translateX(-50%) translateY(250px) !important;
+            transform: translateX(150%) !important;
         }
+        #complaint-floating-btn {
+            bottom: 230px !important;
+            width: 46px !important;
+            height: 46px !important;
+        }
+        #complaint-floating-btn svg {
+            width: 20px !important;
+            height: 20px !important;
+        }
+    }
+
+    /* Global Interactive suggestion & complaint floating button styles */
+    #complaint-floating-btn {
+        position: fixed !important;
+        right: 15px !important;
+        bottom: 85px !important;
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, #3bb77e, #2ecc71) !important;
+        color: #ffffff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 9999 !important;
+        box-shadow: 0 8px 24px rgba(59, 183, 126, 0.4) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        text-decoration: none !important;
+    }
+    #complaint-floating-btn svg {
+        width: 22px !important;
+        height: 22px !important;
+        transition: transform 0.3s ease !important;
+    }
+    #complaint-floating-btn:hover {
+        transform: scale(1.1) translateY(-3px) !important;
+        box-shadow: 0 12px 30px rgba(59, 183, 126, 0.5) !important;
+    }
+    #complaint-floating-btn:hover svg {
+        transform: rotate(10deg) !important;
+    }
+    #complaint-floating-btn .pulse-ring {
+        position: absolute !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 50% !important;
+        border: 2px solid rgba(59, 183, 126, 0.5) !important;
+        animation: floatPulse 2.5s infinite ease-out !important;
+        pointer-events: none !important;
+    }
+    @keyframes floatPulse {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    /* Hide when modal is open */
+    body.modal-open #complaint-floating-btn {
+        display: none !important;
     }
 
     /* Blog Category Filter & Scrollbar Hiding */
@@ -558,6 +616,16 @@
     </svg>
     <span class="sg-vertical-text" style="font-size: 9px; font-weight: 900; letter-spacing: 0.5px; margin: 4px 0;">SG Panel</span>
 </div>
+
+<!-- Interactive suggestion and complaint floating button -->
+<a href="{{ Auth::check() ? route('user.complaints') : route('login') }}" id="complaint-floating-btn" title="Suggestions & Complaints">
+   <div class="pulse-ring"></div>
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      <line x1="9" y1="9" x2="15" y2="9"></line>
+      <line x1="9" y1="13" x2="15" y2="13"></line>
+   </svg>
+</a>
 
 <!-- Sliding Side Drawer Panel -->
 <div id="sg-floating-drawer">
