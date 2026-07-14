@@ -252,14 +252,29 @@
              #quickViewModal span.current-price {
                 font-size: 20px !important;
              }
+             /* Align the dynamic in-stock quantity badge horizontally next to the selector */
+             #quickViewModal #modal-qty-stock h4 {
+                display: inline-block !important;
+                margin: 0 !important;
+                text-align: left !important;
+             }
+             #quickViewModal .detail-extralink {
+                display: flex !important;
+                align-items: center !important;
+                flex-wrap: wrap !important;
+                gap: 12px !important;
+             }
           }
           
-          /* Hide SG floating panel when a modal is open on mobile view */
-          @media (max-width: 768px) {
-             body.modal-open #sg-floating-dock,
-             body.modal-open #sg-restore-handle {
-                display: none !important;
-             }
+          /* Hide SG floating panel and Tawk.to chat widget when a modal is open */
+          body.modal-open #sg-floating-dock,
+          body.modal-open #sg-restore-handle,
+          body.modal-open iframe[src*="tawk.to"],
+          body.modal-open .tawk-min-container,
+          body.modal-open div[id^="tawk"],
+          body.modal-open iframe[id^="tawk"],
+          body.modal-open [class^="tawk-"] {
+             display: none !important;
           }
 
           /* Premium horizontal quantity selector layout for all screen sizes (Desktop & Mobile) */
