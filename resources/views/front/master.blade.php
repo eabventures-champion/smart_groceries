@@ -260,9 +260,7 @@
              /* Resize price cover container */
              #quickViewModal .product-price-cover {
                 padding: 8px 12px !important;
-                margin-bottom: 15px !important;
-                display: inline-block !important;
-                width: auto !important;
+                margin-bottom: 0 !important;
              }
              #quickViewModal span.current-price {
                 font-size: 20px !important;
@@ -609,8 +607,8 @@
             $('#pcategory').text('');
             $('#pcode').text('');
             $('#pimage').attr('src', '/upload/no_image.jpg');
-            $('#available').text('');
-            $('#stockout').text('');
+            $('#available').text('').hide();
+            $('#stockout').text('').hide();
             $('#call_us').text('');
             $('#quantity_stock').text('');
             $('#total_stock').text('');
@@ -651,21 +649,21 @@
             } // end else
 
             /// Start Stock Option
-            if (data.total_stock > 0) {
-                $('#available').text('');
-                $('#stockout').text('');
-                $('#call_us').text('');
-                $('#total_stock').text(data.total_stock);
-                $('#available').text('Available in stock');
-                $('#quantity_stock').text('');
-            }else{
-                $('#available').text('');
-                $('#stockout').text('');
-                $('#stockout').text('Stock Out');
-                $('#call_us').text('Call for supplies: 0548795583 / 0555700931');
-                $('#total_stock').text('');
-                $('#quantity_stock').text('0');
-            }
+             if (data.total_stock > 0) {
+                 $('#available').text('').hide();
+                 $('#stockout').text('').hide();
+                 $('#call_us').text('');
+                 $('#total_stock').text(data.total_stock);
+                 $('#available').text('Available in stock').show();
+                 $('#quantity_stock').text('');
+             }else{
+                 $('#available').text('').hide();
+                 $('#stockout').text('').hide();
+                 $('#stockout').text('Stock Out').show();
+                 $('#call_us').text('Call for supplies: 0548795583 / 0555700931');
+                 $('#total_stock').text('');
+                 $('#quantity_stock').text('0');
+             }
             ///End Start Stock Option
 
             ///Size
@@ -698,6 +696,15 @@
                          $('select[name="color"]').append('<option value="'+value+' ">'+value+'  </option>');
                      }
                  });
+             }
+             
+             // Adjust columns layout depending on selector visibility
+             if ($('#sizeArea').is(':visible') || $('#colorArea').is(':visible')) {
+                 $('.quickview-attributes-col').show();
+                 $('.quickview-price-col').css({ 'flex': '1 1 50%', 'max-width': '50%' });
+             } else {
+                 $('.quickview-attributes-col').hide();
+                 $('.quickview-price-col').css({ 'flex': '0 0 100%', 'max-width': '100%' });
              }
              
              // Trigger state watch instantly on modal load

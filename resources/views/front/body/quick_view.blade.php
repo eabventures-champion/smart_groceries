@@ -12,19 +12,21 @@
                         <img src=" " alt="product image" id="pimage" style="max-height: 100%; max-width: 100%; object-fit: contain; padding: 15px;" />
                      </div>
                      {{-- properties --}}
-                     <div class="quickview-info-wrap" style="font-family: 'Inter', sans-serif; font-size: 13px; color: #7e7e7e; background: #f8f9fa; padding: 12px; border-radius: 12px; border: 1px solid #f1f2f4; width: 100%;">
-                        <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
-                           <span>Brand:</span>
-                           <strong class="text-dark" id="pbrand"></strong>
-                        </div>
-                        <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
-                           <span>Category:</span>
-                           <strong class="text-dark" id="pcategory"></strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                           <span>Code:</span>
-                           <strong class="text-dark" id="pcode"></strong>
-                        </div>
+                     <div class="quickview-info-wrap" style="font-family: 'Inter', sans-serif; font-size: 13px; color: #7e7e7e; background: #f8f9fa; padding: 12px 16px; border-radius: 12px; border: 1px solid #f1f2f4; width: 100%;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                           <tr style="border-bottom: 1px solid #f1f2f4;">
+                              <td style="padding: 6px 0; color: #7e7e7e; width: 75px; font-weight: 500;">Brand:</td>
+                              <td style="padding: 6px 0; font-weight: 700; color: #253D4E; text-align: left;" id="pbrand"></td>
+                           </tr>
+                           <tr style="border-bottom: 1px solid #f1f2f4;">
+                              <td style="padding: 6px 0; color: #7e7e7e; width: 75px; font-weight: 500;">Category:</td>
+                              <td style="padding: 6px 0; font-weight: 700; color: #253D4E; text-align: left;" id="pcategory"></td>
+                           </tr>
+                           <tr>
+                              <td style="padding: 6px 0; color: #7e7e7e; width: 75px; font-weight: 500;">Code:</td>
+                              <td style="padding: 6px 0; font-weight: 700; color: #253D4E; text-align: left;" id="pcode"></td>
+                           </tr>
+                        </table>
                      </div>
                   </div>
                </div>
@@ -34,8 +36,8 @@
 
                      {{-- stock availability --}}
                      <div class="mb-15">
-                        <span class="badge badge-pill" id="available" style="background: rgba(46, 204, 113, 0.1); color: #2ecc71; padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 30px; display: inline-block;"></span>
-                        <span class="badge badge-pill" id="stockout" style="background: rgba(231, 76, 60, 0.1); color: #e74c3c; padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 30px; display: inline-block;"></span>
+                        <span class="badge badge-pill" id="available" style="background: rgba(46, 204, 113, 0.1); color: #2ecc71; padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 30px; display: none;"></span>
+                        <span class="badge badge-pill" id="stockout" style="background: rgba(231, 76, 60, 0.1); color: #e74c3c; padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 30px; display: none;"></span>
                         <p class="in-stock text-brand mb-0 mt-5" id="call_us" style="font-size: 12px; font-weight: 600; color: #e74c3c;"></p>
                         <div class="total-qty-stock mt-2" style="font-size: 13px; color: #7e7e7e; font-family: 'Inter', sans-serif;">
                            Total Qty: <span id="quantity_stock" style="font-weight: 700; color: #253D4E;"></span> <span class="in-stock text-brand" id="total_stock" style="font-weight: 700;"></span>
@@ -45,27 +47,33 @@
                      {{-- product name --}}
                      <h3 class="title-detail" style="font-size: 22px; font-weight: 800; color: #253D4E; line-height: 1.3; margin: 0 0 15px;"><span id="pname"></span></h3>
 
-                     {{-- sizes --}}
-                     <input type="hidden" id="product_id">
-                     <div class="attr-detail attr-size mb-15" id="sizeArea" style="display: flex; align-items: center; gap: 15px;">
-                        <strong style="width: 70px; font-size: 14px; color: #253D4E;">Size:</strong>
-                        <select class="form-control unicase-form-control size" id="getPrice_modal" name="size" style="border-radius: 8px; border: 1px solid #ececec; padding: 8px 12px; font-size: 14px; height: auto; flex: 1;"></select>
-                     </div>
+                      {{-- sizes & variants side-by-side with price --}}
+                      <input type="hidden" id="product_id">
+                      <div class="quickview-attributes-price-wrap" style="display: flex; gap: 15px; align-items: stretch; margin-bottom: 20px;">
+                         <!-- Selectors Column (Left) -->
+                         <div class="quickview-attributes-col" style="flex: 1 1 50%; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
+                            {{-- sizes --}}
+                            <div id="sizeArea" style="width: 100%;">
+                               <select class="form-control unicase-form-control size" id="getPrice_modal" name="size" style="border-radius: 8px; border: 1px solid #ececec; padding: 8px 12px; font-size: 14px; height: 42px; width: 100%; box-sizing: border-box;"></select>
+                            </div>
 
-                     {{-- color --}}
-                     <div class="attr-detail attr-size mb-20" id="colorArea" style="display: flex; align-items: center; gap: 15px;">
-                        <strong style="width: 70px; font-size: 14px; color: #253D4E;">Variant:</strong>
-                        <select class="form-control unicase-form-control" id="color" name="color" style="border-radius: 8px; border: 1px solid #ececec; padding: 8px 12px; font-size: 14px; height: auto; flex: 1;">
-                        </select>
-                     </div>
+                            {{-- color --}}
+                            <div id="colorArea" style="width: 100%;">
+                               <select class="form-control unicase-form-control" id="color" name="color" style="border-radius: 8px; border: 1px solid #ececec; padding: 8px 12px; font-size: 14px; height: 42px; width: 100%; box-sizing: border-box;">
+                               </select>
+                            </div>
+                         </div>
 
-                     {{-- prices --}}
-                     <div class="product-price-cover mb-20" style="background: #fdfaf3; border-radius: 12px; padding: 12px 18px; border: 1px solid #f9ebd1; display: inline-block; width: 100%;">
-                        <div class="product-price primary-color d-flex align-items-baseline" style="gap: 10px; font-family: 'Inter', sans-serif;">
-                           <span class="current-price text-brand" style="font-size: 28px; font-weight: 800; color: #3bb77e;">Gh&nbsp;<span id="pprice"></span></span>
-                           <span class="old-price text-muted" style="text-decoration: line-through; font-size: 16px; font-weight: 500; display: inline-flex;"><span id="hide_curreny">Gh</span>&nbsp;<span id="oldprice"></span></span>
-                        </div>
-                     </div>
+                         <!-- Price Column (Right) -->
+                         <div class="quickview-price-col" style="flex: 1 1 50%; display: flex; align-items: center;">
+                            <div class="product-price-cover" style="background: #fdfaf3; border-radius: 12px; padding: 12px 18px; border: 1px solid #f9ebd1; width: 100%; height: 100%; min-height: 94px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 0 !important;">
+                               <div class="product-price primary-color d-flex align-items-baseline" style="gap: 10px; font-family: 'Inter', sans-serif;">
+                                  <span class="current-price text-brand" style="font-size: 28px; font-weight: 800; color: #3bb77e;">Gh&nbsp;<span id="pprice"></span></span>
+                                  <span class="old-price text-muted" style="text-decoration: line-through; font-size: 16px; font-weight: 500; display: inline-flex;"><span id="hide_curreny">Gh</span>&nbsp;<span id="oldprice"></span></span>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
 
                      {{-- quantities & checkout action --}}
                      <div class="detail-extralink d-flex align-items-center mb-15" style="gap: 15px;">
