@@ -78,7 +78,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
     });
 
     Route::post('add-to-wishlist/{product_id}', 'WishListController@add_to_wish_list');
-    Route::post('add-to-compare/{product_id}', 'CompareController@add_to_compare');
+    // Route::post('add-to-compare/{product_id}', 'CompareController@add_to_compare');
 
     // Route::get('login', 'UserController@login')->name('login');
     // Route::get('register', 'UserController@register')->name('register');
@@ -110,11 +110,11 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
             Route::post('wishlist-bulk-delete', 'wish_list_bulk_delete');
         });
 
-        Route::controller(CompareController::class)->group(function(){
-            Route::get('compare', 'all_compare')->name('compare');
-            Route::get('get-compare-product', 'get_compare_product');
-            Route::get('compare-remove/{id}', 'compare_remove');
-        });
+        // Route::controller(CompareController::class)->group(function(){
+        //     Route::get('compare', 'all_compare')->name('compare');
+        //     Route::get('get-compare-product', 'get_compare_product');
+        //     Route::get('compare-remove/{id}', 'compare_remove');
+        // });
 
         Route::controller(CheckOutController::class)->group(function(){
             Route::get('institution-get/ajax/{region_id}' , 'institution_get_ajax');
