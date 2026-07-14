@@ -1866,12 +1866,207 @@
          <script type="text/javascript">
             document.addEventListener("DOMContentLoaded", function() {
                var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeNoticeModal'));
+               })
+            }
+         // Coupon Remove End
+      </script>
+
+      @if(Auth::check() && Auth::user()->role === 'user')
+         @php
+            $user = Auth::user();
+            $showVerificationModal = false;
+            if ($user->status_identity === 'student') {
+                if (empty($user->institution) || empty($user->hall) || empty($user->phone)) {
+                    $showVerificationModal = true;
+                }
+            } else {
+                if (empty($user->phone)) {
+                    $showVerificationModal = true;
+                }
+            }
+         @endphp
+
+         @if($showVerificationModal)
+            @php
+               $modalInstitutions = \App\Models\DeliveryDistrict::where('district_name', '!=', '.select institution')->orderBy('district_name', 'ASC')->get();
+            @endphp
+            <!-- Verification Modal -->
+            <div class="modal fade" id="profileVerificationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="profileVerificationModalLabel" aria-hidden="true">
+               <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content" style="border-radius: 18px; border: none; box-shadow: 0 15px 50px rgba(0,0,0,0.15);">
+                     <div class="modal-header bg-light" style="border-bottom: 1px solid #f1f2f4; border-radius: 18px 18px 0 0; padding: 20px 24px;">
+                        <h5 class="modal-title" id="profileVerificationModalLabel" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #253D4E; display: flex; align-items: center; gap: 10px;">
+                           <span>🔒</span> Complete Your Profile Details
+                        </h5>
+                     </div>
+                     <form method="POST" action="{{ route('user.profile.update') }}">
+                        @csrf
+                        <input type="hidden" name="is_modal" value="1">
+                        <!-- Retain current fields so they don't get cleared -->
+                        <input type="hidden" name="username" value="{{ $user->username }}">
+                        <input type="hidden" name="name" value="{{ $user->name }}">
+                        <input type="hidden" name="email" value="{{ $user->email }}">
+                        <input type="hidden" name="address" value="{{ $user->address ?? 'N/A' }}">
+
+                        <div class="modal-body" style="padding: 24px;">
+                           <p class="text-muted mb-20" style="font-size: 13px; line-height: 1.5;">
+                              Please verify or complete your details to proceed. This ensures your orders are processed correctly and deliveries reach you safely.
+                           </p>
+                           @if($user->status_identity === 'student')
+                               <div class="form-group mb-15">
+                                  <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Institution *</label>
+                                  <select name="institution" id="modal_institution" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" required>
+                                     <option value="" disabled {{ empty($user->institution) ? 'selected' : '' }}>-- Select Institution --</option>
+                                     @foreach($modalInstitutions as $inst)
+                                        <option value="{{ $inst->district_name }}" data-id="{{ $inst->id }}" {{ $user->institution == $inst->district_name ? 'selected' : '' }}>{{ $inst->district_name }}</option>
+                                     @endforeach
+                                  </select>
+                               </div>
+
+                               @if($user->resident_type === 'non-resident')
+                                  <div class="form-group mb-15" id="modal-residence-text-wrapper">
+                                     <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Name of Residence *</label>
+                                     <input required class="form-control" name="residence_name" id="modal_residence_name" type="text" value="{{ $user->hall }}" placeholder="Enter name of residence" style="height: 48px; border-radius: 10px; font-size: 14px;" />
+                                  </div>
+                               @else
+                                  <div class="form-group mb-15" id="modal-hall-select-wrapper">
+                                     <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Residence Hall *</label>
+                                     <select name="hall" id="modal_hall" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" required>
+                                        <option value="" disabled selected>-- Select Hall --</option>
+                                     </select>
+                                  </div>
+                               @endif
+                            @endif
+
+                            <div class="form-group mb-0">
+                               <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Phone Number *</label>
+                               <input type="text" name="phone" id="modal_phone" value="{{ $user->phone }}" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" placeholder="e.g. 0243036092" required>
+                               <div id="modal_phone_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
+                                  This phone number is already registered by another user.
+                               </div>
+                            </div>
+                         </div>
+                         <div class="modal-footer" style="border-top: 1px solid #f1f2f4; padding: 16px 24px; display: flex; justify-content: flex-end;">
+                            <button type="submit" class="btn btn-default hover-up font-xs" style="background-color: #3BB77E; border-color: #3BB77E; color: white; padding: 12px 30px; border-radius: 10px; font-weight: 700; width: 100%;">
+                               Save and Continue
+                            </button>
+                         </div>
+                      </form>
+                  </div>
+               </div>
+            </div>
+
+            <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function() {
+                   var myModal = new bootstrap.Modal(document.getElementById('profileVerificationModal'), {
+                      backdrop: 'static',
+                      keyboard: false
+                   });
+                   myModal.show();
+
+                   var instSelect = document.getElementById('modal_institution');
+                   var hallSelect = document.getElementById('modal_hall');
+
+                   function loadHallsForSelectedInstitution() {
+                      if (!hallSelect) return;
+                      var selectedOption = instSelect.options[instSelect.selectedIndex];
+                      var districtId = selectedOption ? selectedOption.getAttribute('data-id') : null;
+                      
+                      if (districtId) {
+                         fetch("{{ url('/hall-get/ajax') }}/" + districtId)
+                            .then(response => response.json())
+                            .then(data => {
+                               if (data.length > 0) {
+                                  hallSelect.innerHTML = '<option value="" disabled selected>-- Select Hall --</option>';
+                                  data.forEach(function(item) {
+                                     var opt = document.createElement('option');
+                                     opt.value = item.city;
+                                     opt.textContent = item.city;
+                                     hallSelect.appendChild(opt);
+                                  });
+                               } else {
+                                  hallSelect.innerHTML = '<option value="" disabled selected>No halls available for this institution</option>';
+                               }
+                            })
+                            .catch(error => {
+                               hallSelect.innerHTML = '<option value="" disabled selected>No halls available for this institution</option>';
+                            });
+                      } else {
+                         hallSelect.innerHTML = '<option value="" disabled selected>-- Select Hall --</option>';
+                      }
+                   }
+
+                   if (instSelect) {
+                      instSelect.addEventListener('change', loadHallsForSelectedInstitution);
+                      if (instSelect.value) {
+                         loadHallsForSelectedInstitution();
+                      }
+                   }
+
+                  var phoneInput = document.getElementById('modal_phone');
+                  var feedback = document.getElementById('modal_phone_feedback');
+                  var submitBtn = document.querySelector('#profileVerificationModal button[type="submit"]');
+
+                  function checkPhoneUnique() {
+                     var phoneVal = phoneInput.value.trim();
+                     if (phoneVal.length > 0) {
+                        fetch("{{ url('/check-phone-unique') }}?phone=" + encodeURIComponent(phoneVal))
+                           .then(response => response.json())
+                           .then(data => {
+                              if (data.unique) {
+                                 phoneInput.style.borderColor = '';
+                                 feedback.style.display = 'none';
+                                 submitBtn.disabled = false;
+                              } else {
+                                 phoneInput.style.borderColor = '#d9534f';
+                                 feedback.style.display = 'block';
+                                 submitBtn.disabled = true;
+                              }
+                           });
+                     } else {
+                        phoneInput.style.borderColor = '';
+                        feedback.style.display = 'none';
+                        submitBtn.disabled = false;
+                     }
+                  }
+
+                  if (phoneInput) {
+                     phoneInput.addEventListener('input', checkPhoneUnique);
+                     phoneInput.addEventListener('change', checkPhoneUnique);
+                  }
+               });
+            </script>
+         @endif
+      @endif
+
+      @if(session('welcome_notice'))
+         <!-- Welcome Notice Modal -->
+         <div class="modal fade" id="welcomeNoticeModal" tabindex="-1" aria-labelledby="welcomeNoticeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content" style="border-radius: 24px; border: none; overflow: hidden; background: linear-gradient(135deg, #ffffff 0%, #f4fbf7 100%); box-shadow: 0 20px 60px rgba(59, 183, 126, 0.15);">
+                  <div style="padding: 40px 30px; text-align: center;">
+                     <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
+                     <h3 id="welcomeNoticeModalLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #253D4E; margin-bottom: 12px;">Welcome to your Dashboard!</h3>
+                     <p style="font-size: 15px; color: #7E7E7E; line-height: 1.6; margin-bottom: 30px;">
+                        Your profile details have been successfully verified. You are now ready to place orders and enjoy swift, campus-wide deliveries!
+                     </p>
+                     <button type="button" class="btn btn-default hover-up" data-bs-dismiss="modal" style="background-color: #3BB77E; border-color: #3BB77E; color: white; padding: 12px 40px; border-radius: 12px; font-weight: 700; width: 100%; font-size: 14px;">
+                        Explore Products
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+               var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeNoticeModal'));
                welcomeModal.show();
             });
          </script>
       @endif
 
-      @php
+        @php
           try {
               $ip = request()->ip();
               $sessionId = session()->getId();
@@ -1897,53 +2092,52 @@
           } catch (\Exception $e) {}
       @endphp
 
+      <!--Start of Tawk.to Script-->
+      <script type="text/javascript">
+      var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+      Tawk_API.customStyle = {
+          visibility : {
+              desktop : {
+                  position : 'br',
+                  xOffset : 15,
+                  yOffset : 15
+              },
+              mobile : {
+                  position : 'br',
+                  xOffset : 15,
+                  yOffset : 225
+              }
+          }
+      };
+      (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true;
+      s1.src='https://embed.tawk.to/6a4fa09ba6558f1d451fdc7b/1jt3gmors';
+      s1.charset='UTF-8';
+      s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
+      })();
+      </script>
+      <!--End of Tawk.to Script-->
 
-           <!--Start of Tawk.to Script-->
-        <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        Tawk_API.customStyle = {
-            visibility : {
-                desktop : {
-                    position : 'br',
-                    xOffset : 15,
-                    yOffset : 15
-                },
-                mobile : {
-                    position : 'br',
-                    xOffset : 15,
-                    yOffset : 160
-                }
-            }
-        };
-        (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/6a4fa09ba6558f1d451fdc7b/1jt3gmors';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-        })();
-        </script>
-        <!--End of Tawk.to Script-->
-
-         <script type="text/javascript">
-            $(document).ready(function() {
-               // Hide Tawk.to widget via JS API when any modal opens
-               $(document).on('show.bs.modal', '.modal', function () {
-                  if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
-                     try { window.Tawk_API.hideWidget(); } catch(e) {}
-                  }
-               });
-               // Show Tawk.to widget via JS API when any modal closes
-               $(document).on('hidden.bs.modal', '.modal', function () {
-                  if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
-                     try { window.Tawk_API.showWidget(); } catch(e) {}
-                  }
-               });
+      <script type="text/javascript">
+         $(document).ready(function() {
+            // Hide Tawk.to widget via JS API when any modal opens
+            $(document).on('show.bs.modal', '.modal', function () {
+               if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
+                  try { window.Tawk_API.hideWidget(); } catch(e) {}
+               }
             });
-         </script>
+            // Show Tawk.to widget via JS API when any modal closes
+            $(document).on('hidden.bs.modal', '.modal', function () {
+               if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
+                  try { window.Tawk_API.showWidget(); } catch(e) {}
+               }
+            });
+         });
+      </script>
 
-        @include('front.sections.floating_panel')
+      @include('front.sections.floating_panel')
 
    </body>
 </html>
