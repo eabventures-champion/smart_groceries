@@ -19,6 +19,15 @@
     <div class="card">
        <div class="card-body">
           @role('Developer')
+          @php
+              $onlyEmailsCount = $affiliates->filter(function($user) {
+                  return empty($user->phone);
+              })->count();
+
+              $bothCount = $affiliates->filter(function($user) {
+                  return !empty($user->phone);
+              })->count();
+          @endphp
           <!-- Premium Filter & Export Bar -->
           <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 p-3" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
              <div class="d-flex align-items-center gap-2 flex-nowrap">
@@ -26,9 +35,9 @@
                    <i class="bx bx-filter-alt" style="font-size: 16px;"></i> Filter By:
                 </label>
                 <select id="affiliateFilter" class="form-select form-select-sm px-3 py-2" style="border-radius: 8px; border-color: #cbd5e1; font-weight: 500; min-width: 220px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;">
-                   <option value="all">All Partners</option>
-                   <option value="only_emails">Only Emails (No Contact)</option>
-                   <option value="both">Both Contact & Email</option>
+                   <option value="all">All Partners ({{ count($affiliates) }})</option>
+                   <option value="only_emails">Only Emails (No Contact) ({{ $onlyEmailsCount }})</option>
+                   <option value="both">Both Contact & Email ({{ $bothCount }})</option>
                 </select>
              </div>
              
