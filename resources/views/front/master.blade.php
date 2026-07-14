@@ -77,23 +77,114 @@
             line-height: 1 !important;
          }
 
-         /* Mobile actions alignment (only on screens < 992px) */
-         @media (max-width: 991.98px) {
-            .product-action-1-mobile {
-               display: flex !important;
-               align-items: center !important;
-               justify-content: flex-start !important;
-               gap: 8px !important;
-               margin-top: 5px !important;
-               white-space: nowrap !important;
-            }
-            .product-action-1-mobile a {
-               padding: 0 !important;
-               display: inline-flex !important;
-               align-items: center !important;
-               justify-content: center !important;
-               font-size: 18px !important;
-            }
+          /* Premium Mobile actions alignment & styling (only on screens < 992px) */
+          @media (max-width: 991.98px) {
+             .product-cart-wrap .product-img-action-wrap .product-action-1 {
+                min-width: unset !important;
+                width: auto !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+                border-radius: 40px !important; /* Premium rounded pill shape */
+                border: 1px solid rgba(59, 183, 126, 0.2) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+                padding: 8px 16px !important;
+                display: inline-flex !important;
+                gap: 18px !important; /* Spaced well apart */
+                align-items: center !important;
+                justify-content: center !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+             }
+
+             /* Show actions overlay on mobile tap/active */
+             .product-cart-wrap:hover .product-img-action-wrap .product-action-1,
+             .product-cart-wrap:active .product-img-action-wrap .product-action-1,
+             .product-cart-wrap:focus-within .product-img-action-wrap .product-action-1 {
+                opacity: 1 !important;
+                visibility: visible !important;
+             }
+
+             .product-cart-wrap .product-action-1 a.action-btn {
+                width: 44px !important; /* Touch-friendly larger buttons */
+                height: 44px !important;
+                border-radius: 50% !important;
+                background-color: #f0fdf4 !important; /* Light brand green background */
+                color: #3bb77e !important; /* Brand green */
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.2s ease-in-out !important;
+                border: none !important;
+             }
+
+             /* Prevent border-radius issues */
+             .product-cart-wrap .product-action-1 a.action-btn:first-child,
+             .product-cart-wrap .product-action-1 a.action-btn:last-child {
+                border-radius: 50% !important;
+             }
+
+             /* Remove vertical divider borders */
+             .product-cart-wrap .product-action-1 a.action-btn + a.action-btn {
+                border-left: none !important;
+             }
+
+             /* Interactive active/hover state inside overlay */
+             .product-cart-wrap .product-action-1 a.action-btn:active,
+             .product-cart-wrap .product-action-1 a.action-btn:hover {
+                background-color: #3bb77e !important;
+                color: #ffffff !important;
+                transform: scale(1.15) !important;
+                box-shadow: 0 4px 15px rgba(59, 183, 126, 0.35) !important;
+             }
+
+             /* Hide Compare button on mobile */
+             .product-cart-wrap .product-action-1 a[aria-label="Compare"],
+             .product-cart-wrap .product-action-1 a[onclick*="Compare"],
+             .product-cart-wrap .product-action-1 a[onclick*="addToCompare"] {
+                display: none !important;
+             }
+
+             /* Larger Icon sizes */
+             .product-cart-wrap .product-action-1 a.action-btn i {
+                font-size: 20px !important; /* Large Love and Eye icons */
+                line-height: 1 !important;
+             }
+
+             /* Bottom card inline mobile action styling */
+             .product-action-1-mobile {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 12px !important;
+                margin-top: 5px !important;
+                white-space: nowrap !important;
+             }
+             .product-action-1-mobile a {
+                width: 36px !important;
+                height: 36px !important;
+                border-radius: 50% !important;
+                background-color: #f0fdf4 !important;
+                color: #3bb77e !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 16px !important;
+                transition: all 0.2s ease !important;
+             }
+             .product-action-1-mobile a:active {
+                background-color: #3bb77e !important;
+                color: #ffffff !important;
+                transform: scale(1.1) !important;
+             }
+             .product-action-1-mobile a[aria-label="Compare"],
+             .product-action-1-mobile a[onclick*="Compare"] {
+                display: none !important;
+             }
           }
           
           /* Hide SG floating panel when a modal is open on mobile view */
