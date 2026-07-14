@@ -367,6 +367,11 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('/payout/user-details/{id}', 'get_user_payouts')->name('admin.payout.user-details');
             Route::post('/payout/approve/{id}', 'approve_payout')->name('admin.payout.approve');
             Route::post('/payout/reject/{id}', 'reject_payout')->name('admin.payout.reject');
+
+            // User Account Status Management
+            Route::post('/client/suspend/{id}', 'suspend_user')->name('admin.client.suspend');
+            Route::post('/client/disable/{id}', 'disable_user')->name('admin.client.disable');
+            Route::post('/client/reactivate/{id}', 'reactivate_user')->name('admin.client.reactivate');
         });
 
         Route::controller(ReviewController::class)->group(function(){

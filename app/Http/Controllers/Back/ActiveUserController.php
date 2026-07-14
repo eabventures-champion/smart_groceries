@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class ActiveUserController extends Controller
 {
     public function all_user(){
-        $users = User::where(['role' => 'user', 'status' => 'active'])->latest()->get();
+        $users = User::where('role', 'user')->latest()->get();
         return view('back.admin.user.user_all_data', compact('users'));
 
     } // End Mehtod 
@@ -152,6 +152,59 @@ class ActiveUserController extends Controller
         }
 
         return view('back.admin.user.payout_receipt', compact('payout'));
+    }
+
+    public function suspend_user($id){
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'user') {
+            abort(403, 'Cannot modify this account.');
+        }
+
+        $user->status = 'suspended';
+        $user->setRememberToken(null); // Force logout on next request
+        $user->save();
+
+        $notification = array(
+            'message' => 'User account has been suspended successfully.',
+            'alert-type' => 'warning'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function disable_user($id){
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'user') {
+            abort(403, 'Cannot modify this account.');
+        }
+
+        $user->status = 'disabled';
+        $user->setRememberToken(null);
+        $user->save();
+
+        $notification = array(
+            'message' => 'User account has been disabled successfully.',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function reactivate_user($id){
+        $user = User::findOrFail($id);
+
+        if ($user->role !== 'user') {
+            abort(403, 'Cannot modify this account.');
+        }
+
+        $user->status = 'active';
+        $user->save();
+
+        $notification = array(
+            'message' => 'User account has been reactivated successfully.',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
     }
 
     public function admin_live_chat(){

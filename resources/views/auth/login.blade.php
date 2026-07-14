@@ -41,9 +41,230 @@
             line-height: 1;
          }
          .password-toggle-btn:hover {
-            color: #3BB77E;
-         }
-      </style>
+             color: #3BB77E;
+          }
+
+          /* ── Account Status Modal ── */
+          .account-status-overlay {
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background: rgba(0, 0, 0, 0.6);
+             backdrop-filter: blur(8px);
+             -webkit-backdrop-filter: blur(8px);
+             z-index: 99999;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             opacity: 0;
+             animation: fadeInOverlay 0.4s ease forwards;
+          }
+
+          @keyframes fadeInOverlay {
+             to { opacity: 1; }
+          }
+
+          .account-status-modal {
+             background: #ffffff;
+             border-radius: 20px;
+             width: 90%;
+             max-width: 460px;
+             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+             overflow: hidden;
+             transform: scale(0.8) translateY(30px);
+             opacity: 0;
+             animation: popInModal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s forwards;
+          }
+
+          @keyframes popInModal {
+             to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+             }
+          }
+
+          .account-status-modal .modal-accent {
+             height: 6px;
+             width: 100%;
+          }
+
+          .account-status-modal .modal-accent.suspended {
+             background: linear-gradient(90deg, #f59e0b, #f97316, #ef4444);
+          }
+
+          .account-status-modal .modal-accent.disabled {
+             background: linear-gradient(90deg, #ef4444, #dc2626, #991b1b);
+          }
+
+          .account-status-modal .modal-body-content {
+             padding: 40px 36px 32px;
+             text-align: center;
+          }
+
+          .account-status-modal .status-icon-wrap {
+             width: 80px;
+             height: 80px;
+             border-radius: 50%;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             margin: 0 auto 24px;
+             position: relative;
+          }
+
+          .account-status-modal .status-icon-wrap.suspended {
+             background: linear-gradient(135deg, #fef3c7, #fde68a);
+             box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);
+          }
+
+          .account-status-modal .status-icon-wrap.disabled {
+             background: linear-gradient(135deg, #fee2e2, #fecaca);
+             box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+          }
+
+          .account-status-modal .status-icon-wrap svg {
+             width: 36px;
+             height: 36px;
+          }
+
+          .account-status-modal .status-icon-wrap.suspended svg {
+             color: #d97706;
+          }
+
+          .account-status-modal .status-icon-wrap.disabled svg {
+             color: #dc2626;
+          }
+
+          .status-icon-wrap .pulse-ring {
+             position: absolute;
+             width: 100%;
+             height: 100%;
+             border-radius: 50%;
+             animation: pulseRing 2s ease-out infinite;
+          }
+
+          .status-icon-wrap.suspended .pulse-ring {
+             border: 2px solid rgba(245, 158, 11, 0.4);
+          }
+
+          .status-icon-wrap.disabled .pulse-ring {
+             border: 2px solid rgba(239, 68, 68, 0.4);
+          }
+
+          @keyframes pulseRing {
+             0% { transform: scale(1); opacity: 1; }
+             100% { transform: scale(1.5); opacity: 0; }
+          }
+
+          .account-status-modal h3 {
+             font-size: 22px;
+             font-weight: 700;
+             color: #1f2937;
+             margin-bottom: 12px;
+             letter-spacing: -0.3px;
+          }
+
+          .account-status-modal .status-message {
+             font-size: 15px;
+             color: #6b7280;
+             line-height: 1.6;
+             margin-bottom: 28px;
+          }
+
+          .account-status-modal .info-card {
+             border-radius: 12px;
+             padding: 16px 20px;
+             margin-bottom: 28px;
+             display: flex;
+             align-items: flex-start;
+             gap: 12px;
+             text-align: left;
+          }
+
+          .account-status-modal .info-card.suspended {
+             background: #fffbeb;
+             border: 1px solid #fde68a;
+          }
+
+          .account-status-modal .info-card.disabled {
+             background: #fef2f2;
+             border: 1px solid #fecaca;
+          }
+
+          .account-status-modal .info-card svg {
+             width: 20px;
+             height: 20px;
+             flex-shrink: 0;
+             margin-top: 2px;
+          }
+
+          .account-status-modal .info-card.suspended svg {
+             color: #d97706;
+          }
+
+          .account-status-modal .info-card.disabled svg {
+             color: #dc2626;
+          }
+
+          .account-status-modal .info-card p {
+             font-size: 13px;
+             color: #4b5563;
+             margin: 0;
+             line-height: 1.5;
+          }
+
+          .account-status-modal .modal-btn {
+             display: inline-flex;
+             align-items: center;
+             justify-content: center;
+             gap: 8px;
+             width: 100%;
+             padding: 14px 24px;
+             border: none;
+             border-radius: 12px;
+             font-size: 15px;
+             font-weight: 600;
+             cursor: pointer;
+             transition: all 0.3s ease;
+             text-decoration: none;
+             color: #fff;
+          }
+
+          .account-status-modal .modal-btn.suspended {
+             background: linear-gradient(135deg, #f59e0b, #d97706);
+             box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+          }
+
+          .account-status-modal .modal-btn.suspended:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+          }
+
+          .account-status-modal .modal-btn.disabled {
+             background: linear-gradient(135deg, #ef4444, #dc2626);
+             box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+          }
+
+          .account-status-modal .modal-btn.disabled:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+          }
+
+          .account-status-modal .contact-link {
+             display: block;
+             margin-top: 16px;
+             font-size: 13px;
+             color: #9ca3af;
+             text-decoration: none;
+             transition: color 0.2s;
+          }
+
+          .account-status-modal .contact-link:hover {
+             color: #6b7280;
+          }
+       </style>
    </head>
    <body>
       @include('front.body.header')
@@ -101,6 +322,80 @@
             </div>
          </div>
       </main>
+
+      {{-- ── Premium Account Status Modal ── --}}
+      @if(Session::has('account_status'))
+      @php $accountStatus = Session::get('account_status'); @endphp
+      <div class="account-status-overlay" id="accountStatusOverlay">
+         <div class="account-status-modal">
+            <div class="modal-accent {{ $accountStatus }}"></div>
+            <div class="modal-body-content">
+               {{-- Icon --}}
+               <div class="status-icon-wrap {{ $accountStatus }}">
+                  <div class="pulse-ring"></div>
+                  @if($accountStatus === 'suspended')
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="10" y1="15" x2="10" y2="9"></line>
+                        <line x1="14" y1="15" x2="14" y2="9"></line>
+                     </svg>
+                  @else
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                     </svg>
+                  @endif
+               </div>
+
+               {{-- Title --}}
+               <h3>
+                  @if($accountStatus === 'suspended')
+                     Account Suspended
+                  @else
+                     Account Disabled
+                  @endif
+               </h3>
+
+               {{-- Message --}}
+               <p class="status-message">
+                  @if($accountStatus === 'suspended')
+                     Your account has been temporarily suspended by an administrator. Access to all services is currently restricted.
+                  @else
+                     Your account has been permanently disabled by an administrator. You no longer have access to this platform.
+                  @endif
+               </p>
+
+               {{-- Info Card --}}
+               <div class="info-card {{ $accountStatus }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                     <circle cx="12" cy="12" r="10"></circle>
+                     <line x1="12" y1="8" x2="12" y2="12"></line>
+                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <p>
+                     @if($accountStatus === 'suspended')
+                        This may be due to a policy violation or security concern. Please reach out to our support team to resolve this and restore your account access.
+                     @else
+                        This action is permanent unless reversed by an administrator. If you believe this was done in error, please contact our support team immediately.
+                     @endif
+                  </p>
+               </div>
+
+               {{-- Action Button --}}
+               <a href="mailto:support@smartgroceries.com" class="modal-btn {{ $accountStatus }}">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                     <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  Contact Support
+               </a>
+
+               <a href="{{ url('/') }}" class="contact-link">← Return to Homepage</a>
+            </div>
+         </div>
+      </div>
+      @endif
+
       {{-- @include('front.body.footer') --}}
       <!-- Preloader Start -->
       <div id="preloader-active">

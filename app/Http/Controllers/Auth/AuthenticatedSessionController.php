@@ -39,6 +39,18 @@ class AuthenticatedSessionController extends Controller
             return redirect()->back()->with($notification);
         }
 
+        if(Auth::user()->status == "suspended"){
+            Auth::logout();
+
+            return redirect()->back()->with('account_status', 'suspended');
+        }
+
+        if(Auth::user()->status == "disabled"){
+            Auth::logout();
+
+            return redirect()->back()->with('account_status', 'disabled');
+        }
+
         $request->session()->regenerate();
 
         $notification = array(

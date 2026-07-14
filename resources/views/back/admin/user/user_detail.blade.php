@@ -93,9 +93,60 @@
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap px-0">
                            <h6 class="mb-0 text-muted"><i class="fa fa-check-circle me-2"></i> Account Status</h6>
-                           <span class="badge bg-success">Active</span>
+                           @if($user->status == 'active')
+                              <span class="badge bg-success"><i class="fa fa-check-circle me-1"></i>Active</span>
+                           @elseif($user->status == 'suspended')
+                              <span class="badge bg-warning text-dark"><i class="fa fa-pause-circle me-1"></i>Suspended</span>
+                           @elseif($user->status == 'disabled')
+                              <span class="badge bg-danger"><i class="fa fa-ban me-1"></i>Disabled</span>
+                           @else
+                              <span class="badge bg-secondary"><i class="fa fa-clock me-1"></i>Inactive</span>
+                           @endif
                         </li>
                      </ul>
+
+                     {{-- Manage Account Actions --}}
+                     <div class="card mt-4 border shadow-none" style="border-radius: 8px; background-color: #f8f9fa;">
+                        <div class="card-body p-3">
+                           <h6 class="mb-3 font-weight-bold text-dark text-center"><i class="bx bx-shield me-1 fs-5"></i> Manage Account</h6>
+                           <div class="d-grid gap-2">
+                              @if($user->status == 'active')
+                                 <form action="{{ route('admin.client.suspend', $user->id) }}" method="POST" class="detail-action-form" data-action="suspend" data-username="{{ $user->name }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-warning btn-sm w-100">
+                                       <i class="fa fa-pause-circle me-1"></i> Suspend Account
+                                    </button>
+                                 </form>
+                                 <form action="{{ route('admin.client.disable', $user->id) }}" method="POST" class="detail-action-form" data-action="disable" data-username="{{ $user->name }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger btn-sm w-100">
+                                       <i class="fa fa-ban me-1"></i> Disable Account
+                                    </button>
+                                 </form>
+                              @elseif($user->status == 'suspended')
+                                 <form action="{{ route('admin.client.reactivate', $user->id) }}" method="POST" class="detail-action-form" data-action="reactivate" data-username="{{ $user->name }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-sm w-100">
+                                       <i class="fa fa-check-circle me-1"></i> Reactivate Account
+                                    </button>
+                                 </form>
+                                 <form action="{{ route('admin.client.disable', $user->id) }}" method="POST" class="detail-action-form" data-action="disable" data-username="{{ $user->name }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger btn-sm w-100">
+                                       <i class="fa fa-ban me-1"></i> Disable Account
+                                    </button>
+                                 </form>
+                              @elseif($user->status == 'disabled')
+                                 <form action="{{ route('admin.client.reactivate', $user->id) }}" method="POST" class="detail-action-form" data-action="reactivate" data-username="{{ $user->name }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-sm w-100">
+                                       <i class="fa fa-check-circle me-1"></i> Reactivate Account
+                                    </button>
+                                 </form>
+                              @endif
+                           </div>
+                        </div>
+                     </div>
 
                       <div class="card mt-4 border shadow-none" style="border-radius: 8px; background-color: #fbfbfb;">
                          <div class="card-body p-3 text-center">
@@ -562,4 +613,60 @@
       </div>
    </div>
 </div>
+
+{{-- SweetAlert Confirmation for Account Actions --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   document.querySelectorAll('.detail-action-form').forEach(function(form) {
+      form.addEventListener('submit', function(e) {
+         e.preventDefault();
+         var action = this.dataset.action;
+         var username = this.dataset.username;
+         var formEl = this;
+
+         var config = {
+            suspend: {
+               title: 'Suspend Account?',
+               text: 'Are you sure you want to suspend ' + username + '\'s account? They will be logged out and unable to access the platform.',
+               icon: 'warning',
+               confirmText: 'Yes, Suspend',
+               confirmColor: '#ffc107'
+            },
+            disable: {
+               title: 'Disable Account?',
+               text: 'Are you sure you want to disable ' + username + '\'s account? This will permanently deactivate their access.',
+               icon: 'error',
+               confirmText: 'Yes, Disable',
+               confirmColor: '#dc3545'
+            },
+            reactivate: {
+               title: 'Reactivate Account?',
+               text: 'Are you sure you want to reactivate ' + username + '\'s account? They will regain full access.',
+               icon: 'question',
+               confirmText: 'Yes, Reactivate',
+               confirmColor: '#198754'
+            }
+         };
+
+         var c = config[action];
+
+         Swal.fire({
+            title: c.title,
+            text: c.text,
+            icon: c.icon,
+            showCancelButton: true,
+            confirmButtonColor: c.confirmColor,
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: c.confirmText,
+            cancelButtonText: 'Cancel'
+         }).then(function(result) {
+            if (result.isConfirmed) {
+               formEl.submit();
+            }
+         });
+      });
+   });
+});
+</script>
 @endsection

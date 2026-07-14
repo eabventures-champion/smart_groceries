@@ -24,6 +24,17 @@ class Role
             $expireTime = Carbon::now()->addSeconds(30);
             Cache::put('user-is-online' . Auth::user()->id, true, $expireTime);
             User::where('id', Auth::user()->id)->update(['last_seen' => Carbon::now()]);
+
+            // Eject suspended or disabled users mid-session
+            if (in_array(Auth::user()->status, ['suspended', 'disabled'])) {
+                $accountStatus = Auth::user()->status;
+
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')->with('account_status', $accountStatus);
+            }
          }
 
         if($request->user()->role !== $role){

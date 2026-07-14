@@ -89,7 +89,7 @@
             <div class="menu-title">User Manage</div>
          </a>
          <ul>
-            <li> <a href="{{ route('all.users') }}"><i class="bx bx-right-arrow-alt"></i>All Users</a>
+            <li> <a href="{{ route('all.users') }}"><i class="bx bx-right-arrow-alt"></i>All Active Users</a>
             </li>
             <li> <a href="{{ route('all.affiliates') }}"><i class="bx bx-right-arrow-alt"></i>All Affiliates</a>
             </li>
