@@ -11,23 +11,21 @@
                      <div class="detail-gallery quickview" style="border: 1px solid #f1f2f4; border-radius: 16px; background: #fafbfc; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 260px; margin-bottom: 20px;">
                         <img src=" " alt="product image" id="pimage" style="max-height: 100%; max-width: 100%; object-fit: contain; padding: 15px;" />
                      </div>
-                     {{-- properties --}}
-                     <div class="quickview-info-wrap" style="font-family: 'Inter', sans-serif; font-size: 13px; color: #7e7e7e; background: #f8f9fa; padding: 12px 16px; border-radius: 12px; border: 1px solid #f1f2f4; width: 100%;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                           <tr style="border-bottom: 1px solid #f1f2f4;">
-                              <td style="padding: 6px 0; color: #7e7e7e; width: 75px; font-weight: 500;">Brand:</td>
-                              <td style="padding: 6px 0; font-weight: 700; color: #253D4E; text-align: left;" id="pbrand"></td>
-                           </tr>
-                           <tr style="border-bottom: 1px solid #f1f2f4;">
-                              <td style="padding: 6px 0; color: #7e7e7e; width: 75px; font-weight: 500;">Category:</td>
-                              <td style="padding: 6px 0; font-weight: 700; color: #253D4E; text-align: left;" id="pcategory"></td>
-                           </tr>
-                           <tr>
-                              <td style="padding: 6px 0; color: #7e7e7e; width: 75px; font-weight: 500;">Code:</td>
-                              <td style="padding: 6px 0; font-weight: 700; color: #253D4E; text-align: left;" id="pcode"></td>
-                           </tr>
-                        </table>
-                     </div>
+                      {{-- properties --}}
+                      <div class="quickview-info-wrap" style="font-family: 'Inter', sans-serif; font-size: 13px; color: #7e7e7e; background: #f8f9fa; padding: 16px; border-radius: 12px; border: 1px solid #f1f2f4; width: 100%; display: flex; flex-direction: column; gap: 12px; text-align: left;">
+                         <div>
+                            <strong style="color: #253D4E; font-weight: 800; font-size: 13px; display: block; margin-bottom: 2px;">Brand:</strong>
+                            <span id="pbrand" style="color: #7e7e7e; font-weight: 500; display: block;"></span>
+                         </div>
+                         <div>
+                            <strong style="color: #253D4E; font-weight: 800; font-size: 13px; display: block; margin-bottom: 2px;">Category:</strong>
+                            <span id="pcategory" style="color: #7e7e7e; font-weight: 500; display: block;"></span>
+                         </div>
+                         <div>
+                            <strong style="color: #253D4E; font-weight: 800; font-size: 13px; display: block; margin-bottom: 2px;">Code:</strong>
+                            <span id="pcode" style="color: #7e7e7e; font-weight: 500; display: block;"></span>
+                         </div>
+                      </div>
                   </div>
                </div>
                
