@@ -429,7 +429,7 @@
             transform: translateX(-50%) !important;
         }
         #sg-floating-dock.sg-dock-hidden {
-            transform: translateX(-50%) translateY(150%) !important;
+            transform: translateX(-50%) translateY(250px) !important;
             pointer-events: none !important;
         }
 
@@ -465,7 +465,7 @@
             box-shadow: 0 4px 18px rgba(59, 183, 126, 0.4) !important;
         }
         #sg-restore-handle.sg-restore-hidden {
-            transform: translateX(-50%) translateY(150%) !important;
+            transform: translateX(-50%) translateY(250px) !important;
         }
     }
 
