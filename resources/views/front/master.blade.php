@@ -270,11 +270,14 @@
           body.modal-open #sg-floating-dock,
           body.modal-open #sg-restore-handle,
           body.modal-open iframe[src*="tawk.to"],
-          body.modal-open .tawk-min-container,
-          body.modal-open div[id^="tawk"],
-          body.modal-open iframe[id^="tawk"],
-          body.modal-open [class^="tawk-"] {
+          body.modal-open iframe[src*="tawk"],
+          body.modal-open [class*="tawk"],
+          body.modal-open [id*="tawk"],
+          body.modal-open iframe[title*="Tawk"],
+          body.modal-open iframe[title*="chat"] {
              display: none !important;
+             visibility: hidden !important;
+             opacity: 0 !important;
           }
 
           /* Premium horizontal quantity selector layout for all screen sizes (Desktop & Mobile) */
@@ -1923,7 +1926,24 @@
         </script>
         <!--End of Tawk.to Script-->
 
-       @include('front.sections.floating_panel')
+         <script type="text/javascript">
+            $(document).ready(function() {
+               // Hide Tawk.to widget via JS API when any modal opens
+               $(document).on('show.bs.modal', '.modal', function () {
+                  if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
+                     try { window.Tawk_API.hideWidget(); } catch(e) {}
+                  }
+               });
+               // Show Tawk.to widget via JS API when any modal closes
+               $(document).on('hidden.bs.modal', '.modal', function () {
+                  if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
+                     try { window.Tawk_API.showWidget(); } catch(e) {}
+                  }
+               });
+            });
+         </script>
+
+        @include('front.sections.floating_panel')
 
    </body>
 </html>
