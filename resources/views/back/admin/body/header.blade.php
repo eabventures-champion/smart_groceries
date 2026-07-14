@@ -84,7 +84,7 @@
                         @php
                            $isUnread = is_null($notification->read_at);
                         @endphp
-                        <a class="dropdown-item" href="javascript:;" onclick="markNotificationRead('{{ $notification->id }}')" style="{{ $isUnread ? 'background-color: rgba(59, 183, 126, 0.05);' : '' }} border-bottom: 1px solid #f1f2f4; padding: 12px 16px;">
+                        <a class="dropdown-item" href="javascript:;" onclick="markNotificationRead('{{ $notification->id }}')" style="background-color: {{ $isUnread ? '#edfbf4' : '#ffffff' }} !important; border-bottom: 1px solid #f1f2f4; padding: 12px 16px;">
                            <div class="d-flex align-items-start gap-2">
                               <div class="notify {{ $isUnread ? 'bg-light-success text-success' : 'bg-light-secondary text-secondary' }}" style="width: 32px; height: 32px; line-height: 32px; font-size: 16px; margin-right: 0; flex-shrink: 0; margin-top: 2px;">
                                  <i class="bx {{ $isUnread ? 'bx-bell' : 'bx-envelope-open' }}"></i>
