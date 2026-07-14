@@ -137,6 +137,9 @@
                                           @error('email')
                                           <span class="text-danger">{{ $message }}</span>
                                           @enderror
+                                          <div id="email_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
+                                             The email has already been taken.
+                                          </div>
                                        </div>
 
                                        <!-- Status Identity -->
@@ -445,7 +448,39 @@
                      $(element).removeClass('is-invalid');
                  },
              });
-         });
+
+              var emailInput = $('#email');
+              var emailFeedback = $('#email_feedback');
+              var registerBtn = $('#myForm_type button[type="submit"]');
+
+              function checkEmailUnique() {
+                  var emailVal = emailInput.val().trim();
+                  if (emailVal.length > 0) {
+                      $.ajax({
+                          url: "{{ url('/check-email-unique') }}",
+                          data: { email: emailVal },
+                          dataType: 'json',
+                          success: function(data) {
+                              if (data.unique) {
+                                  emailInput.removeClass('is-invalid').css('border-color', '');
+                                  emailFeedback.hide();
+                                  registerBtn.prop('disabled', false);
+                              } else {
+                                  emailInput.addClass('is-invalid').css('border-color', '#d9534f');
+                                  emailFeedback.show();
+                                  registerBtn.prop('disabled', true);
+                              }
+                          }
+                      });
+                  } else {
+                      emailInput.removeClass('is-invalid').css('border-color', '');
+                      emailFeedback.hide();
+                      registerBtn.prop('disabled', false);
+                  }
+              }
+
+              emailInput.on('input change', checkEmailUnique);
+          });
 
       </script>
 
@@ -502,5 +537,49 @@
         })();
         </script>
         <!--End of Tawk.to Script-->
+
+@if(session('show_activation_modal'))
+<!-- Email Activation Premium Modal -->
+<div class="modal fade" id="activationModal" tabindex="-1" aria-labelledby="activationModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+   <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 24px; border: none; overflow: hidden; background: #ffffff; box-shadow: 0 20px 60px rgba(59, 183, 126, 0.15);">
+         <div style="padding: 40px 30px; text-align: center;">
+            <div class="activation-icon-wrapper" style="margin-bottom: 24px;">
+               <span style="font-size: 60px; display: inline-block; animation: pulse-email 2s infinite;">📧</span>
+            </div>
+            <h3 id="activationModalLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #253D4E; margin-bottom: 12px; font-size: 24px;">Verify Your Email</h3>
+            <p style="font-size: 15px; color: #7E7E7E; line-height: 1.6; margin-bottom: 30px; padding: 0 10px;">
+               An activation link has been sent to your email address. Please check your inbox (and spam folder) and click the link to activate your account.
+            </p>
+            <button type="button" class="btn btn-default hover-up" data-bs-dismiss="modal" style="background-color: #3BB77E; border-color: #3BB77E; color: white; padding: 12px 40px; border-radius: 12px; font-weight: 700; width: 100%; font-size: 14px; box-shadow: 0 4px 12px rgba(59, 183, 126, 0.2);">
+               Got It, Thanks!
+            </button>
+         </div>
+      </div>
+   </div>
+</div>
+
+<style>
+@keyframes pulse-email {
+   0% {
+      transform: scale(1);
+   }
+   50% {
+      transform: scale(1.1);
+   }
+   100% {
+      transform: scale(1);
+   }
+}
+</style>
+
+<script type="text/javascript">
+   document.addEventListener("DOMContentLoaded", function() {
+      var actModal = new bootstrap.Modal(document.getElementById('activationModal'));
+      actModal.show();
+   });
+</script>
+@endif
+
     </body>
 </html>

@@ -118,12 +118,7 @@ class RegisteredUserController extends Controller
         
         Notification::send($new_user, new RegisterUserNotification($request, $user));
 
-        $notification = array(
-            'message' => 'Kindly check your email to activate your account',
-            'alert-type' => 'info'
-        );
-
-        return redirect()->route('register')->with($notification);
+        return redirect()->route('register')->with('show_activation_modal', true);
 
         // event(new Registered($user));
         
@@ -131,5 +126,18 @@ class RegisteredUserController extends Controller
         
         // Notification::send($new_user, new RegisterUserNotification($request, $user));
         // return redirect(RouteServiceProvider::HOME);
+    }
+
+    /**
+     * Check if email is unique.
+     */
+    public function check_email_unique(Request $request)
+    {
+        $email = $request->query('email');
+        if (empty($email)) {
+            return response()->json(['unique' => true]);
+        }
+        $exists = User::where('email', $email)->exists();
+        return response()->json(['unique' => !$exists]);
     }
 }

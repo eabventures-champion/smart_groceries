@@ -414,7 +414,7 @@
         }
         
         #sg-floating-dock {
-            bottom: 20px !important;
+            bottom: 90px !important;
             top: auto !important;
             left: 50% !important;
             right: auto !important;
@@ -454,7 +454,7 @@
         
         #sg-restore-handle {
             top: auto !important;
-            bottom: 20px !important;
+            bottom: 90px !important;
             left: 50% !important;
             right: auto !important;
             transform: translateX(-50%) !important;
