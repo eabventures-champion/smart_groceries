@@ -54,10 +54,14 @@
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Phone Number</label>
                      <input required type="text" name="delivery_phone" value="{{ Auth::user()->phone }}" class="form-control" placeholder="e.g. 0553989190" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
                   </div>
+                  @if(empty(Auth::user()->institution))
                   <div class="col-md-6 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Specific Address</label>
                      <input required type="text" name="delivery_address" value="{{ Auth::user()->address }}" class="form-control" placeholder="e.g. Adenta, Block A Room 204" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
                   </div>
+                  @else
+                  <input type="hidden" name="delivery_address" value="N/A">
+                  @endif
                   <div class="col-md-4 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Region</label>
                      <div class="custom_select">
@@ -75,12 +79,20 @@
                         <select required name="district_id" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; height: auto;"></select>
                      </div>
                   </div>
+                  @if(Auth::user()->resident_type === 'non-resident')
+                  <div class="col-md-4 mb-3">
+                     <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Name of Residence</label>
+                     <input type="text" required name="city_name" value="{{ Auth::user()->hall }}" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E; height: auto;">
+                     <input type="hidden" name="city_id" value="0">
+                  </div>
+                  @else
                   <div class="col-md-4 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Hall</label>
                      <div class="custom_select">
                         <select required name="city_id" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; height: auto;"></select>
                      </div>
                   </div>
+                  @endif
                   <div class="col-md-12 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Additional Notes (Optional)</label>
                      <textarea rows="4" placeholder="Specify room number or exact location instructions if necessary" name="notes" class="form-control" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E; min-height: 90px;"></textarea>

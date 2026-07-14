@@ -46,6 +46,24 @@ class CheckOutController extends Controller
         $region_id = $request->region_id;
         $district_id = $request->district_id;
         $city_id = $request->city_id;
+
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->resident_type === 'non-resident') {
+            $custom_residence = $request->city_name ?: \Illuminate\Support\Facades\Auth::user()->hall ?: 'Off Campus';
+            
+            $deliveryCity = DeliveryCity::where('district_id', $district_id)
+                ->where('city', $custom_residence)
+                ->first();
+                
+            if (!$deliveryCity) {
+                $deliveryCity = DeliveryCity::create([
+                    'region_id' => $region_id,
+                    'district_id' => $district_id,
+                    'city' => $custom_residence,
+                ]);
+            }
+            
+            $city_id = $deliveryCity->id;
+        }
         
         $get_region = DeliveryRegion::where('id', $region_id)->first()->toArray();
         $get_district = DeliveryDistrict::where('id', $district_id)->first()->toArray();
@@ -57,7 +75,7 @@ class CheckOutController extends Controller
 
         $data['region_id'] = $request->region_id;
         $data['district_id'] = $request->district_id;
-        $data['city_id'] = $request->city_id;
+        $data['city_id'] = $city_id;
 
         $data['delivery_address'] = $request->delivery_address;
         $data['notes'] = $request->notes; 

@@ -146,15 +146,19 @@
                             </div>
                             @endif
 
-                            <div class="row">
-                               <div class="form-group col-md-12">
-                                  <label class="account-label">Address <span class="text-muted" style="font-weight: normal; font-size: 11px;">(Optional)</span></label>
-                                  <div class="account-input-wrap">
-                                     <span class="account-input-icon"><i class="fi-rs-marker"></i></span>
-                                     <input class="account-input" name="address" type="text" value="{{ $userData->address }}" placeholder="Enter your address" />
-                                  </div>
-                               </div>
-                            </div>
+                             @if(empty($userData->institution))
+                             <div class="row">
+                                <div class="form-group col-md-12">
+                                   <label class="account-label">Address <span class="text-muted" style="font-weight: normal; font-size: 11px;">(Optional)</span></label>
+                                   <div class="account-input-wrap">
+                                      <span class="account-input-icon"><i class="fi-rs-marker"></i></span>
+                                      <input class="account-input" name="address" type="text" value="{{ $userData->address }}" placeholder="Enter your address" />
+                                   </div>
+                                </div>
+                             </div>
+                             @else
+                             <input type="hidden" name="address" value="N/A">
+                             @endif
 
                            <!-- Hidden file input -->
                            <input class="d-none" name="photo" type="file" id="image" accept="image/*" />

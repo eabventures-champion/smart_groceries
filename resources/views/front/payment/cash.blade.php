@@ -165,7 +165,7 @@
                      <span style="font-size: 14px; font-weight: 700; color: #253D4E;">{{ $data['city'] }}</span>
                   </div>
                </div>
-               @if($data['delivery_address'])
+               @if($data['delivery_address'] && $data['delivery_address'] !== 'N/A' && empty(Auth::user()->institution))
                <div class="col-md-12">
                   <div class="p-3" style="background: #f8f9fa; border-radius: 12px; border: 1px solid #f1f2f4;">
                      <span style="font-size: 11px; text-transform: uppercase; color: #9b9b9b; font-weight: 700; display: block; margin-bottom: 6px;">Specific Address / Location Details</span>
