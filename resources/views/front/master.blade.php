@@ -62,6 +62,11 @@
             display: none !important;
          }
 
+         /* Make product image wrapper overflow visible globally so tooltips aren't clipped */
+         .product-cart-wrap .product-img-action-wrap {
+            overflow: visible !important;
+         }
+
          /* Desktop hover actions */
          .product-cart-wrap .product-action-1 {
             display: flex !important;
@@ -145,9 +150,13 @@
              .product-cart-wrap .product-action-1 a.action-btn:active,
              .product-cart-wrap .product-action-1 a.action-btn:hover {
                 background-color: #3bb77e !important;
-                color: #ffffff !important;
                 transform: scale(1.15) !important;
                 box-shadow: 0 4px 15px rgba(59, 183, 126, 0.35) !important;
+             }
+
+             .product-cart-wrap .product-action-1 a.action-btn:active i,
+             .product-cart-wrap .product-action-1 a.action-btn:hover i {
+                color: #ffffff !important;
              }
 
              /* Hide Compare button on mobile */
@@ -186,8 +195,10 @@
              }
              .product-action-1-mobile a:active {
                 background-color: #3bb77e !important;
-                color: #ffffff !important;
                 transform: scale(1.1) !important;
+             }
+             .product-action-1-mobile a:active i {
+                color: #ffffff !important;
              }
              .product-action-1-mobile a[aria-label="Compare"],
              .product-action-1-mobile a[onclick*="Compare"] {
