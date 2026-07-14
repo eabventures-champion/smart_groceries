@@ -107,7 +107,12 @@
                            @endif
                         </div>
                      </td>
-                     <td> <code style="font-size: 13px; font-weight: bold; color: #7B2828;">{{ $item->referral_code }}</code> </td>
+                     <td> 
+                        <code style="font-size: 13px; font-weight: bold; color: #7B2828; display: block; margin-bottom: 4px;">{{ $item->referral_code }}</code> 
+                        <span class="badge bg-light text-secondary border" style="font-size: 10px; font-weight: 500; text-transform: none; display: inline-block;">
+                           Joined: {{ $item->created_at->format('d M Y') }}
+                        </span>
+                     </td>
                      <td>
                         <a href="javascript:void(0);" onclick="showReferralDetails({{ $item->id }}, '{{ addslashes($item->name) }}')" class="badge bg-info text-dark hover-shadow" style="font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; display: inline-block;">
                            {{ $activeCount }}/{{ $totalCount }} referrals
