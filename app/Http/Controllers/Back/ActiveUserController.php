@@ -14,6 +14,15 @@ class ActiveUserController extends Controller
 
     } // End Mehtod 
 
+    public function restricted_users(){
+        $users = User::where('role', 'user')
+            ->whereIn('status', ['suspended', 'disabled'])
+            ->latest()
+            ->get();
+        return view('back.admin.user.user_restricted_data', compact('users'));
+
+    } // End Method
+
     public function client_detail($id){
         $user = User::findOrFail($id);
         

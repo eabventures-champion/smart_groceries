@@ -357,6 +357,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
 
         Route::controller(ActiveUserController::class)->group(function(){
             Route::get('/all/clients' , 'all_user')->name('all.users');
+            Route::get('/restricted/clients', 'restricted_users')->name('restricted.users');
             Route::get('/client/detail/{id}', 'client_detail')->name('admin.client.detail');
             Route::get('/all/affiliates', 'all_affiliates')->name('all.affiliates');
             Route::get('/affiliate/referrals/{id}', 'get_referral_details')->name('admin.affiliate.referrals');
