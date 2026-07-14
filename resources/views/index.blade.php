@@ -617,4 +617,54 @@
    </div>
 </div>
 
+@if(Auth::check() && Auth::user()->status_identity === 'student' && empty(Auth::user()->hall))
+<!-- Setup Residence Modal -->
+<div class="modal fade" id="setupResidenceModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="setupResidenceModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 24px; border: none; overflow: hidden; background: #ffffff; box-shadow: 0 20px 60px rgba(59, 183, 126, 0.15);">
+         <form action="{{ route('user.setup_residence') }}" method="POST">
+            @csrf
+            <div style="padding: 40px 30px; text-align: center;">
+               <div style="font-size: 50px; margin-bottom: 20px;">🏡</div>
+               <h3 id="setupResidenceModalLabel" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #253D4E; margin-bottom: 12px;">Complete Your Profile</h3>
+               <p style="font-size: 14px; color: #7E7E7E; line-height: 1.6; margin-bottom: 25px;">
+                  Please provide your campus residence details to enable delivery.
+               </p>
+
+               @if(Auth::user()->resident_type === 'resident')
+                  <!-- Select Hall -->
+                  <div class="form-group mb-4" style="text-align: left;">
+                     <label class="form-label-sm" style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px; display: block;">Select Your Hall</label>
+                     <select name="hall" class="form-select" required style="height: 50px; border-radius: 12px; border: 1px solid #ced4da; font-size: 14px; padding: 0 15px; width: 100%;">
+                        <option value="" disabled selected>-- Select Hall --</option>
+                        @foreach($halls as $hall)
+                           <option value="{{ $hall->city }}">{{ $hall->city }}</option>
+                        @endforeach
+                     </select>
+                  </div>
+               @else
+                  <!-- Enter Residence Name -->
+                  <div class="form-group mb-4" style="text-align: left;">
+                     <label class="form-label-sm" style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px; display: block;">Name of Residence</label>
+                     <input required class="form-control" name="residence_name" type="text" placeholder="Enter off-campus residence or hostel name" style="height: 50px; border-radius: 12px; border: 1px solid #ced4da; font-size: 14px; padding: 0 15px; width: 100%;" />
+                  </div>
+               @endif
+
+               <button type="submit" class="btn btn-default hover-up" style="background-color: #3BB77E; border-color: #3BB77E; color: white; padding: 12px 40px; border-radius: 12px; font-weight: 700; width: 100%; font-size: 14px;">
+                  Save & Continue
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<script type="text/javascript">
+   document.addEventListener("DOMContentLoaded", function() {
+      var setupModal = new bootstrap.Modal(document.getElementById('setupResidenceModal'));
+      setupModal.show();
+   });
+</script>
+@endif
+
 @endsection

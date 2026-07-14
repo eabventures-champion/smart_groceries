@@ -1633,89 +1633,96 @@
                            <p class="text-muted mb-20" style="font-size: 13px; line-height: 1.5;">
                               Please verify or complete your details to proceed. This ensures your orders are processed correctly and deliveries reach you safely.
                            </p>
-
                            @if($user->status_identity === 'student')
-                              <div class="form-group mb-15">
-                                 <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Institution *</label>
-                                 <select name="institution" id="modal_institution" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" required>
-                                    <option value="" disabled {{ empty($user->institution) ? 'selected' : '' }}>-- Select Institution --</option>
-                                    @foreach($modalInstitutions as $inst)
-                                       <option value="{{ $inst->district_name }}" data-id="{{ $inst->id }}" {{ $user->institution == $inst->district_name ? 'selected' : '' }}>{{ $inst->district_name }}</option>
-                                    @endforeach
-                                 </select>
-                              </div>
+                               <div class="form-group mb-15">
+                                  <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Institution *</label>
+                                  <select name="institution" id="modal_institution" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" required>
+                                     <option value="" disabled {{ empty($user->institution) ? 'selected' : '' }}>-- Select Institution --</option>
+                                     @foreach($modalInstitutions as $inst)
+                                        <option value="{{ $inst->district_name }}" data-id="{{ $inst->id }}" {{ $user->institution == $inst->district_name ? 'selected' : '' }}>{{ $inst->district_name }}</option>
+                                     @endforeach
+                                  </select>
+                               </div>
 
-                              <div class="form-group mb-15">
-                                 <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Residence Hall *</label>
-                                 <select name="hall" id="modal_hall" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" required>
-                                    <option value="" disabled selected>-- Select Hall --</option>
-                                 </select>
-                              </div>
-                           @endif
+                               @if($user->resident_type === 'non-resident')
+                                  <div class="form-group mb-15" id="modal-residence-text-wrapper">
+                                     <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Name of Residence *</label>
+                                     <input required class="form-control" name="residence_name" id="modal_residence_name" type="text" value="{{ $user->hall }}" placeholder="Enter name of residence" style="height: 48px; border-radius: 10px; font-size: 14px;" />
+                                  </div>
+                               @else
+                                  <div class="form-group mb-15" id="modal-hall-select-wrapper">
+                                     <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Residence Hall *</label>
+                                     <select name="hall" id="modal_hall" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" required>
+                                        <option value="" disabled selected>-- Select Hall --</option>
+                                     </select>
+                                  </div>
+                               @endif
+                            @endif
 
-                           <div class="form-group mb-0">
-                              <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Phone Number *</label>
-                              <input type="text" name="phone" id="modal_phone" value="{{ $user->phone }}" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" placeholder="e.g. 0243036092" required>
-                              <div id="modal_phone_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
-                                 This phone number is already registered by another user.
-                              </div>
-                           </div>
-                        </div>
-                        <div class="modal-footer" style="border-top: 1px solid #f1f2f4; padding: 16px 24px; display: flex; justify-content: flex-end;">
-                           <button type="submit" class="btn btn-default hover-up font-xs" style="background-color: #3BB77E; border-color: #3BB77E; color: white; padding: 12px 30px; border-radius: 10px; font-weight: 700; width: 100%;">
-                              Save and Continue
-                           </button>
-                        </div>
-                     </form>
+                            <div class="form-group mb-0">
+                               <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Phone Number *</label>
+                               <input type="text" name="phone" id="modal_phone" value="{{ $user->phone }}" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" placeholder="e.g. 0243036092" required>
+                               <div id="modal_phone_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
+                                  This phone number is already registered by another user.
+                               </div>
+                            </div>
+                         </div>
+                         <div class="modal-footer" style="border-top: 1px solid #f1f2f4; padding: 16px 24px; display: flex; justify-content: flex-end;">
+                            <button type="submit" class="btn btn-default hover-up font-xs" style="background-color: #3BB77E; border-color: #3BB77E; color: white; padding: 12px 30px; border-radius: 10px; font-weight: 700; width: 100%;">
+                               Save and Continue
+                            </button>
+                         </div>
+                      </form>
                   </div>
                </div>
             </div>
 
             <script type="text/javascript">
-               document.addEventListener("DOMContentLoaded", function() {
-                  var myModal = new bootstrap.Modal(document.getElementById('profileVerificationModal'), {
-                     backdrop: 'static',
-                     keyboard: false
-                  });
-                  myModal.show();
+                document.addEventListener("DOMContentLoaded", function() {
+                   var myModal = new bootstrap.Modal(document.getElementById('profileVerificationModal'), {
+                      backdrop: 'static',
+                      keyboard: false
+                   });
+                   myModal.show();
 
-                  var instSelect = document.getElementById('modal_institution');
-                  var hallSelect = document.getElementById('modal_hall');
+                   var instSelect = document.getElementById('modal_institution');
+                   var hallSelect = document.getElementById('modal_hall');
 
-                  function loadHallsForSelectedInstitution() {
-                     var selectedOption = instSelect.options[instSelect.selectedIndex];
-                     var districtId = selectedOption ? selectedOption.getAttribute('data-id') : null;
-                     
-                     if (districtId) {
-                        fetch("{{ url('/hall-get/ajax') }}/" + districtId)
-                           .then(response => response.json())
-                           .then(data => {
-                              if (data.length > 0) {
-                                 hallSelect.innerHTML = '<option value="" disabled selected>-- Select Hall --</option>';
-                                 data.forEach(function(item) {
-                                    var opt = document.createElement('option');
-                                    opt.value = item.city;
-                                    opt.textContent = item.city;
-                                    hallSelect.appendChild(opt);
-                                 });
-                              } else {
-                                 hallSelect.innerHTML = '<option value="" disabled selected>No halls available for this institution</option>';
-                              }
-                           })
-                           .catch(error => {
-                              hallSelect.innerHTML = '<option value="" disabled selected>No halls available for this institution</option>';
-                           });
-                     } else {
-                        hallSelect.innerHTML = '<option value="" disabled selected>-- Select Hall --</option>';
-                     }
-                  }
+                   function loadHallsForSelectedInstitution() {
+                      if (!hallSelect) return;
+                      var selectedOption = instSelect.options[instSelect.selectedIndex];
+                      var districtId = selectedOption ? selectedOption.getAttribute('data-id') : null;
+                      
+                      if (districtId) {
+                         fetch("{{ url('/hall-get/ajax') }}/" + districtId)
+                            .then(response => response.json())
+                            .then(data => {
+                               if (data.length > 0) {
+                                  hallSelect.innerHTML = '<option value="" disabled selected>-- Select Hall --</option>';
+                                  data.forEach(function(item) {
+                                     var opt = document.createElement('option');
+                                     opt.value = item.city;
+                                     opt.textContent = item.city;
+                                     hallSelect.appendChild(opt);
+                                  });
+                               } else {
+                                  hallSelect.innerHTML = '<option value="" disabled selected>No halls available for this institution</option>';
+                               }
+                            })
+                            .catch(error => {
+                               hallSelect.innerHTML = '<option value="" disabled selected>No halls available for this institution</option>';
+                            });
+                      } else {
+                         hallSelect.innerHTML = '<option value="" disabled selected>-- Select Hall --</option>';
+                      }
+                   }
 
-                  if (instSelect) {
-                     instSelect.addEventListener('change', loadHallsForSelectedInstitution);
-                     if (instSelect.value) {
-                        loadHallsForSelectedInstitution();
-                     }
-                  }
+                   if (instSelect) {
+                      instSelect.addEventListener('change', loadHallsForSelectedInstitution);
+                      if (instSelect.value) {
+                         loadHallsForSelectedInstitution();
+                      }
+                   }
 
                   var phoneInput = document.getElementById('modal_phone');
                   var feedback = document.getElementById('modal_phone_feedback');

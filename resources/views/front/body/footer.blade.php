@@ -132,6 +132,13 @@
                         <li><a href="{{ route('mycart') }}">View Cart</a></li>
                         {{-- <li><a href="{{ route('wishlist') }}">My Wishlist</a></li> --}}
                         <li><a href="{{ route('user.track.order') }}">Track My Order</a></li>
+                        <li>
+                            @auth
+                                <a href="{{ route('user.complaints') }}">Complaints & Suggestions</a>
+                            @else
+                                <a href="{{ route('login') }}">Complaints & Suggestions</a>
+                            @endauth
+                        </li>
                         {{-- <li><a href="{{ route('compare') }}">Compare products</a></li> --}}
                         {{-- <li><a href="#">Help Ticket</a></li> --}}
                         {{-- <li><a href="#">Shipping Details</a></li> --}}

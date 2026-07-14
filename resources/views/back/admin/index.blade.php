@@ -40,10 +40,27 @@
     $total_delivered_count = App\Models\Order::where('status', 'delivered')->count();
     $total_experts_count = App\Models\Expert::count();
     $pending_payouts_count = App\Models\AffiliatePayout::where('status', 'pending')->count();
+    $pending_complaints_count = App\Models\Complaint::where('status', 'pending')->count();
 @endphp
 
 <!--start page wrapper -->
 <div class="page-content">
+   @if($pending_complaints_count > 0)
+   <div class="alert alert-danger border-0 bg-danger alert-dismissible fade show py-3 mb-4" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);">
+      <div class="d-flex align-items-center text-white">
+         <div class="font-35 text-white" style="font-size: 28px; line-height: 1;"><i class='bx bx-message-rounded-error me-2' style='color: #ffffff;'></i></div>
+         <div class="ms-2">
+            <h6 class="mb-1 text-white" style="font-weight: 700; font-size: 15px;">New Feedback: You have {{ $pending_complaints_count }} Pending {{ Str::plural('Complaint/Suggestion', $pending_complaints_count) }}</h6>
+            <div class="text-white" style="font-size: 13px; font-weight: 500; opacity: 0.9;">
+               Users have submitted new complaints or suggestions that require review.
+               <a href="{{ route('admin.complaints') }}" class="text-white alert-link text-decoration-underline" style="font-weight: 700; margin-left: 5px;">View and respond to submissions here →</a>
+            </div>
+         </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+   </div>
+   @endif
+
    @if($queued_count > 0)
    <div class="alert alert-warning border-0 bg-warning alert-dismissible fade show py-3 mb-4" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);">
       <div class="d-flex align-items-center">

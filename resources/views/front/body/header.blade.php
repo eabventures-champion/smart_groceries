@@ -16,16 +16,23 @@
        <div class="header-top header-top-ptb-1 d-none d-lg-block" style="background-color: white;">
            <div class="container">
                <div class="row align-items-center">
-                   <div class="col-xl-3 col-lg-4">
+                   <div class="col-xl-5 col-lg-5">
                        <div class="header-info">
                            <ul>
-                               <li><a style="color: #000000;" href="{{ route('mycart') }}">My Cart</a></li>
-                               <li><a style="color: #000000;" href="{{ route('user.track.order') }}">Order Tracking</a>
-                               </li>
+                                <li><a style="color: #000000; white-space: nowrap;" href="{{ route('mycart') }}">My Cart</a></li>
+                                <li><a style="color: #000000; white-space: nowrap;" href="{{ route('user.track.order') }}">Order Tracking</a>
+                                </li>
+                                <li>
+                                    @auth
+                                        <a style="color: #000000; white-space: nowrap;" href="{{ route('user.complaints') }}">Complaints & Suggestions</a>
+                                    @else
+                                        <a style="color: #000000; white-space: nowrap;" href="{{ route('login') }}">Complaints & Suggestions</a>
+                                    @endauth
+                                </li>
                            </ul>
                        </div>
                    </div>
-                   <div class="col-xl-6 col-lg-4">
+                   <div class="col-xl-4 col-lg-3">
                        <div class="text-center">
                            <div id="news-flash" class="d-inline-block">
                                <ul style="color: #ffffff">

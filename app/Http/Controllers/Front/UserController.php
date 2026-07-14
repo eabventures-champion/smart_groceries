@@ -30,7 +30,43 @@ class UserController extends Controller
         $pendingOrders = Order::where('user_id', $id)->where('status', 'pending')->count();
         $completedOrders = Order::where('user_id', $id)->where('status', 'delivered')->count();
 
-        return view('index', compact('user', 'totalOrders', 'pendingOrders', 'completedOrders'));
+        // Fetch halls if needed for the setup prompt
+        $halls = [];
+        if ($user->status_identity === 'student' && empty($user->hall) && $user->institution) {
+            $district = \App\Models\DeliveryDistrict::where('district_name', $user->institution)->first();
+            if ($district) {
+                $halls = \App\Models\DeliveryCity::where('district_id', $district->id)->orderBy('city', 'ASC')->get();
+            }
+        }
+
+        return view('index', compact('user', 'totalOrders', 'pendingOrders', 'completedOrders', 'halls'));
+    }
+
+    public function setup_residence(Request $request)
+    {
+        $id = Auth::user()->id;
+        $user = User::find($id);
+
+        if ($user->resident_type === 'resident') {
+            $request->validate([
+                'hall' => 'required|string',
+            ]);
+            $user->hall = $request->hall;
+        } else {
+            $request->validate([
+                'residence_name' => 'required|string|max:255',
+            ]);
+            $user->hall = $request->residence_name;
+        }
+
+        $user->save();
+
+        $notification = [
+            'message' => 'Residence details saved successfully!',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
     }
 
     public function user_profile_update(Request $request){
@@ -58,8 +94,13 @@ class UserController extends Controller
         if ($request->has('institution')) {
             $data->institution = $request->institution;
         }
+        if ($request->has('resident_type')) {
+            $data->resident_type = $request->resident_type;
+        }
         if ($request->has('hall')) {
             $data->hall = $request->hall;
+        } elseif ($request->has('residence_name')) {
+            $data->hall = $request->residence_name;
         }
 
         if($request->file('photo')){

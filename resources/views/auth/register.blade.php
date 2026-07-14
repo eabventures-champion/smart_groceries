@@ -166,6 +166,18 @@
                                              @enderror
                                           </div>
 
+                                          <!-- Resident Type -->
+                                          <div class="form-group">
+                                             <select name="resident_type" id="resident_type" class="form-control @error('resident_type') is-invalid @enderror" required>
+                                                <option value="" disabled {{ old('resident_type') === null ? 'selected' : '' }}>-- Select Resident Type --</option>
+                                                <option value="resident" {{ old('resident_type') == 'resident' ? 'selected' : '' }}>resident</option>
+                                                <option value="non-resident" {{ old('resident_type') == 'non-resident' ? 'selected' : '' }}>non-resident</option>
+                                             </select>
+                                             @error('resident_type')
+                                             <span class="text-danger">{{ $message }}</span>
+                                             @enderror
+                                          </div>
+
                                           <!-- Student Fields Group -->
                                           <div id="student-fields-group">
                                              <!-- Year of Admission & Completion -->
@@ -342,22 +354,22 @@
          $(document).ready(function (){
              $('#status_identity').on('change', function(e, isInitial) {
                 var status = $(this).val();
-                if (status === 'student') {
-                   if (isInitial) {
-                      $('#student-options-container').show();
-                   } else {
-                      $('#student-options-container').slideDown();
-                   }
-                   $('#institution, #year_of_admission, #year_of_completion').prop('disabled', false);
-                } else {
-                   if (isInitial) {
-                      $('#student-options-container').hide();
-                   } else {
-                      $('#student-options-container').slideUp();
-                   }
-                   $('#institution, #year_of_admission, #year_of_completion').prop('disabled', true).val('');
-                }
-             });
+                 if (status === 'student') {
+                    if (isInitial) {
+                       $('#student-options-container').show();
+                    } else {
+                       $('#student-options-container').slideDown();
+                    }
+                    $('#institution, #resident_type, #year_of_admission, #year_of_completion').prop('disabled', false);
+                 } else {
+                    if (isInitial) {
+                       $('#student-options-container').hide();
+                    } else {
+                       $('#student-options-container').slideUp();
+                    }
+                    $('#institution, #resident_type, #year_of_admission, #year_of_completion').prop('disabled', true).val('');
+                 }
+              });
              $('#status_identity').trigger('change', [true]);
 
              $('#myForm_type').validate({
@@ -369,6 +381,9 @@
                      required : true,
                   },
                   institution: {
+                     required : true,
+                  },
+                  resident_type: {
                      required : true,
                   },
                   status_identity: {
@@ -397,6 +412,9 @@
                   },
                   institution: {
                      required : 'Please Select Your Institution',
+                  },
+                  resident_type: {
+                     required : 'Please Select Your Resident Type',
                   },
                   status_identity: {
                      required : 'Please Select Your Status Identity',

@@ -153,10 +153,16 @@ Route::namespace('App\Http\Controllers\Front')->group(function(){
 
             Route::post('order/tracking' , 'order_tracking')->name('order.tracking');
             Route::get('check-phone-unique', 'check_phone_unique');
+            Route::post('user/setup-residence', 'setup_residence')->name('user.setup_residence');
         });
 
         Route::controller(ReviewController::class)->group(function(){
             Route::post('store/review', 'store_review')->name('store.review');
+        });
+
+        Route::controller(ComplaintController::class)->group(function(){
+            Route::get('user/complaints', 'user_complaints')->name('user.complaints');
+            Route::post('user/complaint/store', 'store_complaint')->name('user.complaint.store');
         });
 
     }); // end group middleware
@@ -467,6 +473,12 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('lifestyle/blog-categories/edit/{id}', 'blogCategoryEdit')->name('admin.lifestyle.blog_categories.edit');
             Route::post('lifestyle/blog-categories/update', 'blogCategoryUpdate')->name('admin.lifestyle.blog_categories.update');
             Route::get('lifestyle/blog-categories/delete/{id}', 'blogCategoryDelete')->name('admin.lifestyle.blog_categories.delete');
+        });
+
+        Route::controller(ComplaintController::class)->group(function(){
+            Route::get('complaints', 'admin_complaints')->name('admin.complaints');
+            Route::post('complaints/respond', 'respond_complaint')->name('admin.complaints.respond');
+            Route::get('complaints/delete/{id}', 'delete_complaint')->name('admin.complaints.delete');
         });
 
     });

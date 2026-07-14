@@ -45,6 +45,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'status_identity' => ['required', 'string', 'in:student,non-student'],
             'institution' => ['required_if:status_identity,student', 'nullable', 'string', 'max:255'],
+            'resident_type' => ['required_if:status_identity,student', 'nullable', 'string', 'in:resident,non-resident'],
             'year_of_admission' => ['required_if:status_identity,student', 'nullable', 'integer', 'min:2000', 'max:' . (date('Y') + 1)],
             'year_of_completion' => ['required_if:status_identity,student', 'nullable', 'integer', 'min:2000', 'max:' . (date('Y') + 15), 'gte:year_of_admission'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -71,6 +72,7 @@ class RegisteredUserController extends Controller
             'year_of_admission' => $request->status_identity === 'student' ? $request->year_of_admission : null,
             'year_of_completion' => $request->status_identity === 'student' ? $request->year_of_completion : null,
             'institution' => $request->status_identity === 'student' ? $request->institution : null,
+            'resident_type' => $request->status_identity === 'student' ? $request->resident_type : null,
             'status_identity' => $request->status_identity,
             'student_id' => $request->status_identity === 'student' ? User::generateStudentId($request->year_of_admission, $request->year_of_completion) : null,
         ]);

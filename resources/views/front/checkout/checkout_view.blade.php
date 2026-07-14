@@ -196,7 +196,7 @@
                </div>
 
                <button type="submit" class="btn btn-primary" style="background-color: #3bb77e !important; border: none; color: #fff; padding: 16px 45px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 30px; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(59, 183, 126, 0.25); cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(59, 183, 126, 0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 25px rgba(59, 183, 126, 0.25)';">
-                  Proceed to Payment <i class="fi-rs-sign-out" style="margin-left: 5px;"></i>
+                  Proceed <i class="fi-rs-sign-out" style="margin-left: 5px;"></i>
                </button>
             </div>
          </div>

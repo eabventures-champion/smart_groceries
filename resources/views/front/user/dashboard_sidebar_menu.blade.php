@@ -43,6 +43,10 @@ $returnOrdersCount = \App\Models\Order::where('user_id', $userId)->where('return
             <span class="sidebar-nav-icon"><i class="fi fi-rs-map-location-track"></i></span>
             <span class="sidebar-nav-text">Track Order</span>
          </a>
+         <a class="sidebar-nav-item {{ ($route == 'user.complaints') ? 'active' : '' }}" href="{{ route('user.complaints') }}">
+            <span class="sidebar-nav-icon"><i class="fi fi-rs-document-signed"></i></span>
+            <span class="sidebar-nav-text">Complaints & Suggestions</span>
+         </a>
 
          <div class="sidebar-nav-divider"></div>
 

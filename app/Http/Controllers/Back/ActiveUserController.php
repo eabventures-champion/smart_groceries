@@ -64,7 +64,7 @@ class ActiveUserController extends Controller
     public function all_affiliates(){
         $affiliates = User::where('role', 'user')
             ->whereNotNull('referral_code')
-            ->orderBy('referral_balance', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
         return view('back.admin.user.affiliate_all_data', compact('affiliates'));
     }

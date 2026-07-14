@@ -86,42 +86,65 @@
                               </div>
                            </div>
 
-                           @if($userData->status_identity === 'student')
-                           <div class="row">
-                              <div class="form-group col-md-6">
-                                 <label class="account-label">Institution <span class="account-required">*</span></label>
-                                 <div class="account-input-wrap">
-                                    <span class="account-input-icon"><i class="fi fi-rs-graduation-cap"></i></span>
-                                    <select name="institution" id="account_institution" class="account-input" style="padding-left: 45px !important;" required>
-                                       <option value="" disabled>-- Select Institution --</option>
-                                       @foreach($institutions as $inst)
-                                          <option value="{{ $inst->district_name }}" data-id="{{ $inst->id }}" {{ $userData->institution == $inst->district_name ? 'selected' : '' }}>
-                                             {{ $inst->district_name }}
-                                          </option>
-                                       @endforeach
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="form-group col-md-6">
-                                 <label class="account-label">Hall <span class="account-required">*</span></label>
-                                 <div class="account-input-wrap">
-                                    <span class="account-input-icon"><i class="fi fi-rs-marker"></i></span>
-                                    <select name="hall" id="account_hall" class="account-input" style="padding-left: 45px !important;" required>
-                                       @if(count($halls) > 0)
-                                          <option value="" disabled {{ empty($userData->hall) ? 'selected' : '' }}>-- Select Hall --</option>
-                                          @foreach($halls as $hall)
-                                             <option value="{{ $hall->city }}" {{ $userData->hall == $hall->city ? 'selected' : '' }}>
-                                                {{ $hall->city }}
-                                             </option>
-                                          @endforeach
-                                       @else
-                                          <option value="" disabled selected>No halls available for this institution</option>
-                                       @endif
-                                    </select>
-                                 </div>
-                              </div>
-                           </div>
-                           @endif
+                            @if($userData->status_identity === 'student')
+                            <div class="row">
+                               <div class="form-group col-md-6">
+                                  <label class="account-label">Institution <span class="account-required">*</span></label>
+                                  <div class="account-input-wrap">
+                                     <span class="account-input-icon"><i class="fi fi-rs-graduation-cap"></i></span>
+                                     <select name="institution" id="account_institution" class="account-input" style="padding-left: 45px !important;" required>
+                                        <option value="" disabled>-- Select Institution --</option>
+                                        @foreach($institutions as $inst)
+                                           <option value="{{ $inst->district_name }}" data-id="{{ $inst->id }}" {{ $userData->institution == $inst->district_name ? 'selected' : '' }}>
+                                              {{ $inst->district_name }}
+                                           </option>
+                                        @endforeach
+                                     </select>
+                                  </div>
+                               </div>
+                               <div class="form-group col-md-6">
+                                  <label class="account-label">Resident Type <span class="account-required">*</span></label>
+                                  <div class="account-input-wrap">
+                                     <span class="account-input-icon"><i class="fi fi-rs-marker"></i></span>
+                                     <select name="resident_type" id="account_resident_type" class="account-input" style="padding-left: 45px !important;" required>
+                                        <option value="" disabled>-- Select Resident Type --</option>
+                                        <option value="resident" {{ $userData->resident_type == 'resident' ? 'selected' : '' }}>Resident</option>
+                                        <option value="non-resident" {{ $userData->resident_type == 'non-resident' ? 'selected' : '' }}>Non-Resident</option>
+                                     </select>
+                                  </div>
+                               </div>
+                            </div>
+
+                            <div class="row" id="hall_residence_row">
+                               <!-- Hall Select (Resident) -->
+                               <div class="form-group col-md-12" id="hall-select-wrapper">
+                                  <label class="account-label">Hall <span class="account-required">*</span></label>
+                                  <div class="account-input-wrap">
+                                     <span class="account-input-icon"><i class="fi fi-rs-marker"></i></span>
+                                     <select name="hall" id="account_hall" class="account-input" style="padding-left: 45px !important;">
+                                        @if(count($halls) > 0)
+                                           <option value="" disabled {{ empty($userData->hall) ? 'selected' : '' }}>-- Select Hall --</option>
+                                           @foreach($halls as $hall)
+                                              <option value="{{ $hall->city }}" {{ $userData->hall == $hall->city ? 'selected' : '' }}>
+                                                 {{ $hall->city }}
+                                              </option>
+                                           @endforeach
+                                        @else
+                                           <option value="" disabled selected>No halls available for this institution</option>
+                                        @endif
+                                     </select>
+                                  </div>
+                               </div>
+                               <!-- Residence Name (Non-Resident) -->
+                               <div class="form-group col-md-12" id="residence-text-wrapper" style="display: none;">
+                                  <label class="account-label">Name of Residence <span class="account-required">*</span></label>
+                                  <div class="account-input-wrap">
+                                     <span class="account-input-icon"><i class="fi fi-rs-home"></i></span>
+                                     <input class="account-input" name="residence_name" id="account_residence_name" type="text" value="{{ $userData->resident_type == 'non-resident' ? $userData->hall : '' }}" placeholder="Enter name of residence" style="padding-left: 45px !important;" />
+                                  </div>
+                               </div>
+                            </div>
+                            @endif
 
                             <div class="row">
                                <div class="form-group col-md-12">
@@ -420,7 +443,30 @@
            }
        });
 
-       var phoneInput = $('#account_phone');
+        function toggleResidentFields() {
+            var residentType = $('#account_resident_type').val();
+            if (residentType === 'resident') {
+                $('#hall-select-wrapper').show();
+                $('#account_hall').prop('disabled', false).prop('required', true);
+                $('#residence-text-wrapper').hide();
+                $('#account_residence_name').prop('disabled', true).prop('required', false);
+            } else if (residentType === 'non-resident') {
+                $('#hall-select-wrapper').hide();
+                $('#account_hall').prop('disabled', true).prop('required', false);
+                $('#residence-text-wrapper').show();
+                $('#account_residence_name').prop('disabled', false).prop('required', true);
+            } else {
+                $('#hall-select-wrapper').hide();
+                $('#account_hall').prop('disabled', true).prop('required', false);
+                $('#residence-text-wrapper').hide();
+                $('#account_residence_name').prop('disabled', true).prop('required', false);
+            }
+        }
+
+        $('#account_resident_type').on('change', toggleResidentFields);
+        toggleResidentFields();
+
+        var phoneInput = $('#account_phone');
        var feedback = $('#account_phone_feedback');
        var submitBtn = $('.account-save-btn');
 

@@ -324,6 +324,17 @@
             </li>
          </ul>
       </li>
+      <li>
+         <a href="javascript:;" class="has-arrow">
+            <div class="parent-icon"><i class="bx bx-message-rounded-error"></i>
+            </div>
+            <div class="menu-title">Complaints Manage</div>
+         </a>
+         <ul>
+            <li> <a href="{{ route('admin.complaints') }}"><i class="bx bx-right-arrow-alt"></i>All Submissions</a>
+            </li>
+         </ul>
+      </li>
       {{-- @endif --}}
       {{-- @if(Auth::user()->can('slider.menu')) --}}
       <li class="menu-label">Settings</li>
