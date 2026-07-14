@@ -715,12 +715,14 @@
         $(".product-image-slider").slick("setPosition");
         $(".slider-nav-thumbnails").slick("setPosition");
 
-        $(".product-image-slider .slick-active img").elevateZoom({
-            zoomType: "inner",
-            cursor: "crosshair",
-            zoomWindowFadeIn: 500,
-            zoomWindowFadeOut: 750
-        });
+        if (window.innerWidth > 991.98) {
+            $(".product-image-slider .slick-active img").elevateZoom({
+                zoomType: "inner",
+                cursor: "crosshair",
+                zoomWindowFadeIn: 500,
+                zoomWindowFadeOut: 750
+            });
+        }
     });
 
     /*--- Mobile Banner Slider ---*/
