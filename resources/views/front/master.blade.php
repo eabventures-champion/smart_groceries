@@ -146,6 +146,17 @@
                 border-left: none !important;
              }
 
+             /* Disable tooltips completely on mobile view */
+             .product-cart-wrap .product-action-1 a.action-btn:after,
+             .product-cart-wrap .product-action-1 a.action-btn:before,
+             .product-action-1-mobile a:after,
+             .product-action-1-mobile a:before {
+                display: none !important;
+                content: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+             }
+
              /* Interactive active/hover state inside overlay */
              .product-cart-wrap .product-action-1 a.action-btn:active,
              .product-cart-wrap .product-action-1 a.action-btn:hover {
