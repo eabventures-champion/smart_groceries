@@ -364,18 +364,18 @@
             margin-bottom: 20px !important;
         }
          .detail-gallery {
-             max-width: 280px !important;
+             max-width: 200px !important;
              margin: 0 auto !important;
          }
          .detail-gallery .product-image-slider {
              max-width: 100% !important;
-             max-height: 280px !important;
+             max-height: 200px !important;
              margin: 0 auto 15px auto !important;
              border-radius: 16px !important;
              overflow: hidden !important;
          }
          .detail-gallery .product-image-slider img {
-             max-height: 260px !important;
+             max-height: 180px !important;
              width: auto !important;
              margin: 0 auto !important;
              object-fit: contain !important;
