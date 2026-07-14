@@ -578,7 +578,7 @@
 </style>
 
 <!-- Floating Vertical Tab Dock -->
-<div id="sg-floating-dock">
+<div id="sg-floating-dock" class="sg-dock-hidden">
     <div class="flex-col" style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;">
         <!-- Brand Label -->
         <div style="display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px; width: 100%; justify-content: center;">
@@ -627,7 +627,7 @@
 </div>
 
 <!-- Tiny Restoring Handle (Visible only when dock is hidden) -->
-<div id="sg-restore-handle" class="sg-restore-hidden">
+<div id="sg-restore-handle">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
         <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
     </svg>
@@ -1845,30 +1845,18 @@
             }
         }
 
-        // Persistent Hide/Restore layout state using localStorage
-        const panelState = localStorage.getItem('sg_panel_state');
-        if (panelState === 'hidden') {
-            $('#sg-floating-dock').addClass('sg-dock-hidden');
-            $('#sg-restore-handle').removeClass('sg-restore-hidden');
-        } else {
-            $('#sg-floating-dock').removeClass('sg-dock-hidden');
-            $('#sg-restore-handle').addClass('sg-restore-hidden');
-        }
-
         // Hide Click Handler
         $('#sg-hide-btn').on('click', function(e) {
             e.stopPropagation();
             closeSgDrawer();
             $('#sg-floating-dock').addClass('sg-dock-hidden');
             $('#sg-restore-handle').removeClass('sg-restore-hidden');
-            localStorage.setItem('sg_panel_state', 'hidden');
         });
 
         // Restore Click Handler
         $('#sg-restore-handle').on('click', function() {
             $('#sg-floating-dock').removeClass('sg-dock-hidden');
             $('#sg-restore-handle').addClass('sg-restore-hidden');
-            localStorage.setItem('sg_panel_state', 'visible');
         });
 
         // Submit Expert Booking Form
