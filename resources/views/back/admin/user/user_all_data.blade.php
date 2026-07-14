@@ -3,7 +3,7 @@
 <div class="page-content">
    <!--breadcrumb-->
    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-      <div class="breadcrumb-title pe-3">All Users <span class="badge bg-success ms-2" style="font-size: 13px;">{{ count($users) }}</span></div>
+      <div class="breadcrumb-title pe-3">All Active Users <span class="badge bg-success ms-2" style="font-size: 13px;">{{ count($users) }}</span></div>
       {{-- <div class="ps-3">
          <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 p-0">
@@ -31,7 +31,6 @@
                      <th>Email </th>
                      <th>Joined </th>
                      <th>Last seen </th>
-                     <th>Status</th>
                      <th>Action</th>
                   </tr>
                </thead>
@@ -63,69 +62,24 @@
                         @endif
                      </td>
                      <td>
-                        @if($item->status == 'active')
-                           <span class="badge bg-success rounded-pill px-3 py-1" style="font-size: 11px;">
-                              <i class="fa fa-check-circle me-1"></i>Active
-                           </span>
-                        @elseif($item->status == 'suspended')
-                           <span class="badge bg-warning text-dark rounded-pill px-3 py-1" style="font-size: 11px;">
-                              <i class="fa fa-pause-circle me-1"></i>Suspended
-                           </span>
-                        @elseif($item->status == 'disabled')
-                           <span class="badge bg-danger rounded-pill px-3 py-1" style="font-size: 11px;">
-                              <i class="fa fa-ban me-1"></i>Disabled
-                           </span>
-                        @else
-                           <span class="badge bg-secondary rounded-pill px-3 py-1" style="font-size: 11px;">
-                              <i class="fa fa-clock me-1"></i>Inactive
-                           </span>
-                        @endif
-                     </td>
-                     <td>
                         <div class="d-flex align-items-center gap-1">
                            <a href="{{ route('admin.client.detail', $item->id) }}" class="btn btn-sm btn-primary" style="background-color: #3bb77e; border-color: #3bb77e; color: white;">
                               <i class="fa fa-eye"></i> View Detail
                            </a>
-
-                           @if($item->status == 'active')
-                              {{-- Suspend Button --}}
-                              <form action="{{ route('admin.client.suspend', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="suspend" data-username="{{ $item->name }}">
-                                 @csrf
-                                 <button type="submit" class="btn btn-sm btn-warning" title="Suspend Account">
-                                    <i class="fa fa-pause-circle"></i>
-                                 </button>
-                              </form>
-                              {{-- Disable Button --}}
-                              <form action="{{ route('admin.client.disable', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="disable" data-username="{{ $item->name }}">
-                                 @csrf
-                                 <button type="submit" class="btn btn-sm btn-danger" title="Disable Account">
-                                    <i class="fa fa-ban"></i>
-                                 </button>
-                              </form>
-                           @elseif($item->status == 'suspended')
-                              {{-- Reactivate Button --}}
-                              <form action="{{ route('admin.client.reactivate', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="reactivate" data-username="{{ $item->name }}">
-                                 @csrf
-                                 <button type="submit" class="btn btn-sm btn-success" title="Reactivate Account">
-                                    <i class="fa fa-check-circle"></i>
-                                 </button>
-                              </form>
-                              {{-- Disable Button --}}
-                              <form action="{{ route('admin.client.disable', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="disable" data-username="{{ $item->name }}">
-                                 @csrf
-                                 <button type="submit" class="btn btn-sm btn-danger" title="Disable Account">
-                                    <i class="fa fa-ban"></i>
-                                 </button>
-                              </form>
-                           @elseif($item->status == 'disabled')
-                              {{-- Reactivate Button --}}
-                              <form action="{{ route('admin.client.reactivate', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="reactivate" data-username="{{ $item->name }}">
-                                 @csrf
-                                 <button type="submit" class="btn btn-sm btn-success" title="Reactivate Account">
-                                    <i class="fa fa-check-circle"></i>
-                                 </button>
-                              </form>
-                           @endif
+                           {{-- Suspend Button --}}
+                           <form action="{{ route('admin.client.suspend', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="suspend" data-username="{{ $item->name }}">
+                              @csrf
+                              <button type="submit" class="btn btn-sm btn-warning" title="Suspend Account">
+                                 <i class="fa fa-pause-circle"></i>
+                              </button>
+                           </form>
+                           {{-- Disable Button --}}
+                           <form action="{{ route('admin.client.disable', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="disable" data-username="{{ $item->name }}">
+                              @csrf
+                              <button type="submit" class="btn btn-sm btn-danger" title="Disable Account">
+                                 <i class="fa fa-ban"></i>
+                              </button>
+                           </form>
                         </div>
                      </td>
                   </tr>
@@ -162,13 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
                icon: 'error',
                confirmText: 'Yes, Disable',
                confirmColor: '#dc3545'
-            },
-            reactivate: {
-               title: 'Reactivate Account?',
-               text: 'Are you sure you want to reactivate ' + username + '\'s account? They will regain full access.',
-               icon: 'question',
-               confirmText: 'Yes, Reactivate',
-               confirmColor: '#198754'
             }
          };
 

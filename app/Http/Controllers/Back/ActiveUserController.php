@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class ActiveUserController extends Controller
 {
     public function all_user(){
-        $users = User::where('role', 'user')->latest()->get();
+        $users = User::where(['role' => 'user', 'status' => 'active'])->latest()->get();
         return view('back.admin.user.user_all_data', compact('users'));
 
     } // End Mehtod 
