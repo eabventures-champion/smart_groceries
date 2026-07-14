@@ -534,6 +534,17 @@
         scrollbar-width: none !important;
     }
     
+    /* Hide Tawk.to and Suggestion button when SG drawer is active/open */
+    body.sg-drawer-open iframe[src*="tawk.to"],
+    body.sg-drawer-open iframe[id*="tawk"],
+    body.sg-drawer-open div[id*="tawk"],
+    body.sg-drawer-open .tawk-min-container,
+    body.sg-drawer-open #complaint-floating-btn {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+    
     /* Spacing & arrangement for Tawk.to, SG Panel, and Suggestion float button on all mobile screens */
     @media (max-width: 991.98px) {
         #sg-restore-handle {
@@ -994,6 +1005,13 @@
                 dock.addClass('sg-dock-shifted');
             }
         }
+        
+        // Hide Tawk.to widget and Suggestion floating button
+        $('body').addClass('sg-drawer-open');
+        if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
+            try { window.Tawk_API.hideWidget(); } catch(e) {}
+        }
+        $('#complaint-floating-btn').fadeOut(200);
 
         // Activate the tab
         activateSgTab(tabName);
@@ -1007,6 +1025,13 @@
         drawer.removeClass('open');
         dock.removeClass('sg-dock-shifted');
         sgActiveTab = null;
+        
+        // Show Tawk.to widget and Suggestion floating button
+        $('body').removeClass('sg-drawer-open');
+        if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
+            try { window.Tawk_API.showWidget(); } catch(e) {}
+        }
+        $('#complaint-floating-btn').fadeIn(200);
         
         // Hide sub panels
         closeBookingForm();
