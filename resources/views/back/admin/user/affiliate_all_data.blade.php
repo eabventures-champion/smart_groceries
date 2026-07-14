@@ -18,13 +18,14 @@
    <hr/>
     <div class="card">
        <div class="card-body">
+          @role('Developer')
           <!-- Premium Filter & Export Bar -->
           <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 p-3" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
-             <div class="d-flex align-items-center gap-2">
-                <label for="affiliateFilter" style="font-weight: 600; color: #475569; margin: 0; font-size: 14px;">
-                   <i class="bx bx-filter-alt me-1" style="font-size: 16px; vertical-align: middle;"></i> Filter By:
+             <div class="d-flex align-items-center gap-2 flex-nowrap">
+                <label for="affiliateFilter" style="font-weight: 600; color: #475569; margin: 0; font-size: 14px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+                   <i class="bx bx-filter-alt" style="font-size: 16px;"></i> Filter By:
                 </label>
-                <select id="affiliateFilter" class="form-select form-select-sm px-3 py-2" style="border-radius: 8px; border-color: #cbd5e1; font-weight: 500; min-width: 220px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                <select id="affiliateFilter" class="form-select form-select-sm px-3 py-2" style="border-radius: 8px; border-color: #cbd5e1; font-weight: 500; min-width: 220px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;">
                    <option value="all">All Partners</option>
                    <option value="only_emails">Only Emails (No Contact)</option>
                    <option value="both">Both Contact & Email</option>
@@ -35,6 +36,7 @@
                 <i class="bx bx-export" style="font-size: 16px;"></i> Export to CSV
              </button>
           </div>
+          @endrole
 
           <div class="table-responsive">
              <table id="example" class="table table-striped table-bordered" style="width:100%">
@@ -236,19 +238,25 @@ function showReferralDetails(referrerId, referrerName) {
         });
 }
 
-function initAffiliateFilters() {
-    if (typeof $.fn.dataTable !== 'undefined' && $.fn.DataTable.isDataTable('#example')) {
-        var table = $('#example').DataTable();
+@role('Developer')
+window.addEventListener('load', function() {
+    if (typeof jQuery !== 'undefined' && typeof jQuery.fn.dataTable !== 'undefined') {
+        var $ = jQuery;
         
-        // Add custom search filter
+        // Push custom search filter to DataTables global search array
         $.fn.dataTable.ext.search.push(
             function(settings, data, dataIndex) {
-                var filterValue = $('#affiliateFilter').val();
-                if (filterValue === 'all') {
+                // Only apply to our specific table
+                if (settings.nTable.id !== 'example') {
                     return true;
                 }
                 
-                var rowNode = table.row(dataIndex).node();
+                var filterValue = $('#affiliateFilter').val();
+                if (!filterValue || filterValue === 'all') {
+                    return true;
+                }
+                
+                var rowNode = settings.aoData[dataIndex].nTr;
                 var hasEmail = $(rowNode).attr('data-has-email') === 'true';
                 var hasPhone = $(rowNode).attr('data-has-phone') === 'true';
                 
@@ -262,6 +270,9 @@ function initAffiliateFilters() {
             }
         );
         
+        var table = $('#example').DataTable();
+        
+        // Trigger table redraw when select value changes
         $('#affiliateFilter').on('change', function() {
             table.draw();
         });
@@ -306,13 +317,8 @@ function initAffiliateFilters() {
             link.click();
             document.body.removeChild(link);
         });
-    } else {
-        setTimeout(initAffiliateFilters, 100);
     }
-}
-
-$(document).ready(function() {
-    initAffiliateFilters();
 });
+@endrole
 </script>
 @endsection
