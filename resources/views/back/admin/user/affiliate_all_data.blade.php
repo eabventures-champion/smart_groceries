@@ -16,10 +16,28 @@
    </div>
    <!--end breadcrumb-->
    <hr/>
-   <div class="card">
-      <div class="card-body">
-         <div class="table-responsive">
-            <table id="example" class="table table-striped table-bordered" style="width:100%">
+    <div class="card">
+       <div class="card-body">
+          <!-- Premium Filter & Export Bar -->
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 p-3" style="background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+             <div class="d-flex align-items-center gap-2">
+                <label for="affiliateFilter" style="font-weight: 600; color: #475569; margin: 0; font-size: 14px;">
+                   <i class="bx bx-filter-alt me-1" style="font-size: 16px; vertical-align: middle;"></i> Filter By:
+                </label>
+                <select id="affiliateFilter" class="form-select form-select-sm px-3 py-2" style="border-radius: 8px; border-color: #cbd5e1; font-weight: 500; min-width: 220px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                   <option value="all">All Partners</option>
+                   <option value="only_emails">Only Emails (No Contact)</option>
+                   <option value="both">Both Contact & Email</option>
+                </select>
+             </div>
+             
+             <button id="btnExportCSV" class="btn btn-sm text-white px-4 py-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                <i class="bx bx-export" style="font-size: 16px;"></i> Export to CSV
+             </button>
+          </div>
+
+          <div class="table-responsive">
+             <table id="example" class="table table-striped table-bordered" style="width:100%">
                <thead>
                   <tr>
                      <th>S/N</th>
@@ -54,7 +72,7 @@
                           $displayedBalance = max(0, $totalEarned - $totalRedrawal);
                       }
                   @endphp
-                  <tr>
+                  <tr data-has-email="{{ !empty($item->email) ? 'true' : 'false' }}" data-has-phone="{{ !empty($item->phone) ? 'true' : 'false' }}">
                      <td> {{ $key+1 }} </td>
                      <td> 
                         <div class="d-flex align-items-center gap-2">
@@ -67,10 +85,15 @@
                                <span class="badge bg-light-danger text-danger" style="font-size: 10px; font-weight: 600;">Inactive</span>
                            @endif
                         </div>
-                        <div class="d-flex flex-wrap gap-1 mt-1">
-                           <span class="badge bg-light text-secondary border" style="font-size: 10px; font-weight: 500; text-transform: none;">
+                        <div class="d-flex flex-wrap gap-1 mt-1 align-items-center">
+                           <span class="badge bg-light text-secondary border affiliate-email-badge" style="font-size: 10px; font-weight: 500; text-transform: none;">
                               {{ $item->email }}
                            </span>
+                           @if($item->phone)
+                           <span class="badge bg-light-success text-success border border-success affiliate-phone-badge" style="font-size: 10px; font-weight: 600; box-shadow: 0 0 8px rgba(59, 183, 126, 0.4); text-transform: none; display: inline-flex; align-items: center; gap: 4px;">
+                              <i class="fa fa-phone" style="font-size: 9px;"></i> {{ $item->phone }}
+                           </span>
+                           @endif
                         </div>
                      </td>
                      <td> <code style="font-size: 13px; font-weight: bold; color: #7B2828;">{{ $item->referral_code }}</code> </td>
@@ -212,5 +235,84 @@ function showReferralDetails(referrerId, referrerName) {
             document.getElementById('referrals-empty-state').style.display = 'block';
         });
 }
+
+function initAffiliateFilters() {
+    if (typeof $.fn.dataTable !== 'undefined' && $.fn.DataTable.isDataTable('#example')) {
+        var table = $('#example').DataTable();
+        
+        // Add custom search filter
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                var filterValue = $('#affiliateFilter').val();
+                if (filterValue === 'all') {
+                    return true;
+                }
+                
+                var rowNode = table.row(dataIndex).node();
+                var hasEmail = $(rowNode).attr('data-has-email') === 'true';
+                var hasPhone = $(rowNode).attr('data-has-phone') === 'true';
+                
+                if (filterValue === 'only_emails') {
+                    return hasEmail && !hasPhone;
+                } else if (filterValue === 'both') {
+                    return hasEmail && hasPhone;
+                }
+                
+                return true;
+            }
+        );
+        
+        $('#affiliateFilter').on('change', function() {
+            table.draw();
+        });
+        
+        // Handle CSV Export
+        $('#btnExportCSV').on('click', function() {
+            var csvContent = [];
+            var headers = ['S/N', 'Name', 'Email', 'Contact', 'Referral Code', 'Referrals Count', 'Total Earned', 'Total Redrawal', 'Current Balance'];
+            csvContent.push(headers.join(','));
+            
+            table.rows({ search: 'applied' }).every(function(rowIdx, tableLoop, rowLoop) {
+                var rowNode = this.node();
+                var sn = rowLoop + 1;
+                
+                var name = $(rowNode).find('td:eq(1) a').text().trim().replace(/,/g, '');
+                var emailText = $(rowNode).find('.affiliate-email-badge').text().trim().replace(/,/g, '');
+                var phoneText = $(rowNode).find('.affiliate-phone-badge').text().trim().replace(/,/g, '');
+                if (!phoneText) {
+                    phoneText = 'N/A';
+                }
+                
+                var referralCode = $(rowNode).find('td:eq(2) code').text().trim().replace(/,/g, '');
+                var referralsCount = $(rowNode).find('td:eq(3) a').text().trim().replace(/,/g, '').replace(/\s+/g, ' ');
+                
+                var totalEarned = $(rowNode).find('td:eq(4)').text().trim().replace('Gh ', '').replace(/,/g, '');
+                var totalRedrawal = $(rowNode).find('td:eq(5)').text().trim().replace('Gh ', '').replace(/,/g, '');
+                var balance = $(rowNode).find('td:eq(6)').text().trim().replace('Gh ', '').replace(/,/g, '');
+                
+                var rowData = [sn, name, emailText, phoneText, referralCode, referralsCount, totalEarned, totalRedrawal, balance];
+                csvContent.push(rowData.map(function(val) {
+                    return '"' + String(val).replace(/"/g, '""') + '"';
+                }).join(','));
+            });
+            
+            var csvString = csvContent.join('\n');
+            var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "affiliate_partners.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    } else {
+        setTimeout(initAffiliateFilters, 100);
+    }
+}
+
+$(document).ready(function() {
+    initAffiliateFilters();
+});
 </script>
 @endsection

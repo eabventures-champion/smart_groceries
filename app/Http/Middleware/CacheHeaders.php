@@ -18,7 +18,8 @@ class CacheHeaders
         $response = $next($request);
 
         // Don't cache if user is authenticated (admin pages, etc.)
-        if ($request->is('admin/*') || $request->is('vendor/*')) {
+        if (auth()->check() || $request->is('admin/*') || $request->is('vendor/*')) {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
             return $response;
         }
 

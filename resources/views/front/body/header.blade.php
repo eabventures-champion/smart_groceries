@@ -180,7 +180,7 @@
                                        <div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
                                            <ul>
                                                <li>
-                                                   <a href="{{ route('user.account.page') }}"><i
+                                                   <a href="{{ route('dashboard') }}"><i
                                                            class="fi fi-ss-home mr-10"></i>Dashboard</a>
                                                </li>
                                                <li>

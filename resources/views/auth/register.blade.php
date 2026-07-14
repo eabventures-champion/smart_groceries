@@ -523,7 +523,7 @@
                 mobile : {
                     position : 'br',
                     xOffset : 15,
-                    yOffset : 95
+                    yOffset : 160
                 }
             }
         };
