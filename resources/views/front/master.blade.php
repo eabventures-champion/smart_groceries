@@ -361,15 +361,15 @@
       <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}" defer></script>
       <!-- Template JS -->
       <script src="{{ asset('front/assets/js/main.js?v=5.5') }}" defer></script>
-      <script src="{{ asset('front/assets/js/shop.js?v=6.2') }}" defer></script>
-      <script src="{{ asset('front/assets/js/script.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/shop.js?v=6.3') }}" defer></script>
+      <script src="{{ asset('front/assets/js/script.js?v=2.0') }}" defer></script>
       <script src="{{ asset('back/assets/plugins/datatable/js/jquery.dataTables.min.js') }}" defer></script>
       <script>
          $(document).ready(function() {
             if ($('#example').length) { $('#example').DataTable(); }
            } );
       </script>
-      <script src="{{ asset('front/assets/js/code.js') }}" defer></script>
+      <script src="{{ asset('front/assets/js/code.js?v=2.0') }}" defer></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" defer></script>
       <script src="//cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" defer></script>
