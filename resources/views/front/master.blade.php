@@ -1036,14 +1036,27 @@
          }
       </script>
 
-      <script type="text/javascript">
-         function renderWishlist(response){
-            $('#wishQty').text(response.wishQty);
-            $('#wishQty-mobile').text(response.wishQty);
-            
-            // Reset Select All checkbox and hide Bulk Delete button
-            $('#selectAllWishlist').prop('checked', false);
-            $('#bulkDeleteWishlistBtn').addClass('d-none');
+      <script type="text/javascript">          
+          function renderWishlist(response){
+             $('#wishQty').text(response.wishQty);
+             $('#wishQty-mobile').text(response.wishQty);
+             
+             // Reset Select All checkbox and hide Bulk Delete button
+             $('#selectAllWishlist').prop('checked', false);
+             $('#bulkDeleteWishlistBtn').addClass('d-none');
+             
+             if (!response.wishlist || response.wishlist.length === 0) {
+                $('#wishlist-table-container').addClass('d-none');
+                $('#wishlist-mobile-container').addClass('d-none');
+                $('#selectAllWishlist').addClass('d-none');
+                $('#wishlist-empty-state').removeClass('d-none');
+             } else {
+                $('#wishlist-table-container').removeClass('d-none');
+                $('#wishlist-mobile-container').removeClass('d-none');
+                $('#selectAllWishlist').removeClass('d-none');
+                $('#wishlist-empty-state').addClass('d-none');
+             }
+
              var rows = ""
              var mobileCards = ""
              $.each(response.wishlist, function(key,value){
