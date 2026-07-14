@@ -363,39 +363,68 @@
             margin-top: 0 !important;
             margin-bottom: 20px !important;
         }
-         .detail-gallery {
-             max-width: 200px !important;
-             margin: 0 auto !important;
-         }
-         .detail-gallery .product-image-slider {
-             max-width: 100% !important;
-             max-height: 200px !important;
-             margin: 0 auto 15px auto !important;
-             border-radius: 16px !important;
-             overflow: hidden !important;
-         }
-         .detail-gallery .product-image-slider img {
-             max-height: 180px !important;
-             width: auto !important;
-             margin: 0 auto !important;
-             object-fit: contain !important;
-         }
-         .detail-gallery .slider-nav-thumbnails {
-             max-width: 100% !important;
-             margin: 10px auto 0 !important;
-         }
-         .detail-gallery .slider-nav-thumbnails img {
-             max-height: 50px !important;
-             object-fit: contain !important;
-         }
-         /* Prevent zoom library from capturing scrolls on mobile screens */
-         .zoomContainer,
-         .zoomLens,
-         .zoomWindow {
-             display: none !important;
-             pointer-events: none !important;
-             visibility: hidden !important;
-         }
+          .detail-gallery {
+              display: flex !important;
+              flex-direction: row !important;
+              align-items: flex-start !important;
+              justify-content: space-between !important;
+              gap: 15px !important;
+              max-width: 100% !important;
+              margin: 0 auto !important;
+          }
+          .detail-gallery-main-wrap {
+              flex: 0 0 170px !important;
+              max-width: 170px !important;
+          }
+          .detail-gallery-info-wrap {
+              flex: 1 1 auto !important;
+              padding-top: 5px !important;
+              text-align: left !important;
+          }
+          .detail-gallery-info-wrap .font-xs ul {
+              float: none !important;
+              margin-right: 0 !important;
+              margin-bottom: 12px !important;
+              display: block !important;
+              width: 100% !important;
+          }
+          .detail-gallery-info-wrap .font-xs ul:last-child {
+              margin-bottom: 0 !important;
+          }
+          .detail-gallery-info-wrap .font-xs li {
+              font-size: 13px !important;
+              line-height: 1.5 !important;
+              margin-bottom: 6px !important;
+          }
+          .detail-gallery .product-image-slider {
+              max-width: 100% !important;
+              max-height: 170px !important;
+              margin: 0 auto 10px auto !important;
+              border-radius: 16px !important;
+              overflow: hidden !important;
+          }
+          .detail-gallery .product-image-slider img {
+              max-height: 150px !important;
+              width: auto !important;
+              margin: 0 auto !important;
+              object-fit: contain !important;
+          }
+          .detail-gallery .slider-nav-thumbnails {
+              max-width: 100% !important;
+              margin: 5px auto 0 !important;
+          }
+          .detail-gallery .slider-nav-thumbnails img {
+              max-height: 40px !important;
+              object-fit: contain !important;
+          }
+          /* Prevent zoom library from capturing scrolls on mobile screens */
+          .zoomContainer,
+          .zoomLens,
+          .zoomWindow {
+              display: none !important;
+              pointer-events: none !important;
+              visibility: hidden !important;
+          }
     }
 </style>
 
@@ -414,46 +443,50 @@
             <div class="row mb-50 mt-30">
                <div class="col-md-5 col-12">
                 {{-- <div class="col-md-4 col-sm-9 col-6 col-xs-12 mb-md-0 mb-sm-5"> --}}
-                  <div class="detail-gallery">
-                     {{-- <span class="zoom-icon"><i class="fi-rs-search"></i></span> --}}
-                     <!-- MAIN SLIDES -->
-                     <div class="product-image-slider">
-                        @if($multiImage->isEmpty())
-                        <figure class="border-radius-10">
-                           <img src="{{ asset($product->product_thumbnail) }}" alt="product image" />
-                        </figure>
-                        @else
-                        @foreach($multiImage as $img)
-                        <figure class="border-radius-10">
-                           <img src="{{ asset($img->photo_name) }} " alt="product image" />
-                        </figure>
-                        @endforeach
-                        @endif
-                     </div>
-                     <!-- THUMBNAILS -->
-                     <div class="slider-nav-thumbnails mb-30">
-                        @if($multiImage->isEmpty())
-                        <div><img src="{{ asset($product->product_thumbnail) }}" alt="product image" /></div>
-                        @else
-                        @foreach($multiImage as $img)
-                        <div><img src="{{ asset($img->photo_name) }}" alt="product image" /></div>
-                        @endforeach
-                        @endif
-                     </div>
-                     {{-- <hr> --}}
-                     <div class="font-xs">
-                        <ul class="mr-50 float-start">
-                           <li class="mb-5">Brand: <span class="text-brand">{{ $product->brand->brand_name }}</span></li>
-                           <li class="mb-5">Category:<span class="text-brand"> {{ $product->category->category_name }}</span></li>
-                           <li>SubCategory: <span class="text-brand">{{ $product->subcategory->subcategory_name }}</span></li>
-                        </ul>
-                        <ul class="float-start">
-                           <li class="mb-5">Product Code: <a href="#">{{ $product->product_code }}</a></li>
-                           <li class="mb-5">Tags: <a href="#" rel="tag"> {{ $product->product_tags }}</a></li>
-                           {{-- <li>Stock:<span class="in-stock text-brand ml-5">({{ $product->product_qty }}) Items In Stock</span></li> --}}
-                        </ul>
-                     </div>
-                  </div>
+                   <div class="detail-gallery">
+                      {{-- <span class="zoom-icon"><i class="fi-rs-search"></i></span> --}}
+                      <div class="detail-gallery-main-wrap">
+                         <!-- MAIN SLIDES -->
+                         <div class="product-image-slider">
+                            @if($multiImage->isEmpty())
+                            <figure class="border-radius-10">
+                               <img src="{{ asset($product->product_thumbnail) }}" alt="product image" />
+                            </figure>
+                            @else
+                            @foreach($multiImage as $img)
+                            <figure class="border-radius-10">
+                               <img src="{{ asset($img->photo_name) }} " alt="product image" />
+                            </figure>
+                            @endforeach
+                            @endif
+                         </div>
+                         <!-- THUMBNAILS -->
+                         <div class="slider-nav-thumbnails mb-30">
+                            @if($multiImage->isEmpty())
+                            <div><img src="{{ asset($product->product_thumbnail) }}" alt="product image" /></div>
+                            @else
+                            @foreach($multiImage as $img)
+                            <div><img src="{{ asset($img->photo_name) }}" alt="product image" /></div>
+                            @endforeach
+                            @endif
+                         </div>
+                      </div>
+                      {{-- <hr> --}}
+                      <div class="detail-gallery-info-wrap">
+                         <div class="font-xs">
+                            <ul class="mr-50 float-start">
+                               <li class="mb-5">Brand: <span class="text-brand">{{ $product->brand->brand_name }}</span></li>
+                               <li class="mb-5">Category:<span class="text-brand"> {{ $product->category->category_name }}</span></li>
+                               <li>SubCategory: <span class="text-brand">{{ $product->subcategory->subcategory_name }}</span></li>
+                            </ul>
+                            <ul class="float-start">
+                               <li class="mb-5">Product Code: <a href="#">{{ $product->product_code }}</a></li>
+                               <li class="mb-5">Tags: <a href="#" rel="tag"> {{ $product->product_tags }}</a></li>
+                               {{-- <li>Stock:<span class="in-stock text-brand ml-5">({{ $product->product_qty }}) Items In Stock</span></li> --}}
+                            </ul>
+                         </div>
+                      </div>
+                   </div>
                   <!-- End Gallery -->
                </div>
 
