@@ -4,6 +4,24 @@
 @endsection
 @section('content')
 
+<style>
+@media (max-width: 575.98px) {
+   .account-card-header {
+      padding: 20px 15px !important;
+   }
+   .account-card-title {
+      font-size: 17px !important;
+      white-space: nowrap !important;
+   }
+   .account-header-icon {
+      width: 40px !important;
+      height: 40px !important;
+      margin-right: 12px !important;
+      font-size: 16px !important;
+   }
+}
+</style>
+
 <div class="page-content pt-50 pb-50 account-mobile-padding" style="font-family: 'Inter', sans-serif; background: #f8fafb;">
    <div class="container">
       <div class="row">
@@ -20,7 +38,7 @@
                            <i class="fi fi-rs-document-signed"></i>
                         </div>
                         <div>
-                           <h3 class="account-card-title" style="font-family: 'Outfit', sans-serif; Alain-weight: 800; font-size: 22px; color: #253D4E; margin: 0 0 3px;">Complaints & Suggestions</h3>
+                           <h3 class="account-card-title" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 22px; color: #253D4E; margin: 0 0 3px;">Complaints & Suggestions</h3>
                            <p class="account-card-subtitle" style="font-size: 13px; color: #9ca3af; margin: 0; font-weight: 400;">Send us your complaints or suggestions. We appreciate your feedback.</p>
                         </div>
                      </div>
