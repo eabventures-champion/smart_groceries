@@ -215,6 +215,43 @@
              .product-action-1-mobile a[onclick*="Compare"] {
                 display: none !important;
              }
+
+             /* --- Quick View Modal Premium Enhancements for Mobile --- */
+             #quickViewModal.modal {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+             }
+             #quickViewModal .modal-dialog {
+                max-width: 94% !important;
+                margin: 20px auto !important;
+             }
+             #quickViewModal .modal-content {
+                border-radius: 20px !important;
+                padding: 20px 15px !important;
+             }
+             /* Resize image gallery container */
+             #quickViewModal .detail-gallery.quickview {
+                height: 180px !important;
+                margin-top: 15px !important;
+                margin-bottom: 20px !important;
+                padding: 10px !important;
+             }
+             #quickViewModal .detail-gallery.quickview img {
+                max-height: 90% !important;
+                max-width: 90% !important;
+                object-fit: contain !important;
+                padding: 0 !important;
+             }
+             /* Resize price cover container */
+             #quickViewModal .product-price-cover {
+                padding: 8px 12px !important;
+                margin-bottom: 15px !important;
+                display: inline-block !important;
+                width: auto !important;
+             }
+             #quickViewModal span.current-price {
+                font-size: 20px !important;
+             }
           }
           
           /* Hide SG floating panel when a modal is open on mobile view */
@@ -631,14 +668,31 @@
          })
          }
 
-         /// Start Add To Cart Prodcut
-         function addToCart(){
-            var product_name = $('#pname').text();
-            var id = $('#product_id').val();
-            var vendor = $('#pvendor_id').text();
-            var color = $('#color option:selected').text();
-            var size = $('.size option:selected').text();
-            var quantity = $('#qty').val();
+          /// Start Add To Cart Product
+          function addToCart(){
+             // Validate size selection if sizeArea is visible
+             if ($('#sizeArea').is(':visible')) {
+                var sizeVal = $('select[name="size"]').val();
+                if (!sizeVal || sizeVal === '' || sizeVal.indexOf('--select') !== -1 || sizeVal.indexOf('--Choose') !== -1) {
+                   toastr.error('Please select a size first');
+                   return;
+                }
+             }
+             // Validate color/variant selection if colorArea is visible
+             if ($('#colorArea').is(':visible')) {
+                var colorVal = $('select[name="color"]').val();
+                if (!colorVal || colorVal === '' || colorVal.indexOf('--select') !== -1) {
+                   toastr.error('Please select a variant first');
+                   return;
+                }
+             }
+
+             var product_name = $('#pname').text();
+             var id = $('#product_id').val();
+             var vendor = $('#pvendor_id').text();
+             var color = $('#color option:selected').text();
+             var size = $('.size option:selected').text();
+             var quantity = $('#qty').val();
 
             // $('#getPrice_modal').val('');
             // $('#color').val('');
@@ -810,15 +864,41 @@
          }
          /// Mini Cart Remove End
 
-         /// Start Details Page Add To Cart Product
-         function addToCartDetails(){
-         var product_name = $('#dpname').text();
-         var id = $('#dproduct_id').val();
-         var vendor = $('#vproduct_id').val();
-         var color = $('#dcolor option:selected').text();
-         var size = $('.dsize option:selected').text();
-         var quantity = parseInt($('#dqty').val(), 10);
-         var maxStock = parseInt($('#dqty').attr('max'), 10);
+          /// Start Details Page Add To Cart Product
+          function addToCartDetails(){
+             // Validate size selection if sizeArea is visible
+             var $dsizeSelect = $('.dsize');
+             if ($dsizeSelect.length) {
+                var $dsizeWrapper = $dsizeSelect.closest('#sizeArea, .attr-size');
+                if ($dsizeWrapper.length && $dsizeWrapper.is(':visible')) {
+                   var dsizeVal = $dsizeSelect.val();
+                   if (!dsizeVal || dsizeVal === '' || dsizeVal.indexOf('--select') !== -1 || dsizeVal.indexOf('--Choose') !== -1) {
+                      toastr.error('Please select a size first');
+                      return;
+                   }
+                }
+             }
+             
+             // Validate color/variant selection if colorArea is visible
+             var $dcolorSelect = $('#dcolor');
+             if ($dcolorSelect.length) {
+                var $dcolorWrapper = $dcolorSelect.closest('#colorArea, .attr-size');
+                if ($dcolorWrapper.length && $dcolorWrapper.is(':visible')) {
+                   var dcolorVal = $dcolorSelect.val();
+                   if (!dcolorVal || dcolorVal === '' || dcolorVal.indexOf('--select') !== -1) {
+                      toastr.error('Please select a variant first');
+                      return;
+                   }
+                }
+             }
+
+             var product_name = $('#dpname').text();
+             var id = $('#dproduct_id').val();
+             var vendor = $('#vproduct_id').val();
+             var color = $('#dcolor option:selected').text();
+             var size = $('.dsize option:selected').text();
+             var quantity = parseInt($('#dqty').val(), 10);
+             var maxStock = parseInt($('#dqty').attr('max'), 10);
 
          // Client-side stock validation
          if (maxStock && quantity > maxStock) {
