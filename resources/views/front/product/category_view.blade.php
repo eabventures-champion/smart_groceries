@@ -27,20 +27,41 @@ $filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
          <div class="list-group-item mt-20">
             <h5 class="section-title style-1 mb-15">Category</h5>
             <div class="filter-scroll-list">
-               @foreach($categories as $category)
+               @php
+               $parent_products_mobile = App\Models\Product::where('category_id', $breadcat->id)->get();
+               @endphp
+               <label class="premium-custom-checkbox parent-category-checkbox">
+                   <input class="form-check-input filter-input" type="checkbox" name="category[]" id="exampleCheckbox_mobile{{ $breadcat->id }}" value="{{ $breadcat->category_slug }}"
+                   @if(!empty($filter_category) && in_array($breadcat->category_slug, $filter_category))
+                   checked
+                   @endif
+                   />
+                   <span class="checkmark"></span>
+                   <span class="form-check-label" style="font-weight: 700;">{{ $breadcat->category_name }} <span class="count-badge">({{ count($parent_products_mobile) }})</span></span>
+               </label>
+               
+               <!-- Subcategories List -->
+               <div class="subcategory-filter-list" style="margin-left: 22px; margin-top: 10px; border-left: 2px solid #e2e8f0; padding-left: 12px; display: flex; flex-direction: column; gap: 8px;">
                   @php
-                  $products_mobile = App\Models\Product::where('category_id',$category->id)->get();
+                  $subcategories = App\Models\SubCategory::where('category_id', $breadcat->id)->orderBy('subcategory_name', 'ASC')->get();
                   @endphp
-                  <label class="premium-custom-checkbox">
-                      <input class="form-check-input filter-input" type="checkbox" name="category[]" id="exampleCheckbox_mobile{{ $category->id }}" value="{{ $category->category_slug }}"
-                      @if(!empty($filter_category) && in_array($category->category_slug, $filter_category))
-                      checked
-                      @endif
-                      />
-                      <span class="checkmark"></span>
-                      <span class="form-check-label">{{ $category->category_name }} <span class="count-badge">({{ count($products_mobile) }})</span></span>
-                  </label>
-               @endforeach
+                  @foreach($subcategories as $subcat)
+                     @php
+                     $subcat_products = App\Models\Product::where('subcategory_id', $subcat->id)->where('status', 1)->get();
+                     @endphp
+                     @if(count($subcat_products) > 0)
+                        <label class="premium-custom-checkbox" style="margin-bottom: 0;">
+                            <input class="form-check-input filter-input subcategory-filter-input" type="checkbox" name="subcategory[]" id="exampleSubCheckbox_mobile{{ $subcat->id }}" value="{{ $subcat->subcategory_slug }}"
+                            @if(!empty($filter_subcategory) && in_array($subcat->subcategory_slug, $filter_subcategory))
+                            checked
+                            @endif
+                            />
+                            <span class="checkmark"></span>
+                            <span class="form-check-label" style="font-size: 13px;">{{ $subcat->subcategory_name }} <span class="count-badge">({{ count($subcat_products) }})</span></span>
+                        </label>
+                     @endif
+                  @endforeach
+               </div>
             </div>
 
             <h5 class="section-title style-1 mb-15 mt-20">Brand</h5>
@@ -77,20 +98,41 @@ $filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
             <h5 class="section-title style-1 mb-30 collapsible-widget-title" style="cursor: pointer;">Category<i class="fi-rs-angle-down toggle-icon" style="float: right; transition: transform 0.3s ease;"></i></h5>
             <div class="collapsible-widget-content">
                <div class="filter-scroll-list">
-                  @foreach($categories as $category)
+                  @php
+                  $parent_products = App\Models\Product::where('category_id', $breadcat->id)->get();
+                  @endphp
+                  <label class="premium-custom-checkbox parent-category-checkbox">
+                      <input class="form-check-input filter-input" type="checkbox" name="category[]" id="exampleCheckbox{{ $breadcat->id }}" value="{{ $breadcat->category_slug }}"
+                      @if(!empty($filter_category) && in_array($breadcat->category_slug, $filter_category))
+                      checked
+                      @endif
+                      />
+                      <span class="checkmark"></span>
+                      <span class="form-check-label" style="font-weight: 700;">{{ $breadcat->category_name }} <span class="count-badge">({{ count($parent_products) }})</span></span>
+                  </label>
+                  
+                  <!-- Subcategories List -->
+                  <div class="subcategory-filter-list" style="margin-left: 22px; margin-top: 10px; border-left: 2px solid #e2e8f0; padding-left: 12px; display: flex; flex-direction: column; gap: 8px;">
                      @php
-                     $products = App\Models\Product::where('category_id',$category->id)->get();
+                     $subcategories = App\Models\SubCategory::where('category_id', $breadcat->id)->orderBy('subcategory_name', 'ASC')->get();
                      @endphp
-                     <label class="premium-custom-checkbox">
-                         <input class="form-check-input filter-input" type="checkbox" name="category[]" id="exampleCheckbox{{ $category->id }}" value="{{ $category->category_slug }}"
-                         @if(!empty($filter_category) && in_array($category->category_slug, $filter_category))
-                         checked
-                         @endif
-                         />
-                         <span class="checkmark"></span>
-                         <span class="form-check-label">{{ $category->category_name }} <span class="count-badge">({{ count($products) }})</span></span>
-                     </label>
-                  @endforeach
+                     @foreach($subcategories as $subcat)
+                        @php
+                        $subcat_products = App\Models\Product::where('subcategory_id', $subcat->id)->where('status', 1)->get();
+                        @endphp
+                        @if(count($subcat_products) > 0)
+                           <label class="premium-custom-checkbox" style="margin-bottom: 0;">
+                               <input class="form-check-input filter-input subcategory-filter-input" type="checkbox" name="subcategory[]" id="exampleSubCheckbox{{ $subcat->id }}" value="{{ $subcat->subcategory_slug }}"
+                               @if(!empty($filter_subcategory) && in_array($subcat->subcategory_slug, $filter_subcategory))
+                               checked
+                               @endif
+                               />
+                               <span class="checkmark"></span>
+                               <span class="form-check-label" style="font-size: 13px;">{{ $subcat->subcategory_name }} <span class="count-badge">({{ count($subcat_products) }})</span></span>
+                           </label>
+                        @endif
+                     @endforeach
+                  </div>
                </div>
             </div>
          </div>
@@ -146,7 +188,8 @@ $filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
 </div>
 
 <script type="text/javascript">
-   $(document).ready(function(){
+   document.addEventListener("DOMContentLoaded", function() {
+      $(document).ready(function(){
       window.applyFilters = function(page = 1) {
          var $container = $('#shop-product-container');
          if ($container.find('.shop-overlay-loader').length === 0) {
@@ -162,6 +205,14 @@ $filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
             }
          });
 
+         var subcategories = [];
+         $('input[name="subcategory[]"]:checked').each(function() {
+            var val = $(this).val();
+            if (subcategories.indexOf(val) === -1) {
+               subcategories.push(val);
+            }
+         });
+
          var brands = [];
          $('input[name="brand[]"]:checked').each(function() {
             var val = $(this).val();
@@ -173,6 +224,9 @@ $filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
          var params = {};
          if (categories.length > 0) {
             params.category = categories.join(',');
+         }
+         if (subcategories.length > 0) {
+            params.subcategory = subcategories.join(',');
          }
          if (brands.length > 0) {
             params.brand = brands.join(',');
@@ -239,5 +293,6 @@ $filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
          }
       });
    });
+});
 </script>
 @endsection

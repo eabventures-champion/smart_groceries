@@ -78,7 +78,20 @@ class IndexController extends Controller
         $breadcat = Category::where('id', $id)->first();
         $products = Product::where('status', 1);
 
+        $filter_category = [];
         if (!empty($request->category)) {
+            $filter_category = explode(',', $request->category);
+        } else {
+            $filter_category[] = $breadcat->category_slug;
+        }
+
+        $filter_subcategory = [];
+        if (!empty($request->subcategory)) {
+            $sub_slugs = explode(',', $request->subcategory);
+            $filter_subcategory = $sub_slugs;
+            $subcatIds = SubCategory::select('id')->whereIn('subcategory_slug', $sub_slugs)->pluck('id')->toArray();
+            $products->whereIn('subcategory_id', $subcatIds);
+        } else if (!empty($request->category)) {
             $slugs = explode(',', $request->category);
             $catIds = Category::select('id')->whereIn('category_slug', $slugs)->pluck('id')->toArray();
             $products->whereIn('category_id', $catIds);
@@ -102,14 +115,27 @@ class IndexController extends Controller
         $brands = Brand::orderBy('brand_name', 'ASC')->get();
         $newProduct = Product::orderBy('id', 'DESC')->limit(3)->get();
 
-        return view('front.product.category_view', compact('products', 'categories', 'brands', 'breadcat', 'newProduct'));
+        return view('front.product.category_view', compact('products', 'categories', 'brands', 'breadcat', 'newProduct', 'filter_category', 'filter_subcategory'));
     }
 
     public function sub_cat_wise_product(Request $request, $id, $slug){
         $breadsubcat = SubCategory::where('id',$id)->first();
         $products = Product::where('status', 1);
 
+        $filter_category = [];
         if (!empty($request->category)) {
+            $filter_category = explode(',', $request->category);
+        } else {
+            $filter_category[] = $breadsubcat->category->category_slug;
+        }
+
+        $filter_subcategory = [];
+        if (!empty($request->subcategory)) {
+            $sub_slugs = explode(',', $request->subcategory);
+            $filter_subcategory = $sub_slugs;
+            $subcatIds = SubCategory::select('id')->whereIn('subcategory_slug', $sub_slugs)->pluck('id')->toArray();
+            $products->whereIn('subcategory_id', $subcatIds);
+        } else if (!empty($request->category)) {
             $slugs = explode(',', $request->category);
             $catIds = Category::select('id')->whereIn('category_slug', $slugs)->pluck('id')->toArray();
             $products->whereIn('category_id', $catIds);
@@ -133,7 +159,7 @@ class IndexController extends Controller
         $brands = Brand::orderBy('brand_name', 'ASC')->get();
         $newProduct = Product::orderBy('id','DESC')->limit(3)->get();
 
-        return view('front.product.subcategory_view', compact('products', 'categories', 'brands', 'breadsubcat', 'newProduct'));
+        return view('front.product.subcategory_view', compact('products', 'categories', 'brands', 'breadsubcat', 'newProduct', 'filter_category', 'filter_subcategory'));
     }
 
     public function product_view_ajax($id){

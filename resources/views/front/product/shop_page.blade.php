@@ -197,7 +197,8 @@
 </div>
 
 <script type="text/javascript">
-   $(document).ready(function(){
+   document.addEventListener("DOMContentLoaded", function() {
+      $(document).ready(function(){
       if($('#slider-range').length > 0){
          const max_price = parseInt($('#slider-range').data('max'));
          const min_price = parseInt($('#slider-range').data('min'));
@@ -383,5 +384,6 @@
          }
       });
    });
+});
 </script>
 @endsection
