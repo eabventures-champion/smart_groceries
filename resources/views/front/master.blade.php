@@ -1881,14 +1881,14 @@
         Tawk_API.customStyle = {
             visibility : {
                 desktop : {
-                    position : 'br',
+                    position : 'bl',
                     xOffset : 15,
-                    yOffset : 15
+                    yOffset : 85
                 },
                 mobile : {
-                    position : 'br',
-                    xOffset : 8,
-                    yOffset : 225
+                    position : 'bl',
+                    xOffset : 15,
+                    yOffset : 160
                 }
             }
         };
