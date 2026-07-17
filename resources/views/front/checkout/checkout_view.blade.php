@@ -28,7 +28,7 @@
       </div>
    </div>
 
-   <form method="post" action="{{ route('checkout.store') }}">
+   <form id="checkout-form" method="post" action="{{ route('checkout.store') }}">
       @csrf
       <div class="row">
          <!-- Billing Details Card -->
@@ -216,10 +216,33 @@
    </form>
 </div>
 
+<script src="{{ asset('front/assets/js/validate.js') }}"></script>
 <script type="text/javascript">
-   $(document).ready(function(){
-       $('select[name="region_id"]').on('change', function(){
-           var region_id = $(this).val();
+   document.addEventListener("DOMContentLoaded", function() {
+       $(document).ready(function(){
+           $('select[name="region_id"]').on('change', function(){
+               var region_id = $(this).val();
+               if (region_id) {
+                   $.ajax({
+                       url: "{{ url('/institution-get/ajax') }}/"+region_id,
+                       type: "GET",
+                       dataType:"json",
+                       success:function(data){
+                           $('select[name="city_id"]').html('');
+                           var d =$('select[name="district_id"]').empty();
+                           $.each(data, function(key, value){
+                               $('select[name="district_id"]').append('<option value="'+ value.id + '">' + value.district_name + '</option>');
+                           });
+                           $('select[name="district_id"]').trigger('change');
+                       },
+                   });
+               } else {
+                   alert('danger');
+               }
+           });
+
+           // Auto-load matching district on page load if region is pre-selected
+           var region_id = $('select[name="region_id"]').val();
            if (region_id) {
                $.ajax({
                    url: "{{ url('/institution-get/ajax') }}/"+region_id,
@@ -229,129 +252,193 @@
                        $('select[name="city_id"]').html('');
                        var d =$('select[name="district_id"]').empty();
                        $.each(data, function(key, value){
-                           $('select[name="district_id"]').append('<option value="'+ value.id + '">' + value.district_name + '</option>');
+                           var selected = '';
+                           @if(isset($userDistrict))
+                               if (value.id == {{ $userDistrict->id }}) {
+                                   selected = 'selected';
+                               }
+                           @endif
+                           $('select[name="district_id"]').append('<option value="'+ value.id + '" ' + selected + '>' + value.district_name + '</option>');
                        });
                        $('select[name="district_id"]').trigger('change');
                    },
                });
-           } else {
-               alert('danger');
            }
        });
 
-       // Auto-load matching district on page load if region is pre-selected
-       var region_id = $('select[name="region_id"]').val();
-       if (region_id) {
-           $.ajax({
-               url: "{{ url('/institution-get/ajax') }}/"+region_id,
-               type: "GET",
-               dataType:"json",
-               success:function(data){
-                   $('select[name="city_id"]').html('');
-                   var d =$('select[name="district_id"]').empty();
-                   $.each(data, function(key, value){
-                       var selected = '';
-                       @if(isset($userDistrict))
-                           if (value.id == {{ $userDistrict->id }}) {
-                               selected = 'selected';
-                           }
-                       @endif
-                       $('select[name="district_id"]').append('<option value="'+ value.id + '" ' + selected + '>' + value.district_name + '</option>');
+       // Show State Data
+       $(document).ready(function(){
+           $('select[name="district_id"]').on('change', function(){
+               var institution_id = $(this).val();
+               if (institution_id) {
+                   $.ajax({
+                       url: "{{ url('/hall-get/ajax') }}/"+institution_id,
+                       type: "GET",
+                       dataType:"json",
+                       success:function(data){
+                           $('select[name="city_id"]').html('');
+                           var d =$('select[name="city_id"]').empty();
+                           $.each(data, function(key, value){
+                               var selected = '';
+                               @if(Auth::check() && Auth::user()->hall)
+                                   if (value.city == "{{ Auth::user()->hall }}") {
+                                       selected = 'selected';
+                                   }
+                               @endif
+                               $('select[name="city_id"]').append('<option value="'+ value.id + '" ' + selected + '>' + value.city + '</option>');
+                           });
+                       },
                    });
-                   $('select[name="district_id"]').trigger('change');
-               },
+               } else {
+                   alert('danger');
+               }
            });
-       }
-   });
-   // Show State Data
-   $(document).ready(function(){
-       $('select[name="district_id"]').on('change', function(){
-           var institution_id = $(this).val();
-           if (institution_id) {
-               $.ajax({
-                   url: "{{ url('/hall-get/ajax') }}/"+institution_id,
-                   type: "GET",
-                   dataType:"json",
-                   success:function(data){
-                       $('select[name="city_id"]').html('');
-                       var d =$('select[name="city_id"]').empty();
-                       $.each(data, function(key, value){
-                           var selected = '';
-                           @if(Auth::check() && Auth::user()->hall)
-                               if (value.city == "{{ Auth::user()->hall }}") {
-                                   selected = 'selected';
-                               }
-                           @endif
-                           $('select[name="city_id"]').append('<option value="'+ value.id + '" ' + selected + '>' + value.city + '</option>');
-                       });
-                   },
-               });
-           } else {
-               alert('danger');
-           }
+       });
+
+       $(document).ready(function(){
+             $('#checkout-form').validate({
+                 rules: {
+                     delivery_name: {
+                         required: true
+                     },
+                     delivery_email: {
+                         required: true,
+                         email: true
+                     },
+                     delivery_phone: {
+                         required: true
+                     },
+                     delivery_address: {
+                         required: true
+                     },
+                     region_id: {
+                         required: true
+                     },
+                     district_id: {
+                         required: true
+                     },
+                     city_id: {
+                         required: true
+                     },
+                     city_name: {
+                         required: true
+                     }
+                 },
+                 messages: {
+                     delivery_name: {
+                         required: "Please enter your full name"
+                     },
+                     delivery_email: {
+                         required: "Please enter your email address",
+                         email: "Please enter a valid email address"
+                     },
+                     delivery_phone: {
+                         required: "Please enter your phone number"
+                     },
+                     delivery_address: {
+                         required: "Please enter your address"
+                     },
+                     region_id: {
+                         required: "Please select your region"
+                     },
+                     district_id: {
+                         required: "Please select your institution"
+                     },
+                     city_id: {
+                         required: "Please select your hall"
+                     },
+                     city_name: {
+                         required: "Please enter your residence name"
+                     }
+                 },
+                 errorElement: 'span',
+                 errorPlacement: function (error, element) {
+                     error.addClass('text-danger');
+                     error.css({'display': 'block', 'font-size': '12px', 'margin-top': '5px'});
+                     if (element.parent('.custom_select').length) {
+                         element.parent('.custom_select').after(error);
+                     } else {
+                         element.after(error);
+                     }
+                 },
+                 highlight: function(element, errorClass, validClass){
+                     $(element).addClass('is-invalid');
+                     $(element).css('border-color', '#d9534f');
+                 },
+                 unhighlight: function(element, errorClass, validClass){
+                     $(element).removeClass('is-invalid');
+                     $(element).css('border-color', '#ececec');
+                 },
+                 onfocusout: function(element) {
+                     this.element(element);
+                 },
+                 onkeyup: function(element) {
+                     this.element(element);
+                 },
+                 onclick: function(element) {
+                     this.element(element);
+                 },
+                 submitHandler: function(form) {
+                     var orderAmount = {{ $orderAmount }};
+                     if (orderAmount < 50) {
+                         if (typeof Swal !== 'undefined') {
+                             Swal.fire({
+                                 icon: 'warning',
+                                 title: '<span style="color: #bf8069; font-family: \'Outfit\', sans-serif; font-weight: 600;">Minimum Order Required</span>',
+                                 html: '<div style="font-family: \'Inter\', sans-serif; font-size: 15px; color: #555; line-height: 1.6;">Orders below <strong style="color: #bf8069;">GH¢ 50.00</strong> are not eligible for delivery.<br>Please add more items to your cart to proceed.</div>',
+                                 confirmButtonColor: '#bf8069',
+                                 confirmButtonText: 'Go Back to Shop',
+                             }).then((result) => {
+                                 if (result.isConfirmed) {
+                                     window.location.href = '/';
+                                 }
+                             });
+                         } else {
+                             alert('Orders below GH¢ 50.00 are not eligible for delivery.');
+                         }
+                         return false;
+                     }
+
+                     // Check delivery days (Mondays = 1, Thursdays = 4, Saturdays = 6) and 11:00 AM cutoff
+                     var now = new Date();
+                     var day = now.getDay(); 
+                     var hour = now.getHours();
+                     var minutes = now.getMinutes();
+
+                     var isDeliveryDay = (day === 1 || day === 4 || day === 6);
+                     var isPastCutoff = isDeliveryDay && (hour > 11 || (hour === 11 && minutes > 0));
+
+                     if (isPastCutoff) {
+                         var nextDays = { 1: "Thursday", 4: "Saturday", 6: "Monday" };
+                         var nextDayName = nextDays[day];
+
+                         if (typeof Swal !== 'undefined') {
+                             Swal.fire({
+                                 title: '<span style="color: #d9534f; font-family: \'Outfit\', sans-serif; font-weight: 600;">Delivery Schedule Notice</span>',
+                                 html: '<div style="font-family: \'Inter\', sans-serif; font-size: 15px; color: #555; line-height: 1.6;">Today is a delivery day but it is past <strong style="color: #d9534f;">11:00 AM</strong>.<br>Orders placed now will be <strong>queued</strong> and delivered on <strong>' + nextDayName + '</strong>.<br><br>Do you wish to proceed?</div>',
+                                 icon: 'warning',
+                                 showCancelButton: true,
+                                 confirmButtonColor: '#3085d6',
+                                 cancelButtonColor: '#d33',
+                                 confirmButtonText: 'Yes, proceed',
+                                 cancelButtonText: 'Cancel'
+                             }).then((result) => {
+                                 if (result.isConfirmed) {
+                                     form.submit();
+                                 }
+                             });
+                         } else {
+                             if (confirm("Today is a delivery day but it is past 11:00 AM. Your order will be queued for the next delivery day. Do you want to proceed?")) {
+                                 form.submit();
+                             }
+                         }
+                         return false;
+                     }
+
+                     form.submit();
+                 }
+             });
        });
    });
-
-   $(document).ready(function(){
-         $('form').on('submit', function(e){
-             var orderAmount = {{ $orderAmount }};
-             if (orderAmount < 50) {
-                 e.preventDefault();
-                 if (typeof Swal !== 'undefined') {
-                     Swal.fire({
-                         icon: 'warning',
-                         title: '<span style="color: #bf8069; font-family: \'Outfit\', sans-serif; font-weight: 600;">Minimum Order Required</span>',
-                         html: '<div style="font-family: \'Inter\', sans-serif; font-size: 15px; color: #555; line-height: 1.6;">Orders below <strong style="color: #bf8069;">GH¢ 50.00</strong> are not eligible for delivery.<br>Please add more items to your cart to proceed.</div>',
-                         confirmButtonColor: '#bf8069',
-                         confirmButtonText: 'Go Back to Shop',
-                     }).then((result) => {
-                         if (result.isConfirmed) {
-                             window.location.href = '/';
-                         }
-                     });
-                 } else {
-                     alert('Orders below GH¢ 50.00 are not eligible for delivery.');
-                 }
-                 return;
-             }
-
-             // Check delivery days (Mondays = 1, Thursdays = 4, Saturdays = 6) and 11:00 AM cutoff
-             var now = new Date();
-             var day = now.getDay(); 
-             var hour = now.getHours();
-             var minutes = now.getMinutes();
-
-             var isDeliveryDay = (day === 1 || day === 4 || day === 6);
-             var isPastCutoff = isDeliveryDay && (hour > 11 || (hour === 11 && minutes > 0));
-
-             if (isPastCutoff) {
-                 e.preventDefault();
-                 
-                 var nextDays = { 1: "Thursday", 4: "Saturday", 6: "Monday" };
-                 var nextDayName = nextDays[day];
-
-                 if (typeof Swal !== 'undefined') {
-                     Swal.fire({
-                         title: '<span style="color: #d9534f; font-family: \'Outfit\', sans-serif; font-weight: 600;">Delivery Schedule Notice</span>',
-                         html: '<div style="font-family: \'Inter\', sans-serif; font-size: 15px; color: #555; line-height: 1.6;">Today is a delivery day but it is past <strong style="color: #d9534f;">11:00 AM</strong>.<br>Orders placed now will be <strong>queued</strong> and delivered on <strong>' + nextDayName + '</strong>.<br><br>Do you wish to proceed?</div>',
-                         icon: 'warning',
-                         showCancelButton: true,
-                         confirmButtonColor: '#3085d6',
-                         cancelButtonColor: '#d33',
-                         confirmButtonText: 'Yes, proceed',
-                         cancelButtonText: 'Cancel'
-                     }).then((result) => {
-                         if (result.isConfirmed) {
-                             $('form').off('submit').submit();
-                         }
-                     });
-                 } else {
-                     if (confirm("Today is a delivery day but it is past 11:00 AM. Your order will be queued for the next delivery day. Do you want to proceed?")) {
-                         $('form').off('submit').submit();
-                     }
-                 }
-             }
-         });
-     });
 </script>
 @endsection

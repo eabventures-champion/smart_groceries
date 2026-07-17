@@ -125,7 +125,7 @@
 
                                        <!-- Full Name -->
                                        <div class="form-group">
-                                          <input type="text" required="" id="name" name="name" placeholder="Full name" class="form-control @error('name') is-invalid @enderror" />
+                                          <input type="text" required="" id="name" name="name" value="{{ old('name') }}" placeholder="Full name" class="form-control @error('name') is-invalid @enderror" />
                                           @error('name')
                                           <span class="text-danger">{{ $message }}</span>
                                           @enderror
@@ -133,7 +133,7 @@
 
                                        <!-- Email -->
                                        <div class="form-group">
-                                          <input type="email" required="" id="email" name="email" placeholder="Email" class="form-control @error('email') is-invalid @enderror" />
+                                          <input type="email" required="" id="email" name="email" value="{{ old('email') }}" placeholder="Email" class="form-control @error('email') is-invalid @enderror" />
                                           @error('email')
                                           <span class="text-danger">{{ $message }}</span>
                                           @enderror
@@ -376,12 +376,22 @@
              $('#status_identity').trigger('change', [true]);
 
              $('#myForm_type').validate({
+                 onfocusout: function(element) {
+                     this.element(element);
+                 },
+                 onkeyup: function(element) {
+                     this.element(element);
+                 },
+                 onclick: function(element) {
+                     this.element(element);
+                 },
                  rules: {
                   name: {
                      required : true,
                   },
                   email: {
                      required : true,
+                     email: true
                   },
                   institution: {
                      required : true,
@@ -400,9 +410,11 @@
                   },
                   password: {
                      required : true,
+                     minlength: 8
                   },
                   password_confirmation: {
                      required : true,
+                     equalTo: "#password"
                   },
 
                  },
@@ -412,6 +424,7 @@
                   },
                   email: {
                      required : 'Please Enter Your Email',
+                     email: 'Please enter a valid email address'
                   },
                   institution: {
                      required : 'Please Select Your Institution',
@@ -430,22 +443,27 @@
                   },
                   password: {
                      required : 'Please Enter Your Password',
+                     minlength: 'Your password must be at least 8 characters long'
                   },
                   password_confirmation: {
                      required : 'Please Confirm Your Password',
+                     equalTo: 'Passwords do not match'
                   },
 
                  },
                  errorElement : 'span',
                  errorPlacement: function (error,element) {
-                     error.addClass('invalid-feedback');
+                     error.addClass('text-danger');
+                     error.css({'display': 'block', 'font-size': '12px', 'margin-top': '5px'});
                      element.closest('.form-group').append(error);
                  },
                  highlight : function(element, errorClass, validClass){
                      $(element).addClass('is-invalid');
+                     $(element).css('border-color', '#d9534f');
                  },
                  unhighlight : function(element, errorClass, validClass){
                      $(element).removeClass('is-invalid');
+                     $(element).css('border-color', '');
                  },
              });
 
