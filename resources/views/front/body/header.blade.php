@@ -272,6 +272,9 @@
                                    <li>
                                        <a class="active" href="/">Home</a>
                                    </li>
+                                   <li>
+                                       <a href="{{ route('shop.page') }}">Shop</a>
+                                   </li>
 
                                    {{-- <li><a href="page-about.html">About</a></li> --}}
 
@@ -314,7 +317,9 @@
 
                                    @php
                                         $categories_nav = \Illuminate\Support\Facades\Cache::remember('categories_nav_5', 86400, function() {
-                                            return App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')
+                                            return App\Models\Category::with(['subcategories' => function($query) {
+                                                $query->has('products');
+                                            }])->orderBy('category_name', 'ASC')
                                                 ->limit(5)
                                                 ->get();
                                         });
@@ -735,53 +740,19 @@
                <div class="mobile-menu-wrap mobile-header-border">
                    <nav>
                        <ul class="mobile-menu font-heading">
-                           {{--
-                     <li class="menu-item-has-children">
-                        <a href="/">Home</a>
-                     </li>
-                     --}}
-                           {{--
-                     <li class="menu-item-has-children">
-                        <a href="shop-grid-right.html">shop</a>
-                        <ul class="dropdown">
-                           <li><a href="shop-grid-right.html">Shop Grid – Right Sidebar</a></li>
-                           <li><a href="shop-grid-left.html">Shop Grid – Left Sidebar</a></li>
-                           <li><a href="shop-list-right.html">Shop List – Right Sidebar</a></li>
-                           <li><a href="shop-list-left.html">Shop List – Left Sidebar</a></li>
-                           <li><a href="shop-fullwidth.html">Shop - Wide</a></li>
-                           <li class="menu-item-has-children">
-                              <a href="#">Single Product</a>
-                              <ul class="dropdown">
-                                 <li><a href="shop-product-right.html">Product – Right Sidebar</a></li>
-                                 <li><a href="shop-product-left.html">Product – Left Sidebar</a></li>
-                                 <li><a href="shop-product-full.html">Product – No sidebar</a></li>
-                                 <li><a href="shop-product-vendor.html">Product – Vendor Infor</a></li>
-                              </ul>
-                           </li>
-                           <li><a href="shop-filter.html">Shop – Filter</a></li>
-                           <li><a href="shop-wishlist.html">Shop – Wishlist</a></li>
-                           <li><a href="shop-cart.html">Shop – Cart</a></li>
-                           <li><a href="shop-checkout.html">Shop – Checkout</a></li>
-                           <li><a href="shop-compare.html">Shop – Compare</a></li>
-                           <li class="menu-item-has-children">
-                              <a href="#">Shop Invoice</a>
-                              <ul class="dropdown">
-                                 <li><a href="shop-invoice-1.html">Shop Invoice 1</a></li>
-                                 <li><a href="shop-invoice-2.html">Shop Invoice 2</a></li>
-                                 <li><a href="shop-invoice-3.html">Shop Invoice 3</a></li>
-                                 <li><a href="shop-invoice-4.html">Shop Invoice 4</a></li>
-                                 <li><a href="shop-invoice-5.html">Shop Invoice 5</a></li>
-                                 <li><a href="shop-invoice-6.html">Shop Invoice 6</a></li>
-                              </ul>
-                           </li>
-                        </ul>
-                     </li>
-                     --}}
                             @php
-                                $all_categories = \Illuminate\Support\Facades\Cache::remember('all_categories_with_sub', 86400, function() {
-                                    return App\Models\Category::with('subcategories')->orderBy('category_name', 'ASC')->get();
-                                });
-                            @endphp
+                                 $all_categories = \Illuminate\Support\Facades\Cache::remember('all_categories_with_sub', 86400, function() {
+                                     return App\Models\Category::with(['subcategories' => function($query) {
+                                         $query->has('products');
+                                     }])->orderBy('category_name', 'ASC')->get();
+                                 });
+                             @endphp
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('shop.page') }}">Shop</a>
+                            </li>
                            <li class="menu-item-has-children">
                                <a href="#">Categories</a>
                                <ul class="dropdown">

@@ -420,12 +420,24 @@
     var searchToggle = $(".categories-button-active");
     searchToggle.on("click", function (e) {
         e.preventDefault();
+        e.stopPropagation();
         if ($(this).hasClass("open")) {
             $(this).removeClass("open");
             $(this).siblings(".categories-dropdown-active-large").removeClass("open");
         } else {
             $(this).addClass("open");
             $(this).siblings(".categories-dropdown-active-large").addClass("open");
+        }
+    });
+
+    $(document).on("click", function (e) {
+        var $categoriesButton = $(".categories-button-active");
+        var $categoriesDropdown = $(".categories-dropdown-active-large");
+
+        if (!$categoriesButton.is(e.target) && $categoriesButton.has(e.target).length === 0 &&
+            !$categoriesDropdown.is(e.target) && $categoriesDropdown.has(e.target).length === 0) {
+            $categoriesButton.removeClass("open");
+            $categoriesDropdown.removeClass("open");
         }
     });
 

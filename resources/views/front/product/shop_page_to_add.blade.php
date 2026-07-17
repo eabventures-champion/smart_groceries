@@ -219,26 +219,30 @@
         </div>
 
          <!-- Product sidebar Widget -->
-         <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10">
-            <h5 class="section-title style-1 mb-30">New products</h5>
-            @foreach($newProduct as $product)
-            <div class="single-post clearfix">
-               <div class="image">
-                  <img src="{{ asset( $product->product_thumbnail ) }}" alt="#" />
-               </div>
-               <div class="content pt-10">
-                  <p><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></p>
-                  @if($product->discount_price == NULL)
-                  <p class="price mb-0 mt-5">Gh {{ number_format($product->selling_price, 2) }}</p>
-                  @else
-                  <p class="price mb-0 mt-5">Gh {{ number_format($product->discount_price, 2) }}</p>
-                  @endif
-                  <div class="product-rate">
-                     <div class="product-rating" style="width: 90%"></div>
+         <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10 widget-collapsed">
+            <h5 class="section-title style-1 mb-30 collapsible-widget-title">New products<i class="fi-rs-angle-down toggle-icon"></i></h5>
+            <div class="collapsible-widget-content" style="display: none;">
+               @foreach($newProduct as $product)
+               <div class="premium-product-item">
+                  <div class="img-container">
+                     <a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">
+                        <img src="{{ asset($product->product_thumbnail) }}" alt="" />
+                     </a>
+                  </div>
+                  <div class="content pt-0">
+                     <h6 class="title"><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></h6>
+                     @if($product->discount_price == NULL)
+                     <span class="price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     @else
+                     <div class="price-container">
+                        <span class="price">Gh {{ number_format($product->discount_price, 2) }}</span>
+                        <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     </div>
+                     @endif
                   </div>
                </div>
+               @endforeach
             </div>
-            @endforeach
          </div>
       </div>
    </div>

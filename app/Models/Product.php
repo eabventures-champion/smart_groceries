@@ -116,6 +116,13 @@ class Product extends Model
 
         static::saved(function ($product) {
             $product->checkStockAndAlert();
+            \Illuminate\Support\Facades\Cache::forget('home_new_products');
+            \Illuminate\Support\Facades\Cache::forget('home_catwise_products_'.$product->category_id);
+        });
+
+        static::deleted(function ($product) {
+            \Illuminate\Support\Facades\Cache::forget('home_new_products');
+            \Illuminate\Support\Facades\Cache::forget('home_catwise_products_'.$product->category_id);
         });
     }
 }

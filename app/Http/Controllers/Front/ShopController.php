@@ -10,32 +10,35 @@ use App\Http\Controllers\Controller;
 
 class ShopController extends Controller
 {
-    public function shop_page(){
-        $products = Product::query();
-        if(!empty($_GET['category'])){
-            $slugs = explode(',', $_GET['category']);
+    public function shop_page(Request $request){
+        $products = Product::where('status', 1);
+
+        if(!empty($request->category)){
+            $slugs = explode(',', $request->category);
             $catIds = Category::select('id')->whereIn('category_slug', $slugs)->pluck('id')->toArray();
-            $products = Product::whereIn('category_id', $catIds)->paginate(20);
-        }
-        elseif(!empty($_GET['brand'])){
-            $slugs = explode(',', $_GET['brand']);
-            $brandIds = Brand::select('id')->whereIn('brand_slug', $slugs)->pluck('id')->toArray();
-            $products = Product::whereIn('brand_id', $brandIds)->paginate(20);
-        }
-        else{
-            // $all_products = Product::where('status', 1)->orderBy('id', 'DESC')->get();
-            $products = Product::where('status', 1)->orderBy('id', 'DESC')->paginate(20);
+            $products->whereIn('category_id', $catIds);
         }
 
-        // Price Range
-        if(!empty($_GET['price'])){
-            $price = explode('-', $_GET['price']);
-            $products = $products->whereBetween('selling_price', $price);
+        if(!empty($request->brand)){
+            $slugs = explode(',', $request->brand);
+            $brandIds = Brand::select('id')->whereIn('brand_slug', $slugs)->pluck('id')->toArray();
+            $products->whereIn('brand_id', $brandIds);
         }
+
+        if(!empty($request->price)){
+            $price = explode('-', $request->price);
+            $products->whereBetween('selling_price', $price);
+        }
+
+        $products = $products->orderBy('id', 'DESC')->paginate(20)->withQueryString();
 
         $categories = Category::orderBy('category_name', 'ASC')->get();
         $brands = Brand::orderBy('brand_name', 'ASC')->get();
         $newProduct = Product::orderBy('id', 'DESC')->limit(3)->get();
+
+        if ($request->ajax() || $request->has('ajax') || $request->wantsJson()) {
+            return view('front.product.shop_grid_partial', compact('products'))->render();
+        }
 
         return view('front.product.shop_page', compact('products', 'categories', 'brands', 'newProduct'));
     }

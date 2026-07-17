@@ -167,48 +167,60 @@ Searching for {{ $item }} ...
          <!--End Deals-->
       </div>
       <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
-         <div class="sidebar-widget widget-category-2 mb-30">
-            <h5 class="section-title style-1 mb-30">Category</h5>
-            <ul>
-               @foreach($categories as $category)
-               @php
-               $products = App\Models\Product::where('category_id', $category->id)->get();
-               @endphp
-               <li>
-                  <a href="shop-grid-right.html"> <img src=" {{ asset($category->category_photo) }} " alt="" />{{ $category->category_name }}</a><span class="count">{{ count($products) }}</span>
-               </li>
-               @endforeach 
-            </ul>
+         <div class="sidebar-widget widget-category-2 mb-30 widget-collapsed">
+            <h5 class="section-title style-1 mb-30 collapsible-widget-title">Category<i class="fi-rs-angle-down toggle-icon"></i></h5>
+            <div class="collapsible-widget-content" style="display: none;">
+               <ul>
+                  @foreach($categories as $category)
+                  @php
+                  $products = App\Models\Product::where('category_id', $category->id)->get();
+                  @endphp
+                  <li class="premium-category-item">
+                     <a href="shop-grid-right.html">
+                        <div class="img-container">
+                           <img src="{{ asset($category->category_photo) }}" alt="" />
+                        </div>
+                        <span>{{ $category->category_name }}</span>
+                     </a>
+                     <span class="category-count">{{ count($products) }}</span>
+                  </li>
+                  @endforeach 
+               </ul>
+            </div>
          </div>
          <!-- Fillter By Price -->
          <!-- Product sidebar Widget -->
          
-         <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10">
-            <h5 class="section-title style-1 mb-30">New products</h5>
-            @foreach($newProduct as $product)
+         <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10 widget-collapsed">
+            <h5 class="section-title style-1 mb-30 collapsible-widget-title">New products<i class="fi-rs-angle-down toggle-icon"></i></h5>
+            <div class="collapsible-widget-content" style="display: none;">
+               @foreach($newProduct as $product)
 
-            @php
-            $amount = (100 - $product->discount_price)/100;
-            $new_price = $amount * $product->selling_price;
-            @endphp
-            
-            <div class="single-post clearfix">
-               <div class="image">
-                  <img src="{{ asset( $product->product_thumbnail ) }}" alt="#" />
+               @php
+               $amount = (100 - $product->discount_price)/100;
+               $new_price = $amount * $product->selling_price;
+               @endphp
+               
+               <div class="premium-product-item">
+                  <div class="img-container">
+                     <a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">
+                        <img src="{{ asset($product->product_thumbnail) }}" alt="" />
+                     </a>
+                  </div>
+                  <div class="content pt-0">
+                     <h6 class="title"><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></h6>
+                     @if($product->discount_price == NULL)
+                     <span class="price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     @else
+                     <div class="price-container">
+                        <span class="price">Gh {{ number_format($new_price, 2) }}</span>
+                        <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     </div>
+                     @endif
+                  </div>
                </div>
-               <div class="content pt-10">
-                  <p><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></p>
-                  @if($product->discount_price == NULL)
-                  <p class="price mb-0 mt-5">Gh {{ number_format($product->selling_price, 2) }}</p>
-                  @else
-                  <p class="price mb-0 mt-5">Gh {{ number_format($new_price, 2) }}</p>
-                  @endif
-                  {{-- <div class="product-rate">
-                     <div class="product-rating" style="width: 90%"></div>
-                  </div> --}}
-               </div>
+               @endforeach
             </div>
-            @endforeach
          </div>
       </div>
    </div>

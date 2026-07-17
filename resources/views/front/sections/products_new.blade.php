@@ -1,13 +1,17 @@
 @php
-$products = App\Models\Product::where('status', 1)->orderBy('id','DESC')->limit(15)->get();
-$categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->get();
+$products = \Illuminate\Support\Facades\Cache::remember('home_new_products', 3600, function() {
+    return App\Models\Product::where('status', 1)->orderBy('id','DESC')->limit(15)->get();
+});
+$categories = \Illuminate\Support\Facades\Cache::remember('home_categories_limit_7', 3600, function() {
+    return App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->get();
+});
 @endphp
 
 @if($categories)
 <section class="product-tabs section-padding position-relative">
    <div class="container">
       <div class="section-title style-2 wow animate__animated animate__fadeIn">
-         <h3 class="d-none d-lg-block">Products</h3>
+         <h3 class="products-category-title" onclick="document.getElementById('nav-tab-one').click();">Products category</h3>
          <ul class="nav nav-tabs links" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab" data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">All</button>
@@ -129,7 +133,9 @@ $categories = App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->g
             <div class="row product-grid-4">
 
                @php
-               $catwiseProduct = App\Models\Product::where('category_id', $category->id)->where('status', 1)->orderBy('id', 'DESC')->limit(15)->get();
+               $catwiseProduct = \Illuminate\Support\Facades\Cache::remember('home_catwise_products_'.$category->id, 3600, function() use ($category) {
+                   return App\Models\Product::where('category_id', $category->id)->where('status', 1)->orderBy('id', 'DESC')->limit(15)->get();
+               });
                @endphp
 
                @forelse ( $catwiseProduct as $product )
