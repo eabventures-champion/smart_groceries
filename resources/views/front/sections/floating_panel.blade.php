@@ -414,42 +414,44 @@
         }
         
         #sg-floating-dock {
-            bottom: 90px !important;
+            bottom: 145px !important;
             top: auto !important;
-            left: 50% !important;
-            right: auto !important;
-            transform: translateX(-50%) !important;
-            flex-direction: row !important;
-            border-radius: 9999px !important;
-            padding: 8px 16px !important;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.18) !important;
+            left: auto !important;
+            right: 0 !important;
+            transform: none !important;
+            flex-direction: column !important;
+            border-radius: 20px 0 0 20px !important;
+            padding: 16px 8px !important;
+            box-shadow: -4px 0 25px rgba(0, 0, 0, 0.06) !important;
             border: 2px solid #bbf7d0 !important;
+            border-right: none !important;
         }
         #sg-floating-dock.sg-dock-shifted {
-            transform: translateX(-50%) !important;
+            transform: none !important;
         }
         #sg-floating-dock.sg-dock-hidden {
-            transform: translateX(-50%) translateY(250px) !important;
+            transform: translateX(110%) !important;
             pointer-events: none !important;
         }
 
         #sg-floating-dock .flex-col {
-            flex-direction: row !important;
-            gap: 12px !important;
+            flex-direction: column !important;
+            gap: 8px !important;
         }
         .sg-dock-btn {
             padding: 10px !important;
         }
         .sg-vertical-text {
-            writing-mode: horizontal-tb !important;
-            transform: none !important;
+            writing-mode: vertical-rl !important;
         }
         #sg-hide-btn {
-            border-top: none !important;
-            border-left: 1px solid #edf2f7 !important;
-            padding-left: 12px !important;
-            margin-top: 0 !important;
-            width: auto !important;
+            border-left: none !important;
+            border-top: 1px solid #edf2f7 !important;
+            padding-top: 12px !important;
+            margin-top: 4px !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
         }
     }
 
@@ -457,7 +459,7 @@
     #complaint-floating-btn {
         position: fixed !important;
         right: 15px !important;
-        bottom: 85px !important;
+        bottom: 75px !important;
         width: 50px !important;
         height: 50px !important;
         border-radius: 50% !important;
@@ -549,22 +551,22 @@
     @media (max-width: 991.98px) {
         #sg-restore-handle {
             top: auto !important;
-            bottom: 95px !important;
-            right: 15px !important;
+            bottom: 145px !important;
+            right: 0 !important;
             left: auto !important;
             transform: none !important;
-            padding: 10px 18px !important;
-            border-radius: 9999px !important;
-            flex-direction: row !important;
-            gap: 8px !important;
-            box-shadow: 0 4px 18px rgba(59, 183, 126, 0.3) !important;
+            padding: 14px 6px !important;
+            border-radius: 10px 0 0 10px !important;
+            flex-direction: column !important;
+            gap: 4px !important;
+            box-shadow: -2px 0 12px rgba(59, 183, 126, 0.3) !important;
             z-index: 9998 !important;
         }
         #sg-restore-handle.sg-restore-hidden {
-            transform: translateX(150%) !important;
+            transform: translateX(110%) !important;
         }
         #complaint-floating-btn {
-            bottom: 160px !important;
+            bottom: 75px !important;
             right: 15px !important;
             width: 46px !important;
             height: 46px !important;

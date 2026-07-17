@@ -234,7 +234,7 @@ $categories = \Illuminate\Support\Facades\Cache::remember('home_categories_all',
          @endforeach
 
          <div class="container text-center mt-10 mb-10">
-            <a href="{{ route('shop.page') }}" class="btn btn-xs">Shop for more items <i class="fi-rs-arrow-small-right"></i></a>
+            <a href="{{ route('shop.page') }}" class="btn btn-xs btn-shop-more-animate">Shop for more items <i class="fi-rs-arrow-small-right"></i></a>
          </div>
 
          <!-- SG Features Horizontal Promo Ads Banner -->
@@ -279,6 +279,61 @@ $categories = \Illuminate\Support\Facades\Cache::remember('home_categories_all',
          </div>
 
          <style>
+          .btn-shop-more-animate {
+              position: relative !important;
+              overflow: hidden !important;
+              transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+              background: linear-gradient(135deg, #3bb77e 0%, #2ecc71 100%) !important;
+              border: none !important;
+              color: #ffffff !important;
+              box-shadow: 0 4px 15px rgba(59, 183, 126, 0.2) !important;
+              display: inline-flex !important;
+              align-items: center !important;
+              gap: 8px !important;
+              padding: 10px 24px !important;
+              border-radius: 30px !important;
+              font-weight: 700 !important;
+              font-size: 14px !important;
+          }
+
+          .btn-shop-more-animate i {
+              transition: transform 0.3s ease !important;
+              font-size: 16px !important;
+          }
+
+          .btn-shop-more-animate:hover {
+              transform: translateY(-3px) scale(1.02) !important;
+              box-shadow: 0 8px 25px rgba(59, 183, 126, 0.4) !important;
+              background: linear-gradient(135deg, #2ecc71 0%, #3bb77e 100%) !important;
+              color: #ffffff !important;
+          }
+
+          .btn-shop-more-animate:hover i {
+              transform: translateX(5px) !important;
+          }
+
+          .btn-shop-more-animate::after {
+              content: '' !important;
+              position: absolute !important;
+              top: 0 !important;
+              left: -100% !important;
+              width: 50% !important;
+              height: 100% !important;
+              background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 100%) !important;
+              transform: skewX(-25deg) !important;
+              transition: none !important;
+          }
+
+          .btn-shop-more-animate:hover::after {
+              animation: sg-shimmer 0.8s ease-in-out !important;
+          }
+
+          @keyframes sg-shimmer {
+              100% {
+                  left: 150% !important;
+              }
+          }
+
          .sg-promo-banner-container {
              background: linear-gradient(135deg, #3BB77E 0%, #2fa56f 100%);
              border-radius: 0;

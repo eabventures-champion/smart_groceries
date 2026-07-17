@@ -1883,12 +1883,12 @@
                 desktop : {
                     position : 'bl',
                     xOffset : 15,
-                    yOffset : 85
+                    yOffset : 75
                 },
                 mobile : {
                     position : 'bl',
                     xOffset : 15,
-                    yOffset : 160
+                    yOffset : 75
                 }
             }
         };
