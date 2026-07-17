@@ -163,6 +163,7 @@
                padding-right: 15px !important;
                border-bottom: none !important;
                scroll-behavior: smooth !important;
+               justify-content: flex-start !important;
             }
             .nav-tabs.links::-webkit-scrollbar {
                display: none !important;
@@ -490,7 +491,7 @@
       <script src="{{ asset('front/assets/js/plugins/jquery.theia.sticky.js') }}" defer></script>
       <script src="{{ asset('front/assets/js/plugins/jquery.elevatezoom.js') }}" defer></script>
       <!-- Template JS -->
-      <script src="{{ asset('front/assets/js/main.js?v=5.5') }}" defer></script>
+      <script src="{{ asset('front/assets/js/main.js?v=5.6') }}" defer></script>
       <script src="{{ asset('front/assets/js/shop.js?v=6.3') }}" defer></script>
       <script src="{{ asset('front/assets/js/script.js?v=2.0') }}" defer></script>
       <script src="{{ asset('back/assets/plugins/datatable/js/jquery.dataTables.min.js') }}" defer></script>

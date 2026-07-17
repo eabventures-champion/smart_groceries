@@ -141,6 +141,8 @@
             speed: 900,
             arrows: true,
             autoplay: true,
+            swipeToSlide: true,
+            touchThreshold: 15,
             slidesToShow: 10,
             slidesToScroll: 1,
             loop: true,
