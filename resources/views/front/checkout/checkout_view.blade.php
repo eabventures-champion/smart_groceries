@@ -296,6 +296,10 @@
        });
 
        $(document).ready(function(){
+             $.validator.addMethod("customEmail", function(value, element) {
+                 return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+             }, "Please enter a valid email address with a domain extension (e.g. .com)");
+
              $('#checkout-form').validate({
                  rules: {
                      delivery_name: {
@@ -303,7 +307,7 @@
                      },
                      delivery_email: {
                          required: true,
-                         email: true
+                         customEmail: true
                      },
                      delivery_phone: {
                          required: true
@@ -330,7 +334,7 @@
                      },
                      delivery_email: {
                          required: "Please enter your email address",
-                         email: "Please enter a valid email address"
+                         customEmail: "Please enter a valid email address (e.g. name@domain.com)"
                      },
                      delivery_phone: {
                          required: "Please enter your phone number"

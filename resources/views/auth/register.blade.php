@@ -375,7 +375,11 @@
               });
              $('#status_identity').trigger('change', [true]);
 
-             $('#myForm_type').validate({
+              $.validator.addMethod("customEmail", function(value, element) {
+                  return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+              }, "Please enter a valid email address with a domain extension (e.g. .com)");
+
+              $('#myForm_type').validate({
                  onfocusout: function(element) {
                      this.element(element);
                  },
@@ -391,7 +395,7 @@
                   },
                   email: {
                      required : true,
-                     email: true
+                     customEmail: true
                   },
                   institution: {
                      required : true,
@@ -424,7 +428,7 @@
                   },
                   email: {
                      required : 'Please Enter Your Email',
-                     email: 'Please enter a valid email address'
+                     customEmail: 'Please enter a valid email address (e.g. name@domain.com)'
                   },
                   institution: {
                      required : 'Please Select Your Institution',
