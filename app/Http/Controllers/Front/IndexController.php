@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\MultiImage;
 use App\Models\SubCategory;
+use App\Models\Brand;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\ProductAttribute;
@@ -73,22 +74,66 @@ class IndexController extends Controller
         }
     }
 
-    public function cat_wise_product($id, $slug){
-        $products = Product::where('status', 1)->where('category_id', $id)->orderBy('id', 'DESC')->paginate(10);
-        $categories = Category::orderBy('category_name', 'ASC')->get();
+    public function cat_wise_product(Request $request, $id, $slug){
         $breadcat = Category::where('id', $id)->first();
+        $products = Product::where('status', 1);
+
+        if (!empty($request->category)) {
+            $slugs = explode(',', $request->category);
+            $catIds = Category::select('id')->whereIn('category_slug', $slugs)->pluck('id')->toArray();
+            $products->whereIn('category_id', $catIds);
+        } else {
+            $products->where('category_id', $id);
+        }
+
+        if (!empty($request->brand)) {
+            $slugs = explode(',', $request->brand);
+            $brandIds = Brand::select('id')->whereIn('brand_slug', $slugs)->pluck('id')->toArray();
+            $products->whereIn('brand_id', $brandIds);
+        }
+
+        $products = $products->orderBy('id', 'DESC')->paginate(10)->withQueryString();
+        
+        if ($request->ajax() || $request->has('ajax') || $request->wantsJson()) {
+            return view('front.product.shop_grid_partial', compact('products'));
+        }
+
+        $categories = Category::orderBy('category_name', 'ASC')->get();
+        $brands = Brand::orderBy('brand_name', 'ASC')->get();
         $newProduct = Product::orderBy('id', 'DESC')->limit(3)->get();
 
-        return view('front.product.category_view', compact('products', 'categories', 'breadcat', 'newProduct'));
+        return view('front.product.category_view', compact('products', 'categories', 'brands', 'breadcat', 'newProduct'));
     }
 
-    public function sub_cat_wise_product($id, $slug){
-        $products = Product::where('status', 1)->where('subcategory_id',$id)->orderBy('id','DESC')->paginate(10);
-        $categories = Category::orderBy('category_name','ASC')->get();
+    public function sub_cat_wise_product(Request $request, $id, $slug){
         $breadsubcat = SubCategory::where('id',$id)->first();
+        $products = Product::where('status', 1);
+
+        if (!empty($request->category)) {
+            $slugs = explode(',', $request->category);
+            $catIds = Category::select('id')->whereIn('category_slug', $slugs)->pluck('id')->toArray();
+            $products->whereIn('category_id', $catIds);
+        } else {
+            $products->where('subcategory_id', $id);
+        }
+
+        if (!empty($request->brand)) {
+            $slugs = explode(',', $request->brand);
+            $brandIds = Brand::select('id')->whereIn('brand_slug', $slugs)->pluck('id')->toArray();
+            $products->whereIn('brand_id', $brandIds);
+        }
+
+        $products = $products->orderBy('id', 'DESC')->paginate(10)->withQueryString();
+
+        if ($request->ajax() || $request->has('ajax') || $request->wantsJson()) {
+            return view('front.product.shop_grid_partial', compact('products'));
+        }
+
+        $categories = Category::orderBy('category_name','ASC')->get();
+        $brands = Brand::orderBy('brand_name', 'ASC')->get();
         $newProduct = Product::orderBy('id','DESC')->limit(3)->get();
 
-        return view('front.product.subcategory_view', compact('products', 'categories', 'breadsubcat', 'newProduct'));
+        return view('front.product.subcategory_view', compact('products', 'categories', 'brands', 'breadsubcat', 'newProduct'));
     }
 
     public function product_view_ajax($id){

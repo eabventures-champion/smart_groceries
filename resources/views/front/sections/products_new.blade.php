@@ -2,8 +2,8 @@
 $products = \Illuminate\Support\Facades\Cache::remember('home_new_products', 3600, function() {
     return App\Models\Product::where('status', 1)->orderBy('id','DESC')->limit(15)->get();
 });
-$categories = \Illuminate\Support\Facades\Cache::remember('home_categories_limit_7', 3600, function() {
-    return App\Models\Category::orderBy('category_name', 'DESC')->limit(7)->get();
+$categories = \Illuminate\Support\Facades\Cache::remember('home_categories_all', 3600, function() {
+    return App\Models\Category::orderBy('category_name', 'DESC')->get();
 });
 @endphp
 

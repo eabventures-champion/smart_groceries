@@ -13,242 +13,111 @@
    </div>
 </div>
 
+@php
+$filter_category = !empty($_GET['category']) ? explode(',', $_GET['category']) : [$breadcat->category_slug];
+$filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
+@endphp
+
 <div class="container btn-group dropend d-block d-lg-none">
    <button type="button" class="btn btn-sm btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="fi fi-br-settings-sliders"></i>&nbsp; Filter
    </button>
-   <ul class="dropdown-menu" style="padding: .5rem .5rem !important; min-width: 13rem;">
-      {{-- <div class="sidebar-widget price_range range mb-30">
-         <form action="{{ route('shop.filter') }}" method="post">
-             @csrf
-             <div class="list-group">
-               <div class="list-group-item mt-20">
+   <ul class="dropdown-menu" style="padding: .5rem 1.5rem !important; min-width: 15rem;">
+      <div class="list-group premium-filter-widget">
+         <div class="list-group-item mt-20">
+            <h5 class="section-title style-1 mb-15">Category</h5>
+            <div class="filter-scroll-list">
+               @foreach($categories as $category)
+                  @php
+                  $products_mobile = App\Models\Product::where('category_id',$category->id)->get();
+                  @endphp
+                  <label class="premium-custom-checkbox">
+                      <input class="form-check-input filter-input" type="checkbox" name="category[]" id="exampleCheckbox_mobile{{ $category->id }}" value="{{ $category->category_slug }}"
+                      @if(!empty($filter_category) && in_array($category->category_slug, $filter_category))
+                      checked
+                      @endif
+                      />
+                      <span class="checkmark"></span>
+                      <span class="form-check-label">{{ $category->category_name }} <span class="count-badge">({{ count($products_mobile) }})</span></span>
+                  </label>
+               @endforeach
+            </div>
 
-                   @if (!empty($_GET['category']))
-                   @php
-                    $filter_category = explode(',', $_GET['category']);   
-                   @endphp  
-                   @endif
-
-                   <label class="fw-900">Filter by Category</label>
-                   @foreach($categories as $category)
-                       @php
-                       $products_mobile = App\Models\Product::where('category_id',$category->id)->get();
-                       @endphp
-                       <div class="custome-checkbox">
-                           <input class="form-check-input" type="checkbox" name="category[]" id="exampleCheckbox_mobile{{ $category->id }}" value="{{ $category->category_slug }}"
-                           @if(!empty($filter_category) && in_array($category->category_slug, $filter_category)) 
-                           checked 
-                           @endif
-                           onchange="this.form.submit()" 
-                           />
-                           <label class="form-check-label" for="exampleCheckbox_mobile{{ $category->id }}"><span>{{ $category->category_name }} ({{ count($products_mobile) }})</span></label>
-                           <br />
-                       </div>
-                   @endforeach
-                   <br>
-                   <a style="background-color: red" href="{{ route('shop.page') }}" class="btn btn-sm btn-default">Reset products</a>
-               </div>
-             </div>
-         </form>
-      </div> --}}
-      <div class="sidebar-widget widget-category-2">
-         <label class="fw-900 d-none d-lg-none">Filter by Category</label>
-         <ul>
-            @foreach($categories as $category)
-            @php
-            $category_products = App\Models\Product::where('category_id', $category->id)->paginate(10);
-            @endphp
-            <li>
-               <a href="{{ url('product/category/'.$category->id.'/'.$category->category_slug) }}"> <img src=" {{ asset($category->category_photo) }} " alt="" />{{ $category->category_name }}</a>
-               <span class="count">{{ count($category_products) }}</span>
-            </li>
-            @endforeach 
-         </ul>
+            <h5 class="section-title style-1 mb-15 mt-20">Brand</h5>
+            <div class="filter-scroll-list">
+               @foreach($brands as $brand)
+                  <label class="premium-custom-checkbox">
+                      <input class="form-check-input filter-input" type="checkbox" name="brand[]" id="exampleBrand_mobile{{ $brand->id }}" value="{{ $brand->brand_slug }}"
+                      @if(!empty($filter_brand) && in_array($brand->brand_slug, $filter_brand))
+                      checked
+                      @endif
+                      />
+                      <span class="checkmark"></span>
+                      <span class="form-check-label">{{ $brand->brand_name }}</span>
+                  </label>
+               @endforeach
+            </div>
+            
+            <button type="button" class="btn-reset-filter" onclick="resetFilters()"><i class="fi fi-rs-refresh"></i> Reset Filters</button>
+         </div>
       </div>
    </ul>
 </div>
 
-<div class="container mb-30 mt-50">
+<div class="container mb-30">
    <div class="row flex-row-reverse">
 
-      <div class="col-lg-4-5">
-         <div class="shop-product-fillter">
-            <div class="totall-product">
-               <p>We found <strong class="text-brand">{{ count($products) }}</strong> items for you!</p>
-            </div>
-            {{-- <div class="sort-by-product-area">
-               <div class="sort-by-cover mr-10">
-                  <div class="sort-by-product-wrap">
-                     <div class="sort-by">
-                        <span><i class="fi-rs-apps"></i>Show:</span>
-                     </div>
-                     <div class="sort-by-dropdown-wrap">
-                        <span> 50 <i class="fi-rs-angle-small-down"></i></span>
-                     </div>
-                  </div>
-                  <div class="sort-by-dropdown">
-                     <ul>
-                        <li><a class="active" href="#">50</a></li>
-                        <li><a href="#">100</a></li>
-                        <li><a href="#">150</a></li>
-                        <li><a href="#">200</a></li>
-                        <li><a href="#">All</a></li>
-                     </ul>
-                  </div>
-               </div>
-               <div class="sort-by-cover">
-                  <div class="sort-by-product-wrap">
-                     <div class="sort-by">
-                        <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
-                     </div>
-                     <div class="sort-by-dropdown-wrap">
-                        <span> Featured <i class="fi-rs-angle-small-down"></i></span>
-                     </div>
-                  </div>
-                  <div class="sort-by-dropdown">
-                     <ul>
-                        <li><a class="active" href="#">Featured</a></li>
-                        <li><a href="#">Price: Low to High</a></li>
-                        <li><a href="#">Price: High to Low</a></li>
-                        <li><a href="#">Release Date</a></li>
-                        <li><a href="#">Avg. Rating</a></li>
-                     </ul>
-                  </div>
-               </div>
-            </div> --}}
-            
-         </div>
-
-         <div class="row product-grid">
-            @forelse($products as $product)
-               <div class="col-lg-2 col-md-4 col-6 col-sm-6">
-               <div class="product-cart-wrap mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
-                  <div class="product-img-action-wrap">
-                     <div class="product-img product-img-zoom">
-                        <a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">
-                        <img class="default-img" src="{{ asset( $product->product_thumbnail ) }}" alt="" />
-                        </a>
-                     </div>
-                     <div class="product-action-1 shop">
-                        <a aria-label="Add To Wishlist" class="action-btn" id="{{ $product->id }}" onclick="addToWishList(this.id)"  ><i class="fi-rs-heart"></i></a>
-                        <a aria-label="Compare" class="action-btn"  id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>
-                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal" id="{{ $product->id }}" onclick="productView(this.id)" ><i class="fi-rs-eye"></i></a>
-                     </div>
-                     @php
-                     $amount = $product->selling_price - $product->discount_price;
-                     $discount = ($amount/$product->selling_price) * 100;
-                     @endphp
-                     <div class="product-badges product-badges-position product-badges-mrg">
-                        @if($product->discount_price == NULL)
-                        {{-- <span class="new">New</span> --}}
-                        @else
-                        <span class="hot"> {{ round($product->discount_price) }} %</span>
-                        @endif
-                     </div>
-                  </div>
-                  <div class="product-content-wrap">
-                     <div class="product-category">
-                        <a href="shop-grid-right.html">{{ $product['category']['category_name'] }}</a>
-                     </div>
-                     <h2><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}"> {{ $product->product_name }} </a></h2>
-                     @php
-                     $amount = (100 - $product->discount_price)/100;
-                     $new_price = $amount * $product->selling_price;
-                     @endphp
-                     <div class="product-card-bottom">
-                        @if($product->discount_price == NULL)
-                        <div class="product-price">
-                           <span>Gh {{ number_format($product->selling_price, 2) }}</span>
-                        </div>
-                        @else
-                        <div class="product-price">
-                           <span>Gh {{ number_format($new_price, 2) }}</span><br>
-                           <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
-                        </div>
-                        @endif
-                        <div class="add-cart">
-                           <a class="add" href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}"><i class="fi-rs-shopping-cart mr-5"></i></a>                        
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            @empty
-               <div class="col-12 text-center py-5 px-3 mb-5" style="background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f2f4; margin-top: 30px;">
-                  <div class="mb-4" style="animation: bounce 2s infinite ease-in-out;">
-                     <!-- Beautiful premium empty shopping bag SVG -->
-                     <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="#bf8069" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag" style="opacity: 0.85;">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                     </svg>
-                  </div>
-                  <h3 class="mb-2" style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #253D4E; font-size: 24px;">No Products Found</h3>
-                  <p class="mb-4 text-muted mx-auto" style="font-family: 'Inter', sans-serif; font-size: 15px; max-width: 420px; line-height: 1.6;">
-                     We couldn't find any products in this category right now. Please check back later or explore other grocery categories.
-                  </p>
-                  <a href="/" class="btn" style="background-color: #3bb77e; border: none; color: #fff; padding: 12px 30px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 30px; font-size: 15px; display: inline-flex; align-items: center; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(59, 183, 126, 0.2);">
-                     <i class="fi-rs-shopping-bag mr-10" style="margin-right: 8px;"></i> Back to Home
-                  </a>
-               </div>
-               <style>
-                  @keyframes bounce {
-                     0%, 100% { transform: translateY(0); }
-                     50% { transform: translateY(-10px); }
-                  }
-               </style>
-            @endforelse
-         </div>
-         <!--product grid-->
-         <div class="pagination-area mt-20 mb-20">
-            <nav aria-label="Page navigation example">
-               {{-- <ul class="pagination justify-content-start">
-                  <li class="page-item">
-                     <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                  <li class="page-item"><a class="page-link" href="#">6</a></li>
-                  <li class="page-item">
-                     <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
-                  </li>
-               </ul> --}}
-               {{ $products->links('vendor.pagination.custom') }}
-            </nav>
-         </div>
-         <!--End Deals-->
+      <div class="col-lg-9" id="shop-product-container">
+         @include('front.product.shop_grid_partial')
       </div>
       
-      <div class="col-lg-1-5 primary-sidebar sticky-sidebar d-none d-lg-block">
-         <div class="sidebar-widget widget-category-2 mb-30 widget-collapsed">
-            <h5 class="section-title style-1 mb-30 collapsible-widget-title">Category<i class="fi-rs-angle-down toggle-icon"></i></h5>
-            <div class="collapsible-widget-content" style="display: none;">
-               <ul>
+      <div class="col-lg-3 primary-sidebar sticky-sidebar d-none d-lg-block">
+         <!-- Category Filter Widget -->
+         <div class="sidebar-widget price_range range mb-30 premium-filter-widget" style="margin-top: 30px !important;">
+            <h5 class="section-title style-1 mb-30 collapsible-widget-title" style="cursor: pointer;">Category<i class="fi-rs-angle-down toggle-icon" style="float: right; transition: transform 0.3s ease;"></i></h5>
+            <div class="collapsible-widget-content">
+               <div class="filter-scroll-list">
                   @foreach($categories as $category)
-                  @php
-                  $products = App\Models\Product::where('category_id',$category->id)->get();
-                  @endphp
-                  <li class="premium-category-item">
-                     <a href="{{ url('product/category/'.$category->id.'/'.$category->category_slug) }}">
-                        <div class="img-container">
-                           <img src="{{ asset($category->category_photo) }}" alt="" />
-                        </div>
-                        <span>{{ $category->category_name }}</span>
-                     </a>
-                     <span class="category-count">{{ count($products) }}</span>
-                  </li>
-                  @endforeach 
-               </ul>
+                     @php
+                     $products = App\Models\Product::where('category_id',$category->id)->get();
+                     @endphp
+                     <label class="premium-custom-checkbox">
+                         <input class="form-check-input filter-input" type="checkbox" name="category[]" id="exampleCheckbox{{ $category->id }}" value="{{ $category->category_slug }}"
+                         @if(!empty($filter_category) && in_array($category->category_slug, $filter_category))
+                         checked
+                         @endif
+                         />
+                         <span class="checkmark"></span>
+                         <span class="form-check-label">{{ $category->category_name }} <span class="count-badge">({{ count($products) }})</span></span>
+                     </label>
+                  @endforeach
+               </div>
             </div>
          </div>
-         <!-- Fillter By Price -->
+
+         <!-- Brand Filter Widget -->
+         <div class="sidebar-widget price_range range mb-30 premium-filter-widget widget-collapsed">
+            <h5 class="section-title style-1 mb-30 collapsible-widget-title" style="cursor: pointer;">Brand<i class="fi-rs-angle-down toggle-icon" style="float: right; transition: transform 0.3s ease;"></i></h5>
+            <div class="collapsible-widget-content" style="display: none;">
+               <div class="filter-scroll-list">
+                  @foreach($brands as $brand)
+                     <label class="premium-custom-checkbox">
+                         <input class="form-check-input filter-input" type="checkbox" name="brand[]" id="exampleBrand{{ $brand->id }}" value="{{ $brand->brand_slug }}"
+                         @if(!empty($filter_brand) && in_array($brand->brand_slug, $filter_brand))
+                         checked
+                         @endif
+                         />
+                         <span class="checkmark"></span>
+                         <span class="form-check-label">{{ $brand->brand_name }}</span>
+                     </label>
+                  @endforeach
+               </div>
+            </div>
+         </div>
 
          <!-- Product sidebar Widget -->
          <div class="sidebar-widget product-sidebar mb-30 p-30 bg-grey border-radius-10 widget-collapsed">
-            <h5 class="section-title style-1 mb-30 collapsible-widget-title">New products<i class="fi-rs-angle-down toggle-icon"></i></h5>
+            <h5 class="section-title style-1 mb-30 collapsible-widget-title" style="cursor: pointer;">New products<i class="fi-rs-angle-down toggle-icon" style="float: right; transition: transform 0.3s ease;"></i></h5>
             <div class="collapsible-widget-content" style="display: none;">
                @foreach($newProduct as $product)
                <div class="premium-product-item">
@@ -275,4 +144,100 @@
       </div>
    </div>
 </div>
+
+<script type="text/javascript">
+   $(document).ready(function(){
+      window.applyFilters = function(page = 1) {
+         var $container = $('#shop-product-container');
+         if ($container.find('.shop-overlay-loader').length === 0) {
+            $container.css('position', 'relative');
+            $container.append('<div class="shop-overlay-loader"><div class="shop-spinner"></div></div>');
+         }
+
+         var categories = [];
+         $('input[name="category[]"]:checked').each(function() {
+            var val = $(this).val();
+            if (categories.indexOf(val) === -1) {
+               categories.push(val);
+            }
+         });
+
+         var brands = [];
+         $('input[name="brand[]"]:checked').each(function() {
+            var val = $(this).val();
+            if (brands.indexOf(val) === -1) {
+               brands.push(val);
+            }
+         });
+
+         var params = {};
+         if (categories.length > 0) {
+            params.category = categories.join(',');
+         }
+         if (brands.length > 0) {
+            params.brand = brands.join(',');
+         }
+         if (page > 1) {
+            params.page = page;
+         }
+
+         var ajaxParams = $.extend({ ajax: 1 }, params);
+
+         $.ajax({
+            url: window.location.pathname,
+            type: 'GET',
+            data: ajaxParams,
+            success: function(response) {
+               if (response.indexOf('<!DOCTYPE html>') !== -1 || response.indexOf('<html') !== -1 || response.indexOf('id="preloader-active"') !== -1) {
+                  var $temp = $('<div>').html(response);
+                  var partialHtml = $temp.find('#shop-product-container').html();
+                  if (partialHtml) {
+                     $container.html(partialHtml);
+                  } else {
+                     window.location.reload();
+                  }
+               } else {
+                  $container.html(response);
+               }
+               
+               var queryString = $.param(params);
+               var newUrl = window.location.pathname + (queryString ? '?' + queryString : '');
+               history.pushState(null, '', newUrl);
+            },
+            error: function(xhr) {
+               console.error(xhr);
+               $container.find('.shop-overlay-loader').remove();
+            }
+         });
+      }
+
+      window.resetFilters = function() {
+         $('.filter-input').prop('checked', false);
+         window.applyFilters(1);
+      }
+
+      $(document).on('change', '.filter-input', function() {
+         var val = $(this).val();
+         var name = $(this).attr('name');
+         var isChecked = $(this).prop('checked');
+         
+         $('input[name="' + name + '"][value="' + val + '"]').not(this).prop('checked', isChecked);
+         window.applyFilters(1);
+      });
+
+      $(document).on('click', '#shop-product-container .pagination-area a', function(e) {
+         e.preventDefault();
+         var url = $(this).attr('href');
+         if (url) {
+            var page = 1;
+            var match = url.match(/page=(\d+)/);
+            if (match) {
+               page = match[1];
+            }
+            window.applyFilters(page);
+            $('html, body').animate({ scrollTop: $('#shop-product-container').offset().top - 100 }, 300);
+         }
+      });
+   });
+</script>
 @endsection

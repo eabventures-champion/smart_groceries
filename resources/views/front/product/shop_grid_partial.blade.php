@@ -4,9 +4,11 @@
          We found <strong class="text-brand">{{ $products->total() }}</strong> products for you!
       </p>
    </div>
-   <div class="reset-filter-container">
-      <button type="button" class="btn-reset-filter-header" onclick="resetFilters()"><i class="fi fi-rs-refresh"></i> Reset Filters</button>
-   </div>
+    @if(Route::currentRouteName() === 'shop.page')
+    <div class="reset-filter-container">
+       <button type="button" class="btn-reset-filter-header" onclick="resetFilters()"><i class="fi fi-rs-refresh"></i> Reset Filters</button>
+    </div>
+    @endif
 </div>
 
 <div class="row product-grid">
