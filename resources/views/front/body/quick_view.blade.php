@@ -1,5 +1,58 @@
 <!-- Modal -->
 <!-- Quick view -->
+<style>
+@media (max-width: 767px) {
+   #quickViewModal .modal-dialog {
+      margin: 16px auto !important;
+      width: calc(100% - 32px) !important;
+      max-width: calc(100% - 32px) !important;
+   }
+   #quickViewModal .modal-content {
+      padding: 20px 15px !important;
+      border-radius: 20px !important;
+   }
+   #quickViewModal .quickview-columns-wrap {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 10px !important;
+      margin-bottom: 15px !important;
+      align-items: stretch !important;
+   }
+   #quickViewModal .detail-gallery.quickview {
+      flex: 1 1 50% !important;
+      width: 50% !important;
+      height: 145px !important;
+      margin-bottom: 0 !important;
+      border-radius: 12px !important;
+   }
+   #quickViewModal .detail-gallery.quickview img {
+      max-height: 115px !important;
+      padding: 8px !important;
+   }
+   #quickViewModal .quickview-info-wrap {
+      flex: 1 1 50% !important;
+      width: 50% !important;
+      padding: 10px 12px !important;
+      border-radius: 12px !important;
+      gap: 6px !important;
+      font-size: 11px !important;
+      justify-content: center !important;
+      box-sizing: border-box !important;
+   }
+   #quickViewModal .quickview-info-wrap strong {
+      font-size: 11px !important;
+      margin-bottom: 1px !important;
+   }
+   #quickViewModal .quickview-info-wrap span {
+      font-size: 11px !important;
+      line-height: 1.2 !important;
+   }
+   #quickViewModal .detail-info {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+   }
+}
+</style>
 <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered" style="max-width: 760px !important; margin: 30px auto; top: auto !important; transform: none !important;">
       <div class="modal-content" style="border-radius: 24px; padding: 30px; border: 1px solid #f1f2f4; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.08); border-top: 5px solid #3bb77e; position: relative;">
