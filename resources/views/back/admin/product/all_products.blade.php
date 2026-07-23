@@ -59,16 +59,11 @@
                      </td>
                      {{-- <td>{{ $item->category->category_name }}</td> --}}
                      <td>
-                        Gh {{ number_format($item->selling_price, 2) }} <br>
+                        Gh {{ number_format((float)$item->selling_price, 2) }} <br>
                         @if($item->discount_price == NULL)
                            <span class="badge rounded-pill bg-info">No Discount</span>
                            @else
-                           {{-- @php
-                              $amount = $item->selling_price - $item->discount_price;
-                              $discount = ($amount/$item->selling_price) * 100;
-                           @endphp --}}
-                           {{-- <span class="badge rounded-pill bg-danger"> {{ round($discount) }}% off</span> --}}
-                           <span class="badge rounded-pill bg-danger"> {{ round($item->discount_price) }}% off</span>
+                           <span class="badge rounded-pill bg-danger"> {{ round((float)$item->discount_price) }}% off</span>
                         @endif
                      </td>
                      {{-- <td>{{ $item->product_qty }}</td> --}}

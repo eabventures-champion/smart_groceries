@@ -171,11 +171,11 @@ $filter_brand = !empty($_GET['brand']) ? explode(',', $_GET['brand']) : [];
                   <div class="content pt-0">
                      <h6 class="title"><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></h6>
                      @if($product->discount_price == NULL)
-                     <span class="price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     <span class="price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      @else
                      <div class="price-container">
-                        <span class="price">Gh {{ number_format($product->discount_price, 2) }}</span>
-                        <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                        <span class="price">Gh {{ number_format((float)$product->discount_price, 2) }}</span>
+                        <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      </div>
                      @endif
                   </div>

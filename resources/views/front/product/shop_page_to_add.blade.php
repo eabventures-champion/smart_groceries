@@ -78,14 +78,14 @@
                         <a aria-label="Compare" class="action-btn"  id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>
                         <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal" id="{{ $product->id }}" onclick="productView(this.id)" ><i class="fi-rs-eye"></i></a>
                      </div>
-                     @php
-                     $amount = $product->selling_price - $product->discount_price;
-                     $discount = ($amount/$product->selling_price) * 100;
-                     @endphp
                      <div class="product-badges product-badges-position product-badges-mrg">
                         @if($product->discount_price == NULL)
                         <span class="new">New</span>
                         @else
+                        @php
+                        $amount = (float)$product->selling_price - (float)$product->discount_price;
+                        $discount = ($amount/(float)$product->selling_price) * 100;
+                        @endphp
                         <span class="hot"> {{ round($discount) }} %</span>
                         @endif
                      </div>
@@ -111,12 +111,12 @@
                      <div class="product-card-bottom">
                         @if($product->discount_price == NULL)
                         <div class="product-price">
-                           <span>Gh {{ number_format($product->selling_price, 2) }}</span>
+                           <span>Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                         </div>
                         @else
                         <div class="product-price">
-                           <span>Gh {{ number_format($product->discount_price, 2) }}</span><br>
-                           <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                           <span>Gh {{ number_format((float)$product->discount_price, 2) }}</span><br>
+                           <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                         </div>
                         @endif
                         <div class="add-cart">
@@ -232,11 +232,11 @@
                   <div class="content pt-0">
                      <h6 class="title"><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></h6>
                      @if($product->discount_price == NULL)
-                     <span class="price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     <span class="price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      @else
                      <div class="price-container">
-                        <span class="price">Gh {{ number_format($product->discount_price, 2) }}</span>
-                        <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                        <span class="price">Gh {{ number_format((float)$product->discount_price, 2) }}</span>
+                        <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      </div>
                      @endif
                   </div>

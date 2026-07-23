@@ -75,16 +75,11 @@
                                                         onclick="productView(this.id)"><i class="fi-rs-eye"></i></a>
                                                 </div>
 
-                                                @php
-                                                    $amount = $product->selling_price - $product->discount_price;
-                                                    $discount = ($amount / $product->selling_price) * 100;
-                                                @endphp
-
                                                 <div class="product-badges product-badges-position product-badges-mrg">
                                                     @if ($product->discount_price == null)
                                                         {{-- <span class="new">New</span> --}}
                                                     @else
-                                                        <span class="hot"> {{ round($product->discount_price) }}
+                                                        <span class="hot"> {{ round((float)$product->discount_price) }}
                                                             %</span>
                                                     @endif
                                                 </div>
@@ -114,20 +109,20 @@
                                                     @endif
                                                 </div> --}}
                                                 @php
-                                                    $amount = (100 - $product->discount_price) / 100;
-                                                    $new_price = $amount * $product->selling_price;
+                                                    $amount = (100 - (float)($product->discount_price ?? 0)) / 100;
+                                                    $new_price = $amount * (float)$product->selling_price;
                                                 @endphp
                                                 <div class="product-card-bottom">
                                                     @if ($product->discount_price == null)
                                                         <div class="product-price">
-                                                            <span>Gh {{ number_format($product->selling_price, 2) }}
+                                                            <span>Gh {{ number_format((float)$product->selling_price, 2) }}
                                                             </span>
                                                         </div>
                                                     @else
                                                         <div class="product-price">
-                                                            <span>Gh {{ number_format($new_price, 2) }} </span><br>
+                                                            <span>Gh {{ number_format((float)$new_price, 2) }} </span><br>
                                                             <span class="old-price">Gh
-                                                                {{ number_format($product->selling_price, 2) }}</span>
+                                                                {{ number_format((float)$product->selling_price, 2) }}</span>
                                                         </div>
                                                     @endif
                                                     {{-- <div class="sold mt-15 mb-15">

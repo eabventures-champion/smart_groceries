@@ -166,8 +166,8 @@
                @foreach($newProduct as $product)
 
                @php
-               $amount = (100 - $product->discount_price)/100;
-               $new_price = $amount * $product->selling_price;
+               $amount = (100 - (float)($product->discount_price ?? 0))/100;
+               $new_price = $amount * (float)$product->selling_price;
                @endphp
 
                <div class="premium-product-item">
@@ -179,11 +179,11 @@
                   <div class="content pt-0">
                      <h6 class="title"><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></h6>
                      @if($product->discount_price == NULL)
-                     <span class="price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     <span class="price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      @else
                      <div class="price-container">
-                        <span class="price">Gh {{ number_format($new_price, 2) }}</span>
-                        <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                        <span class="price">Gh {{ number_format((float)$new_price, 2) }}</span>
+                        <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      </div>
                      @endif
                   </div>

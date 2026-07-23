@@ -541,21 +541,21 @@
                         $discount = ($amount/$product->selling_price) * 100;
                         @endphp --}}
                         @php
-                        $amount = (100 - $product->discount_price)/100;
-                        $new_price = $amount * $product->selling_price;
+                        $amount = (100 - (float)($product->discount_price ?? 0))/100;
+                        $new_price = $amount * (float)$product->selling_price;
                         @endphp
 
                         <span class="get_attribute_price">
                            @if($product->discount_price == NULL)
                            <div class="product-price primary-color float-left">
-                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format($product->selling_price, 2) }}</span>
+                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                            </div>
                            @else
                            <div class="product-price primary-color float-left">
-                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $new_price }}">Gh {{ number_format($new_price, 2) }}</span>
+                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $new_price }}">Gh {{ number_format((float)$new_price, 2) }}</span>
                               <span>
-                              <span class="save-price font-md color3 ml-20">{{ round($product->discount_price) }}% Off</span>
-                              <span class="old-price font-md ml-20" id="detail-old-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format($product->selling_price, 2) }}</span>
+                              <span class="save-price font-md color3 ml-20">{{ round((float)$product->discount_price) }}% Off</span>
+                              <span class="old-price font-md ml-20" id="detail-old-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                               </span>
                            </div>
                            @endif
@@ -976,15 +976,11 @@
                                  <a aria-label="Compare" class="action-btn"  id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>
                                  <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal" id="{{ $product->id }}" onclick="productView(this.id)" ><i class="fi-rs-eye"></i></a>
                               </div>
-                              @php
-                              $amount = $product->selling_price - $product->discount_price;
-                              $discount = ($amount/$product->selling_price) * 100;
-                              @endphp
                               <div class="product-badges product-badges-position product-badges-mrg">
                                  @if($product->discount_price == NULL)
                                  {{-- <span class="new">New</span> --}}
                                  @else
-                                 <span class="hot"> {{ round($product->discount_price) }} %</span>
+                                 <span class="hot"> {{ round((float)$product->discount_price) }} %</span>
                                  @endif
                               </div>
                            </div>
@@ -1022,18 +1018,18 @@
                               </div>
                               --}}
                               @php
-                              $amount = (100 - $product->discount_price)/100;
-                              $new_price = $amount * $product->selling_price;
+                              $amount = (100 - (float)($product->discount_price ?? 0))/100;
+                              $new_price = $amount * (float)$product->selling_price;
                               @endphp
                               <div class="product-card-bottom">
                                  @if($product->discount_price == NULL)
                                  <div class="product-price">
-                                    <span>Gh {{ number_format($product->selling_price, 2) }}</span>
+                                    <span>Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                                  </div>
                                  @else
                                  <div class="product-price">
-                                    <span>Gh {{ number_format($new_price, 2) }}</span>
-                                    <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                                    <span>Gh {{ number_format((float)$new_price, 2) }}</span>
+                                    <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                                  </div>
                                  @endif
                                  <div class="add-cart">

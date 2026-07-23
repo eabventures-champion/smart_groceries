@@ -75,16 +75,11 @@ Searching for {{ $item }} ...
                         <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal" id="{{ $product->id }}" onclick="productView(this.id)" ><i class="fi-rs-eye"></i></a>
                      </div>
 
-                     @php
-                     $amount = $product->selling_price - $product->discount_price;
-                     $discount = ($amount/$product->selling_price) * 100;
-                     @endphp
-
                      <div class="product-badges product-badges-position product-badges-mrg">
                         @if($product->discount_price == NULL)
                         {{-- <span class="new">New</span> --}}
                         @else
-                        <span class="hot"> {{ round($product->discount_price) }} %</span>
+                        <span class="hot"> {{ round((float)$product->discount_price) }} %</span>
                         @endif
                      </div>
                   </div>
@@ -94,18 +89,18 @@ Searching for {{ $item }} ...
                      </div>
                      <h2><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}"> {{ $product->product_name }} </a></h2>
                      @php
-                     $amount = (100 - $product->discount_price)/100;
-                     $new_price = $amount * $product->selling_price;
+                     $amount = (100 - (float)($product->discount_price ?? 0))/100;
+                     $new_price = $amount * (float)$product->selling_price;
                      @endphp
                      <div class="product-card-bottom">
                         @if($product->discount_price == NULL)
                         <div class="product-price">
-                           <span>Gh {{ number_format($product->selling_price, 2) }}</span>
+                           <span>Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                         </div>
                         @else
                         <div class="product-price">
-                           <span>Gh {{ number_format($new_price, 2) }}</span>
-                           <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                           <span>Gh {{ number_format((float)$new_price, 2) }}</span>
+                           <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                         </div>
                         @endif
 
@@ -197,8 +192,8 @@ Searching for {{ $item }} ...
                @foreach($newProduct as $product)
 
                @php
-               $amount = (100 - $product->discount_price)/100;
-               $new_price = $amount * $product->selling_price;
+               $amount = (100 - (float)($product->discount_price ?? 0))/100;
+               $new_price = $amount * (float)$product->selling_price;
                @endphp
                
                <div class="premium-product-item">
@@ -210,11 +205,11 @@ Searching for {{ $item }} ...
                   <div class="content pt-0">
                      <h6 class="title"><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}">{{ $product->product_name }}</a></h6>
                      @if($product->discount_price == NULL)
-                     <span class="price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                     <span class="price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      @else
                      <div class="price-container">
-                        <span class="price">Gh {{ number_format($new_price, 2) }}</span>
-                        <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                        <span class="price">Gh {{ number_format((float)$new_price, 2) }}</span>
+                        <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                      </div>
                      @endif
                   </div>

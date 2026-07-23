@@ -30,15 +30,11 @@ $skip_product_0 = App\Models\Product::where('status',1)->where('category_id', $s
                            <a aria-label="Compare" class="action-btn"  id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>
                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal" id="{{ $product->id }}" onclick="productView(this.id)" ><i class="fi-rs-eye"></i></a>                        
                         </div>
-                        @php
-                        $amount = $product->selling_price - $product->discount_price;
-                        $discount = ($amount/$product->selling_price) * 100;
-                        @endphp
                         <div class="product-badges product-badges-position product-badges-mrg">
                            @if($product->discount_price == NULL)
                            {{-- <span class="new">New</span> --}}
                            @else
-                           <span class="hot"> {{ round($product->discount_price) }} %</span>
+                           <span class="hot"> {{ round((float)$product->discount_price) }} %</span>
                            @endif
                         </div>
                      </div>
@@ -49,50 +45,21 @@ $skip_product_0 = App\Models\Product::where('status',1)->where('category_id', $s
                         <h2><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}"> {{ $product->product_name }} </a></h2>
                         <div class="product-action-1-mobile d-block d-lg-none">
                            <a aria-label="Add To Wishlist" class="action-btn" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>                            
-                           {{-- <a aria-label="Compare" class="action-btn" id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>                            --}}
                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal" id="{{ $product->id }}" onclick="productView(this.id)"><i class="fi-rs-eye"></i></a>
                         </div>
-                        {{-- @php
-                        $reviewcount = App\Models\Review::where('product_id',$product->id)->where('status',1)->latest()->get();
-                        $average = App\Models\Review::where('product_id',$product->id)->where('status',1)->avg('rating');
-                        @endphp 
-                        <div class="product-rate-cover">
-                           <div class="product-rate d-inline-block">
-                              @if($average == 0)
-                              @elseif($average == 1 || $average < 2)                     
-                              <div class="product-rating" style="width: 20%"></div>
-                              @elseif($average == 2 || $average < 3)                     
-                              <div class="product-rating" style="width: 40%"></div>
-                              @elseif($average == 3 || $average < 4)                     
-                              <div class="product-rating" style="width: 60%"></div>
-                              @elseif($average == 4 || $average < 5)                     
-                              <div class="product-rating" style="width: 80%"></div>
-                              @elseif($average == 5 || $average < 5)                     
-                              <div class="product-rating" style="width: 100%"></div>
-                              @endif
-                           </div>
-                           <span class="font-small ml-5 text-muted"> ({{count($reviewcount)}})</span>
-                        </div> --}}
-                        {{-- <div>
-                           @if($product->vendor_id == NULL)
-                           <span class="font-small text-muted">By <a href="vendor-details-1.html">Owner</a></span>
-                           @else
-                           <span class="font-small text-muted">By <a href="vendor-details-1.html">{{ $product['vendor']['name'] }}</a></span>
-                           @endif
-                        </div> --}}
                         @php
-                        $amount = (100 - $product->discount_price)/100;
-                        $new_price = $amount * $product->selling_price;
+                        $amount = (100 - (float)($product->discount_price ?? 0))/100;
+                        $new_price = $amount * (float)$product->selling_price;
                         @endphp
                         <div class="product-card-bottom">
                            @if($product->discount_price == NULL)
                            <div class="product-price">
-                              <span>Gh {{ number_format($product->selling_price, 2) }}</span>
+                              <span>Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                            </div>
                            @else
                            <div class="product-price">
-                              <span>Gh {{ number_format($new_price, 2) }}</span><br>
-                              <span class="old-price">Gh {{ number_format($product->selling_price, 2) }}</span>
+                              <span>Gh {{ number_format((float)$new_price, 2) }}</span><br>
+                              <span class="old-price">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
                            </div>
                            @endif
                            <div class="add-cart">

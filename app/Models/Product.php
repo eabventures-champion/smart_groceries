@@ -10,6 +10,21 @@ class Product extends Model
     use HasFactory;
     protected $guarded = [];
 
+    protected $casts = [
+        'selling_price' => 'float',
+        'discount_price' => 'float',
+    ];
+
+    public function getSellingPriceAttribute($value)
+    {
+        return (float)($value ?? 0);
+    }
+
+    public function getDiscountPriceAttribute($value)
+    {
+        return ($value !== null && $value !== '') ? (float)$value : null;
+    }
+
     public function vendor(){
         return $this->belongsTo(User::class, 'vendor_id','id');
     }

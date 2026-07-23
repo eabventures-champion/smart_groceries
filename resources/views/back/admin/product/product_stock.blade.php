@@ -48,7 +48,7 @@
                      <td> {{ $key+1 }} </td>
                      <td> <img src="{{ asset($item->product_thumbnail) }}" style="width: 70px; height:40px;" >  </td>
                      <td>{{ $item->product_name }}</td>
-                     <td>{{ number_format($item->selling_price, 2) }}</td>
+                     <td>{{ number_format((float)$item->selling_price, 2) }}</td>
                      <td>
                         @php
                            $total_stock = App\Models\ProductAttribute::where('product_id', $item->id)->sum('stock');
@@ -65,11 +65,7 @@
                         @if($item->discount_price == NULL)
                         <span class="badge rounded-pill bg-info">No Discount</span>
                         @else
-                        @php
-                        $amount = $item->selling_price - $item->discount_price;
-                        $discount = ($amount/$item->selling_price) * 100;
-                        @endphp
-                        <span class="badge rounded-pill bg-danger"> {{ round($discount) }}%</span>
+                        <span class="badge rounded-pill bg-danger"> {{ round((float)$item->discount_price) }}% off</span>
                         @endif
                      </td>
                      <td> @if($item->status == 1)
