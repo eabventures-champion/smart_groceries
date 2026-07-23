@@ -84,9 +84,6 @@ Searching for {{ $item }} ...
                      </div>
                   </div>
                   <div class="product-content-wrap">
-                     <div class="product-category">
-                        <a href="{{ url('product/category/'.$product['category']['id'].'/'.$product['category']['category_slug']) }}">{{ $product['category']['category_name'] }}</a>
-                     </div>
                      <h2><a href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}"> {{ $product->product_name }} </a></h2>
                      @php
                      $amount = (100 - (float)($product->discount_price ?? 0))/100;
@@ -104,10 +101,6 @@ Searching for {{ $item }} ...
                         </div>
                         @endif
 
-                        <div class="product-action-1-mobile d-block d-lg-none">
-                           <a aria-label="Add To Wishlist" class="action-btn" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>                            
-                           <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal" id="{{ $product->id }}" onclick="productView(this.id)"><i class="fi-rs-eye"></i></a>
-                        </div>
                         <div class="add-cart">
                            <a class="add" href="{{ url('product/details/'.$product->id.'/'.$product->product_slug) }}"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
                         </div>

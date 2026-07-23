@@ -54,6 +54,16 @@
 
       <!-- Custom CSS Overrides for product grid action buttons (Desktop & Mobile) -->
       <style>
+         /* Completely hide category name above product name on cards */
+         .product-cart-wrap .product-category {
+            display: none !important;
+         }
+
+         /* Completely hide product action buttons below product name on mobile */
+         .product-action-1-mobile {
+            display: none !important;
+         }
+
          /* Completely hide all Compare buttons across all views (Desktop & Mobile) */
          .product-cart-wrap .product-action-1 a.action-btn[aria-label="Compare"],
          .product-cart-wrap .product-action-1 a.action-btn[onclick*="Compare"],
