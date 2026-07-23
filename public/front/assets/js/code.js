@@ -75,7 +75,7 @@ $(document).ready(function(){
            return val !== null && val !== undefined && $.trim(val) !== '';
         });
 
-        if (sizeValidOptions.length === 1 && variantValidOptions.length === 1) {
+        if (variantValidOptions.length === 1) {
            $variantSelect.val(variantValidOptions.first().val());
         }
 
@@ -132,7 +132,7 @@ $(document).ready(function(){
          return val !== null && val !== undefined && $.trim(val) !== '';
       });
 
-      if (sizeValidOptions.length === 1 && variantValidOptions.length === 1) {
+      if (variantValidOptions.length === 1) {
          $variantSelect.val(variantValidOptions.first().val());
       }
 

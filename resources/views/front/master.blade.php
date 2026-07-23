@@ -649,8 +649,13 @@
               $('.quickview-attributes-col').show();
               $('.quickview-price-col').css({ 'flex': '1 1 50%', 'max-width': '50%' });
 
-              // Auto-select size & variant if both have exactly 1 option
-              if (data.product_attribute && data.product_attribute.length === 1 && validColors.length === 1) {
+              // Auto-select variant if only 1 variant option exists
+              if (validColors.length === 1) {
+                  $('select[name="color"]').prop('selectedIndex', 1);
+              }
+
+              // Auto-select size if only 1 size option exists
+              if (data.product_attribute && data.product_attribute.length === 1) {
                   $('select[name="size"]').prop('selectedIndex', 1).trigger('change');
               }
              
