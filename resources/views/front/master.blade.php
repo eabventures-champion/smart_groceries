@@ -510,7 +510,7 @@
             if ($('#example').length) { $('#example').DataTable(); }
            } );
       </script>
-      <script src="{{ asset('front/assets/js/code.js?v=2.0') }}" defer></script>
+      <script src="{{ asset('front/assets/js/code.js?v=' . (file_exists(public_path('front/assets/js/code.js')) ? filemtime(public_path('front/assets/js/code.js')) : '2.1')) }}" defer></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" defer></script>
       <script src="//cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" defer></script>
@@ -648,6 +648,11 @@
               // Maintain 2-column layout side-by-side
               $('.quickview-attributes-col').show();
               $('.quickview-price-col').css({ 'flex': '1 1 50%', 'max-width': '50%' });
+
+              // Auto-select size & variant if both have exactly 1 option
+              if (data.product_attribute && data.product_attribute.length === 1 && validColors.length === 1) {
+                  $('select[name="size"]').prop('selectedIndex', 1).trigger('change');
+              }
              
              // Trigger state watch instantly on modal load
              if (typeof window.updateQuantityState === 'function') {
