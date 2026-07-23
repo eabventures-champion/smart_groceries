@@ -536,6 +536,16 @@
         scrollbar-width: none !important;
     }
     
+    /* Hide SG Panel and floating buttons when modal is open */
+    body.modal-open #sg-restore-handle,
+    body.modal-open #sg-floating-dock,
+    body.modal-open #sg-floating-drawer,
+    body.modal-open #complaint-floating-btn {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+    
     /* Hide Tawk.to and Suggestion button when SG drawer is active/open */
     body.sg-drawer-open iframe[src*="tawk.to"],
     body.sg-drawer-open iframe[id*="tawk"],
@@ -547,7 +557,7 @@
         opacity: 0 !important;
     }
     
-    /* Spacing & arrangement for Tawk.to, SG Panel, and Suggestion float button on all mobile screens */
+    /* Spacing & arrangement for Tawk.to, SG Panel, and Suggestion float button on mobile screens */
     @media (max-width: 991.98px) {
         #sg-restore-handle {
             top: auto !important;
@@ -575,6 +585,16 @@
         #complaint-floating-btn svg {
             width: 20px !important;
             height: 20px !important;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        #sg-restore-handle,
+        #sg-floating-dock,
+        #sg-floating-drawer {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
     }
 </style>

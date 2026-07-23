@@ -113,14 +113,17 @@
                         </div>
                      </div>
 
-                     {{-- product name --}}
-                     <h3 class="title-detail" style="font-size: 22px; font-weight: 800; color: #253D4E; line-height: 1.3; margin: 0 0 15px;"><span id="pname"></span></h3>
+                     {{-- product name & in-stock badge --}}
+                     <div class="product-title-stock-wrap d-flex align-items-center flex-wrap gap-3 mb-15">
+                        <h3 class="title-detail mb-0" style="font-size: 22px; font-weight: 800; color: #253D4E; line-height: 1.3; margin: 0;"><span id="pname"></span></h3>
+                        <div id="modal-qty-stock" style="font-size: 13px; color: #e74c3c; font-weight: 600; display: inline-flex; align-items: center; margin: 0;"></div>
+                     </div>
 
                       {{-- sizes & variants side-by-side with price --}}
                       <input type="hidden" id="product_id">
                       <div class="quickview-attributes-price-wrap" style="display: flex; gap: 15px; align-items: stretch; margin-bottom: 20px;">
                          <!-- Selectors Column (Left) -->
-                         <div class="quickview-attributes-col" style="flex: 1 1 50%; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
+                         <div class="quickview-attributes-col" style="flex: 1 1 50%; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
                             {{-- sizes --}}
                             <div id="sizeArea" style="width: 100%;">
                                <select class="form-control unicase-form-control size" id="getPrice_modal" name="size" style="border-radius: 8px; border: 1px solid #ececec; padding: 8px 12px; font-size: 14px; height: 42px; width: 100%; box-sizing: border-box;"></select>
@@ -131,34 +134,31 @@
                                <select class="form-control unicase-form-control" id="color" name="color" style="border-radius: 8px; border: 1px solid #ececec; padding: 8px 12px; font-size: 14px; height: 42px; width: 100%; box-sizing: border-box;">
                                </select>
                             </div>
+
+                            {{-- quantities --}}
+                            <div class="detail-qty border radius" style="border-radius: 8px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #ececec; padding: 0 10px; background: #fff; height: 44px; width: 100%; margin: 0; box-sizing: border-box;">
+                               <a href="#" class="qty-down" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-down"></i></a>
+                               <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1" style="width: 30px; text-align: center; border: none; font-weight: 700; color: #253D4E; margin: 0 5px; font-size: 14px;">
+                               <a href="#" class="qty-up" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-up"></i></a>
+                            </div>
                          </div>
 
                          <!-- Price Column (Right) -->
-                         <div class="quickview-price-col" style="flex: 1 1 50%; display: flex; align-items: center;">
-                            <div class="product-price-cover" style="background: #fdfaf3; border-radius: 12px; padding: 10px 14px; border: 1px solid #f9ebd1; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 0 !important;">
+                         <div class="quickview-price-col" style="flex: 1 1 50%; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
+                            <div class="product-price-cover" style="background: #fdfaf3; border-radius: 12px; padding: 10px 14px; border: 1px solid #f9ebd1; width: 100%; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 0 !important;">
                                <div class="product-price primary-color d-flex align-items-center justify-content-center" style="gap: 8px; font-family: 'Inter', sans-serif; flex-wrap: wrap;">
                                   <span class="current-price text-brand" style="font-size: 22px; font-weight: 800; color: #3bb77e; white-space: nowrap;">Gh&nbsp;<span id="pprice"></span></span>
                                   <span class="old-price text-muted" style="text-decoration: line-through; font-size: 14px; font-weight: 500; display: inline-flex; white-space: nowrap;"><span id="hide_curreny">Gh</span>&nbsp;<span id="oldprice"></span></span>
                                </div>
                             </div>
+
+                            <div class="product-extra-link2" style="margin: 0; width: 100%;">
+                               <button type="submit" class="btn w-100" onclick="addToCart()" style="background-color: #3bb77e !important; border: none; color: #fff; height: 44px; padding: 0 15px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 25px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(59, 183, 126, 0.25); cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 25px rgba(59, 183, 126, 0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 20px rgba(59, 183, 126, 0.25)';">
+                                  <i class="fi-rs-shopping-cart"></i> Add to cart
+                               </button>
+                            </div>
                          </div>
                       </div>
-
-                     {{-- quantities & checkout action --}}
-                     <div class="detail-extralink d-flex align-items-center mb-15" style="gap: 15px;">
-                        <div class="detail-qty border radius" style="border-radius: 8px; display: inline-flex; align-items: center; border: 1px solid #ececec; padding: 8px 12px; background: #fff;">
-                           <a href="#" class="qty-down" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-down"></i></a>
-                           <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1" style="width: 30px; text-align: center; border: none; font-weight: 700; color: #253D4E; margin: 0 5px; font-size: 14px;">
-                           <a href="#" class="qty-up" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-up"></i></a>
-                        </div>
-                        <div id="modal-qty-stock" style="font-size: 13px; color: #e74c3c; font-weight: 600; display: inline-flex; align-items: center; margin: 0;"></div>
-                     </div>
-                     
-                     <div class="product-extra-link2 mt-15">
-                        <button type="submit" class="btn" onclick="addToCart()" style="background-color: #3bb77e !important; border: none; color: #fff; padding: 12px 35px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 30px; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(59, 183, 126, 0.25); cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 25px rgba(59, 183, 126, 0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 20px rgba(59, 183, 126, 0.25)';">
-                           <i class="fi-rs-shopping-cart"></i> Add to cart
-                        </button>
-                     </div>
                   </div>
                </div>
             </div>

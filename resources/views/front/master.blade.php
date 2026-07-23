@@ -635,14 +635,9 @@
                   });
               }
              
-             // Adjust columns layout depending on selector visibility
-             if ($('#sizeArea').is(':visible') || $('#colorArea').is(':visible')) {
-                 $('.quickview-attributes-col').show();
-                 $('.quickview-price-col').css({ 'flex': '1 1 50%', 'max-width': '50%' });
-             } else {
-                 $('.quickview-attributes-col').hide();
-                 $('.quickview-price-col').css({ 'flex': '0 0 100%', 'max-width': '100%' });
-             }
+              // Maintain 2-column layout side-by-side
+              $('.quickview-attributes-col').show();
+              $('.quickview-price-col').css({ 'flex': '1 1 50%', 'max-width': '50%' });
              
              // Trigger state watch instantly on modal load
              if (typeof window.updateQuantityState === 'function') {

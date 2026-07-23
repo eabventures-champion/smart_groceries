@@ -61,6 +61,24 @@ $(document).ready(function(){
         var size = $(this).val();
         var product_id = $(this).attr("product-id");
 
+        var $sizeSelect = $(this);
+        var $variantSelect = $("#dcolor");
+        if (!$variantSelect.length) {
+           $variantSelect = $('select[name="color"]');
+        }
+        var sizeValidOptions = $sizeSelect.find('option:not(:disabled)').filter(function() {
+           var val = $(this).val();
+           return val !== '' && val !== null;
+        });
+        var variantValidOptions = $variantSelect.find('option:not(:disabled)').filter(function() {
+           var val = $(this).val();
+           return val !== '' && val !== null;
+        });
+
+        if (sizeValidOptions.length === 1 && variantValidOptions.length === 1) {
+           $variantSelect.val(variantValidOptions.first().val());
+        }
+
         $.ajax({
            headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -99,6 +117,24 @@ $(document).ready(function(){
    $("#getPrice_modal").change(function () {
       var size = $(this).val();
       var product_id = $("#product_id").val();
+
+      var $sizeSelect = $(this);
+      var $variantSelect = $("#color");
+      if (!$variantSelect.length) {
+         $variantSelect = $('select[name="color"]');
+      }
+      var sizeValidOptions = $sizeSelect.find('option:not(:disabled)').filter(function() {
+         var val = $(this).val();
+         return val !== '' && val !== null;
+      });
+      var variantValidOptions = $variantSelect.find('option:not(:disabled)').filter(function() {
+         var val = $(this).val();
+         return val !== '' && val !== null;
+      });
+
+      if (sizeValidOptions.length === 1 && variantValidOptions.length === 1) {
+         $variantSelect.val(variantValidOptions.first().val());
+      }
 
       $.ajax({
          headers: {
