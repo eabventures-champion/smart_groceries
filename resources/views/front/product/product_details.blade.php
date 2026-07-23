@@ -493,75 +493,52 @@
                <div class="col-md-7 col-12">
                {{-- <div class="col-md-8 col-sm-12 col-6 col-xs-12"> --}}
                   <div class="detail-info pr-30 pl-30">
-                     @if($total_stock > 0)
-                     {{-- @if($product->product_qty > 0) --}}
-                     <span class="stock-status in-stock">
-                        Available in stock
-                        <span class="total-qty-stock">
-                           <p class="in-stock text-brand">Total Qty: ({{ $total_stock }})</p>
+                     <div class="detail-header-top-wrap d-flex justify-content-between align-items-center flex-wrap mb-15" style="gap: 15px;">
+                        @if($total_stock > 0)
+                        <span class="stock-status in-stock" style="margin-bottom: 0;">
+                           Available in stock
+                           <span class="total-qty-stock">
+                              <p class="in-stock text-brand" style="margin-bottom: 0;">Total Qty: ({{ $total_stock }})</p>
+                           </span>
                         </span>
-                        {{-- <p class="in-stock text-brand">Qty: ({{ $product->product_qty }})</p> --}}
-                     </span>
-                     @else
-                     <span class="stock-status out-stock">
-                        Stock Out
-                        <p class="in-stock text-brand"></p>
-                        <p class="in-stock text-brand">Call for supplies: 0548795583 / 0555700931</p>
-                     </span>
-                     @endif
+                        @else
+                        <span class="stock-status out-stock" style="margin-bottom: 0;">
+                           Stock Out
+                           <p class="in-stock text-brand" style="margin-bottom: 0;"></p>
+                           <p class="in-stock text-brand" style="margin-bottom: 0;">Call for supplies: 0548795583 / 0555700931</p>
+                        </span>
+                        @endif
 
-                     <h2 class="title-detail" id="dpname"> {{ $product->product_name }} </h2>
+                        <div class="clearfix product-price-cover" style="margin-bottom: 0;">
+                           @php
+                           $amount = (100 - (float)($product->discount_price ?? 0))/100;
+                           $new_price = $amount * (float)$product->selling_price;
+                           @endphp
+
+                           <span class="get_attribute_price">
+                              @if($product->discount_price == NULL)
+                              <div class="product-price primary-color float-left">
+                                 <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
+                              </div>
+                              @else
+                              <div class="product-price primary-color float-left">
+                                 <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $new_price }}">Gh {{ number_format((float)$new_price, 2) }}</span>
+                                 <span>
+                                 <span class="save-price font-md color3 ml-20">{{ round((float)$product->discount_price) }}% Off</span>
+                                 <span class="old-price font-md ml-20" id="detail-old-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
+                                 </span>
+                              </div>
+                              @endif
+                           </span>
+                        </div>
+                     </div>
+
+                     <h2 class="title-detail" id="dpname" style="margin-top: 5px;"> {{ $product->product_name }} </h2>
+
                      @php
                      $reviewcount = App\Models\Review::where('product_id', $product->id)->where('status', 1)->latest()->get();
                      $average = App\Models\Review::where('product_id',$product->id)->where('status', 1)->avg('rating');
                      @endphp
-                     {{-- <div class="product-detail-rating">
-                        <div class="product-rate-cover text-end">
-
-                           <div class="product-rate d-inline-block">
-                              @if($average == 0)
-                              @elseif($average == 1 || $average < 2)
-                              <div class="product-rating" style="width: 20%"></div>
-                              @elseif($average == 2 || $average < 3)
-                              <div class="product-rating" style="width: 40%"></div>
-                              @elseif($average == 3 || $average < 4)
-                              <div class="product-rating" style="width: 60%"></div>
-                              @elseif($average == 4 || $average < 5)
-                              <div class="product-rating" style="width: 80%"></div>
-                              @elseif($average == 5 || $average < 5)
-                              <div class="product-rating" style="width: 100%"></div>
-                              @endif
-                           </div>
-                           <span class="font-small ml-5 text-muted"> ({{ count($reviewcount)}} reviews)</span>
-                        </div>
-                     </div> --}}
-                     <div class="clearfix product-price-cover">
-                        {{-- @php
-                        $amount = $product->selling_price - $product->discount_price;
-                        $discount = ($amount/$product->selling_price) * 100;
-                        @endphp --}}
-                        @php
-                        $amount = (100 - (float)($product->discount_price ?? 0))/100;
-                        $new_price = $amount * (float)$product->selling_price;
-                        @endphp
-
-                        <span class="get_attribute_price">
-                           @if($product->discount_price == NULL)
-                           <div class="product-price primary-color float-left">
-                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
-                           </div>
-                           @else
-                           <div class="product-price primary-color float-left">
-                              <span class="current-price text-brand" id="detail-current-price" data-base-price="{{ $new_price }}">Gh {{ number_format((float)$new_price, 2) }}</span>
-                              <span>
-                              <span class="save-price font-md color3 ml-20">{{ round((float)$product->discount_price) }}% Off</span>
-                              <span class="old-price font-md ml-20" id="detail-old-price" data-base-price="{{ $product->selling_price }}">Gh {{ number_format((float)$product->selling_price, 2) }}</span>
-                              </span>
-                           </div>
-                           @endif
-                        </span>
-
-                     </div>
                      <div class="short-desc mb-10">
                         <p class="font-lg"> {{ $product->short_descp }}</p>
                      </div>
@@ -577,70 +554,165 @@
                            @endforeach
                         </select>
                      </div> --}}
-                     <div class="attr-detail attr-size mb-10">
-                        <strong class="mr-10 d-none d-lg-block" style="width:50px;">Size : </strong>
-                        <select name="size" id="getPrice" product-id="{{ $product['id'] }}" class="form-control unicase-form-control dsize" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
-                           <option selected="" disabled=""> --select size-- </option>
-                           @foreach($product['attributes'] as $attribute)
-                            <option value="{{ $attribute['size'] }}">{{ $attribute['size']  }}</option>
-                           @endforeach
-                        </select>
-                     </div>
+                     <style>
+                     .product-controls-wrapper {
+                        margin-top: 20px;
+                        margin-bottom: 25px;
+                     }
+                     .product-controls-row {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 15px;
+                        align-items: flex-start;
+                        width: 100%;
+                     }
+                     .product-controls-col-left {
+                        flex: 1 1 50%;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                        justify-content: flex-start;
+                     }
+                     .product-controls-col-right {
+                        flex: 1 1 50%;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                        justify-content: flex-start;
+                     }
+                     .product-controls-col-right .qty-stock:empty {
+                        display: none !important;
+                     }
+                     .product-controls-col-left select {
+                        border-radius: 8px !important;
+                        border: 1px solid #ececec !important;
+                        height: 44px !important;
+                        padding: 8px 12px !important;
+                        font-size: 14px !important;
+                        width: 100% !important;
+                        background-color: #fff !important;
+                        margin: 0 !important;
+                     }
+                     .product-controls-col-right .detail-qty {
+                        height: 44px !important;
+                        margin: 0 !important;
+                        width: 100% !important;
+                        border-radius: 8px !important;
+                        border: 1px solid #ececec !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: space-between !important;
+                        padding: 0 10px !important;
+                        box-sizing: border-box !important;
+                        background: #fff !important;
+                     }
+                     .product-controls-col-right .product-extra-link2 {
+                        display: flex !important;
+                        align-items: center !important;
+                        gap: 8px !important;
+                        margin: 0 !important;
+                        width: 100% !important;
+                     }
+                     .product-controls-col-right .button-add-to-cart {
+                        height: 44px !important;
+                        line-height: 44px !important;
+                        padding: 0 15px !important;
+                        font-size: 14px !important;
+                        font-weight: 700 !important;
+                        border-radius: 25px !important;
+                        background-color: #3bb77e !important;
+                        border: none !important;
+                        color: #fff !important;
+                        flex: 1 1 auto !important;
+                        margin: 0 !important;
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        gap: 6px !important;
+                        cursor: pointer !important;
+                     }
+                     @media (max-width: 575px) {
+                        .product-controls-row {
+                           gap: 10px;
+                        }
+                        .product-controls-col-left {
+                           gap: 10px;
+                        }
+                        .product-controls-col-right {
+                           gap: 10px;
+                        }
+                        .product-controls-col-left select {
+                           font-size: 13px !important;
+                           height: 40px !important;
+                           padding: 6px 10px !important;
+                        }
+                        .product-controls-col-right .detail-qty {
+                           height: 40px !important;
+                        }
+                        .product-controls-col-right .button-add-to-cart {
+                           height: 40px !important;
+                           line-height: 40px !important;
+                           font-size: 13px !important;
+                        }
+                     }
+                     </style>
 
-                     {{-- <div class="sizes u-s-m-b-11 mt-3">
-                        <span>Available Size:</span>
-                        <div class="size-variant select-box-wrapper">
-                           <select name="size" id="getPrice" product-id="{{ $product_details['id'] }}" class="select-box product-size" required>
-                              <option value="">Select size</option>
-                              @foreach ($product_details['attributes'] as $attribute )
-                                 <option value="{{ $attribute['size'] }}">{{ $attribute['size'] }}</option>
-                              @endforeach
-                           </select>
-                        </div>
-                     </div> --}}
-                     {{-- @endif --}}
-                      @if($product->product_color == "" || strtolower(trim($product->product_color)) == 'none')
-                      <div></div>
-                      @else
-                      <div class="attr-detail attr-size mb-20">
-                         <strong class="mr-10 d-none d-lg-block" style="width:50px;">Variant: </strong>
-                         <select class="form-control unicase-form-control" id="dcolor" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
-                            <option selected="" disabled=""> --select variant-- </option>
-                            @foreach($product_color as $color)
-                            @if(strtolower(trim($color)) !== 'none')
-                            <option value="{{ $color }}">{{ ucwords($color) }}</option>
-                            @endif
-                            @endforeach
-                         </select>
-                      </div>
-                      @endif
+                     <div class="product-controls-wrapper">
+                        <div class="product-controls-row">
+                           <!-- Column 1 (Left): Select Size (top) & Select Variant (bottom) -->
+                           <div class="product-controls-col-left">
+                              <div class="attr-detail attr-size m-0" style="width: 100%;">
+                                 <select name="size" id="getPrice" product-id="{{ $product['id'] }}" class="form-control unicase-form-control dsize" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
+                                    <option selected="" disabled=""> --select size-- </option>
+                                    @foreach($product['attributes'] as $attribute)
+                                     <option value="{{ $attribute['size'] }}">{{ $attribute['size']  }}</option>
+                                    @endforeach
+                                 </select>
+                              </div>
 
-                     <div class="detail-extralink mt-30 mb-30">
-                        <div class="detail-qty border radius" @if($total_stock <= 0) style="opacity: 0.5; pointer-events: none;" @endif>
-                           <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                           <input type="text" name="quantity" id="dqty" class="qty-val" value="{{ $total_stock > 0 ? 1 : 0 }}" min="{{ $total_stock > 0 ? 1 : 0 }}" max="{{ $total_stock }}" data-stock="{{ $total_stock }}" @if($total_stock <= 0) disabled readonly @endif>
-                           <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                        </div>
-                        <div class="qty-stock"></div>
+                              @php
+                              $valid_colors = [];
+                              if (!empty($product->product_color)) {
+                                  $raw_colors = explode(',', $product->product_color);
+                                  foreach ($raw_colors as $c) {
+                                      $trimmed_c = trim($c);
+                                      if ($trimmed_c !== '' && strtolower($trimmed_c) !== 'none' && strtolower($trimmed_c) !== 'color or type') {
+                                          $valid_colors[] = $trimmed_c;
+                                      }
+                                  }
+                              }
+                              @endphp
 
-                        {{-- Mobile --}}
-                        <div class="product-extra-link2 d-block d-lg-none">
-                           <input type="hidden" id="dproduct_id" value="{{ $product->id }}">
-                           <input type="hidden" id="vproduct_id" value="{{ $product->vendor_id }}">
-                           <button type="submit" class="button button-add-to-cart" onclick="addToCartDetails()" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif><i class="fi-rs-shopping-cart"></i> &nbsp;{{ $total_stock > 0 ? 'Add' : 'Out of Stock' }}</button>&nbsp;&nbsp;
-                           <a aria-label="Add To Wishlist" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>
-                           {{-- <a aria-label="Compare" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>                            --}}
-                        </div>
+                              @if(count($valid_colors) > 0)
+                              <div class="attr-detail attr-size m-0" style="width: 100%;">
+                                 <select class="form-control unicase-form-control" id="dcolor" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
+                                    <option selected="" disabled=""> --select variant-- </option>
+                                    @foreach($valid_colors as $color)
+                                    <option value="{{ $color }}">{{ ucwords($color) }}</option>
+                                    @endforeach
+                                 </select>
+                              </div>
+                              @endif
+                           </div>
 
-                        {{-- Large screen --}}
-                        <div class="product-extra-link2 d-none d-lg-block">
-                           <input type="hidden" id="dproduct_id" value="{{ $product->id }}">
-                           <input type="hidden" id="vproduct_id" value="{{ $product->vendor_id }}">
-                           <button type="submit" class="button button-add-to-cart" onclick="addToCartDetails()" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif><i class="fi-rs-shopping-cart"></i>{{ $total_stock > 0 ? 'Add to cart' : 'Out of Stock' }}</button>
-                           {{-- <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a> --}}
-                           <a aria-label="Add To Wishlist" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>
-                           <a aria-label="Compare" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToCompare(this.id)"><i class="fi-rs-shuffle"></i></a>
-                           {{-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> --}}
+                           <!-- Column 2 (Right): Quantity Change (top) & Add Button (bottom) -->
+                           <div class="product-controls-col-right">
+                              <div class="detail-qty border radius" @if($total_stock <= 0) style="opacity: 0.5; pointer-events: none;" @endif>
+                                 <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                 <input type="text" name="quantity" id="dqty" class="qty-val" value="{{ $total_stock > 0 ? 1 : 0 }}" min="{{ $total_stock > 0 ? 1 : 0 }}" max="{{ $total_stock }}" data-stock="{{ $total_stock }}" @if($total_stock <= 0) disabled readonly @endif>
+                                 <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                              </div>
+                              <div class="qty-stock"></div>
+
+                              <div class="product-extra-link2">
+                                 <input type="hidden" id="dproduct_id" value="{{ $product->id }}">
+                                 <input type="hidden" id="vproduct_id" value="{{ $product->vendor_id }}">
+                                 <button type="submit" class="button button-add-to-cart" onclick="addToCartDetails()" @if($total_stock <= 0) disabled style="opacity: 0.5; cursor: not-allowed;" @endif>
+                                    <i class="fi-rs-shopping-cart"></i> {{ $total_stock > 0 ? 'Add' : 'Out of Stock' }}
+                                 </button>
+                                 <a aria-label="Add To Wishlist" class="action-btn hover-up" id="{{ $product->id }}" onclick="addToWishList(this.id)"><i class="fi-rs-heart"></i></a>
+                              </div>
+                           </div>
                         </div>
                      </div>
                      {{-- @if($product->vendor_id == NULL)

@@ -44,7 +44,7 @@
                     <div class="mb-3">
                         <label for="inputProductTitle" class="form-label">Variant</label>
                         {{-- <input type="text" name="product_color" class="form-control visually-hidden" data-role="tagsinput"> --}}
-                        <input type="text" name="product_color" class="form-control visually-hidden" data-role="tagsinput" value="color or type">
+                        <input type="text" name="product_color" class="form-control visually-hidden" data-role="tagsinput" value="none">
                     </div>
                     <div class="form-group mb-3">
                         <label for="inputProductDescription" class="form-label">Short Description</label>

@@ -614,23 +614,25 @@
              }
              // end size
 
-            ///Color
-             $('select[name="color"]').empty();
-             var showColor = true;
-             if (!data.color || data.color.length === 0 || (data.color.length === 1 && data.color[0].trim().toLowerCase() === 'none') || data.color == "") {
-                 showColor = false;
-             }
-             if (!showColor) {
-                 $('#colorArea').hide();
-             } else {
-                 $('select[name="color"]').append('<option selected="" disabled=""> --select variant-- </option>');
-                 $('#colorArea').show();
-                 $.each(data.color, function(key, value){
-                     if (value.trim().toLowerCase() !== 'none') {
-                         $('select[name="color"]').append('<option value="'+value+' ">'+value+'  </option>');
-                     }
-                 });
-             }
+             ///Color
+              $('select[name="color"]').empty();
+              var validColors = [];
+              if (data.color && Array.isArray(data.color)) {
+                  validColors = data.color.filter(function(c) {
+                      if (!c) return false;
+                      var str = c.trim().toLowerCase();
+                      return str !== '' && str !== 'none' && str !== 'color or type';
+                  });
+              }
+              if (validColors.length === 0) {
+                  $('#colorArea').hide();
+              } else {
+                  $('select[name="color"]').append('<option selected="" disabled=""> --select variant-- </option>');
+                  $('#colorArea').show();
+                  $.each(validColors, function(key, value){
+                      $('select[name="color"]').append('<option value="'+value.trim()+'">'+value.trim()+'</option>');
+                  });
+              }
              
              // Adjust columns layout depending on selector visibility
              if ($('#sizeArea').is(':visible') || $('#colorArea').is(':visible')) {
