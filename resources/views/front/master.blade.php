@@ -558,7 +558,8 @@
             dataType: 'json',
             success:function(data){
                $('#pname').text(data.product.product_name);
-               $('#pprice').text(data.product.selling_price);
+               var formattedSellingPrice = parseFloat(data.product.selling_price || 0).toFixed(2);
+               $('#pprice').text(formattedSellingPrice);
                $('#pcode').text(data.product.product_code);
                $('#pcategory').text(data.product.category.category_name);
                $('#pbrand').text(data.product.brand.brand_name);
@@ -575,10 +576,10 @@
             if (data.product.discount_price == null) {
                 $('#oldprice').text('').attr('data-base-price', '');
                 $('#hide_curreny').text('');
-                $('#pprice').text(data.product.selling_price).attr('data-base-price', data.product.selling_price);
+                $('#pprice').text(formattedSellingPrice).attr('data-base-price', data.product.selling_price);
                }else{
                   $('#pprice').text(data.new_price.toFixed(2)).attr('data-base-price', data.new_price);
-                  $('#oldprice').text(data.product.selling_price).attr('data-base-price', data.product.selling_price);
+                  $('#oldprice').text(formattedSellingPrice).attr('data-base-price', data.product.selling_price);
                   $('#hide_curreny').text('Gh');
             } // end else
 

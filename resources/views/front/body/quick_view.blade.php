@@ -51,6 +51,24 @@
       padding-left: 0 !important;
       padding-right: 0 !important;
    }
+   #quickViewModal .product-price-cover {
+      padding: 8px 10px !important;
+      min-height: auto !important;
+      border-radius: 10px !important;
+   }
+   #quickViewModal .product-price {
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      gap: 4px !important;
+   }
+   #quickViewModal .product-price .current-price {
+      font-size: 20px !important;
+      white-space: nowrap !important;
+   }
+   #quickViewModal .product-price .old-price {
+      font-size: 13px !important;
+      white-space: nowrap !important;
+   }
 }
 </style>
 <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
@@ -117,10 +135,10 @@
 
                          <!-- Price Column (Right) -->
                          <div class="quickview-price-col" style="flex: 1 1 50%; display: flex; align-items: center;">
-                            <div class="product-price-cover" style="background: #fdfaf3; border-radius: 12px; padding: 12px 18px; border: 1px solid #f9ebd1; width: 100%; height: 100%; min-height: 94px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 0 !important;">
-                               <div class="product-price primary-color d-flex align-items-baseline" style="gap: 10px; font-family: 'Inter', sans-serif;">
-                                  <span class="current-price text-brand" style="font-size: 28px; font-weight: 800; color: #3bb77e;">Gh&nbsp;<span id="pprice"></span></span>
-                                  <span class="old-price text-muted" style="text-decoration: line-through; font-size: 16px; font-weight: 500; display: inline-flex;"><span id="hide_curreny">Gh</span>&nbsp;<span id="oldprice"></span></span>
+                            <div class="product-price-cover" style="background: #fdfaf3; border-radius: 12px; padding: 10px 14px; border: 1px solid #f9ebd1; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; margin-bottom: 0 !important;">
+                               <div class="product-price primary-color d-flex align-items-center justify-content-center" style="gap: 8px; font-family: 'Inter', sans-serif; flex-wrap: wrap;">
+                                  <span class="current-price text-brand" style="font-size: 22px; font-weight: 800; color: #3bb77e; white-space: nowrap;">Gh&nbsp;<span id="pprice"></span></span>
+                                  <span class="old-price text-muted" style="text-decoration: line-through; font-size: 14px; font-weight: 500; display: inline-flex; white-space: nowrap;"><span id="hide_curreny">Gh</span>&nbsp;<span id="oldprice"></span></span>
                                </div>
                             </div>
                          </div>
@@ -133,7 +151,7 @@
                            <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1" style="width: 30px; text-align: center; border: none; font-weight: 700; color: #253D4E; margin: 0 5px; font-size: 14px;">
                            <a href="#" class="qty-up" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-up"></i></a>
                         </div>
-                        <div id="modal-qty-stock" style="font-size: 13px; color: #e74c3c; font-weight: 600;"></div>
+                        <div id="modal-qty-stock" style="font-size: 13px; color: #e74c3c; font-weight: 600; display: inline-flex; align-items: center; margin: 0;"></div>
                      </div>
                      
                      <div class="product-extra-link2 mt-15">

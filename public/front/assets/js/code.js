@@ -78,7 +78,7 @@ $(document).ready(function(){
                  $(".get_attribute_price").html("<div class='product-price primary-color float-left'><span class='current-price text-brand' id='detail-current-price' data-base-price='" + resp['selling_price'] + "'>Gh " + resp['selling_price'].toFixed(2) + "</span></div>");
               }
 
-              $(".qty-stock").html("<h4 class='heading-2 text-center'><button type='button' class='btn btn-primary position-relative' style='padding: 5px 10px; font-weight:200'>in stock<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary' style='background-color: #351313 !important;font-size: .95em;'>" + "" + resp['product_stock'] + "</span></button></h4>");
+              $(".qty-stock").html("<div class='d-inline-flex align-items-center' style='margin:0;'><button type='button' class='btn btn-primary position-relative' style='padding: 5px 12px; font-weight:600; font-size: 13px; line-height: 1.2; margin: 0;'>in stock<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary' style='background-color: #351313 !important; font-size: .85em;'>" + "" + resp['product_stock'] + "</span></button></div>");
 
               var sizeStock = parseInt(resp['product_stock'], 10);
               $('#dqty').attr('max', sizeStock).attr('data-stock', sizeStock);
@@ -117,7 +117,7 @@ $(document).ready(function(){
                $(".get_attribute_price_modal").html("<div class='product-price primary-color float-left'><span class='current-price text-brand'>Gh&nbsp;</span><span class='current-price text-brand' id='pprice' data-base-price='" + resp['selling_price'] + "'>" + " " + resp['selling_price'].toFixed(2) + "</span></div>");
             }
 
-            $("#modal-qty-stock").html("<h4 class='heading-2 text-center'><button type='button' class='btn btn-primary position-relative' style='padding: 5px 10px; font-weight:200'>in stock<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary' style='background-color: #351313 !important;font-size: .95em;'>" + "" + resp['product_stock'] + "</span></button></h4>");
+            $("#modal-qty-stock").html("<div class='d-inline-flex align-items-center' style='margin:0;'><button type='button' class='btn btn-primary position-relative' style='padding: 6px 12px; font-weight:600; font-size: 13px; line-height: 1.2; margin: 0;'>in stock<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary' style='background-color: #351313 !important; font-size: .85em;'>" + "" + resp['product_stock'] + "</span></button></div>");
 
             // Trigger price update after HTML replacement
             updateTotalPrice($('#qty'));

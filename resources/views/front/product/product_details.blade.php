@@ -533,7 +533,10 @@
                         </div>
                      </div>
 
-                     <h2 class="title-detail" id="dpname" style="margin-top: 5px;"> {{ $product->product_name }} </h2>
+                      <div class="product-title-stock-wrap d-flex align-items-center flex-wrap gap-3 mb-10" style="margin-top: 5px;">
+                         <h2 class="title-detail mb-0" id="dpname" style="margin: 0;"> {{ $product->product_name }} </h2>
+                         <div class="qty-stock d-inline-flex align-items-center" style="margin: 0;"></div>
+                      </div>
 
                      @php
                      $reviewcount = App\Models\Review::where('product_id', $product->id)->where('status', 1)->latest()->get();
@@ -702,7 +705,6 @@
                                  <input type="text" name="quantity" id="dqty" class="qty-val" value="{{ $total_stock > 0 ? 1 : 0 }}" min="{{ $total_stock > 0 ? 1 : 0 }}" max="{{ $total_stock }}" data-stock="{{ $total_stock }}" @if($total_stock <= 0) disabled readonly @endif>
                                  <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                               </div>
-                              <div class="qty-stock"></div>
 
                               <div class="product-extra-link2">
                                  <input type="hidden" id="dproduct_id" value="{{ $product->id }}">
