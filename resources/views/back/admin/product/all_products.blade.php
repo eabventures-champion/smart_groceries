@@ -71,8 +71,16 @@
                         @endphp
                         @if(count($valid_variants) > 0)
                            <br>
-                           <span class="badge rounded-pill bg-success" title="Product Variants" style="font-size: 10px; margin-top: 3px;">
-                              Variant: {{ implode(', ', $valid_variants) }}
+                           <span class="badge rounded-pill bg-success" title="Product Variants" style="font-size: 10px; margin-top: 3px; display: inline-flex; align-items: center; gap: 4px;">
+                              <span>Variant: {{ implode(', ', $valid_variants) }}</span>
+                              <a href="{{ route('clear.product.variant', $item->id) }}" style="color: #ffffff; text-decoration: none; font-size: 11px; margin-left: 2px;" title="Clear variant to none" onclick="return confirm('Cancel/clear variants for {{ addslashes($item->product_name) }} to none?')">
+                                 <i class="fa fa-times-circle"></i>
+                              </a>
+                           </span>
+                        @else
+                           <br>
+                           <span class="badge rounded-pill bg-secondary" style="font-size: 10px; margin-top: 3px;">
+                              Variant: None
                            </span>
                         @endif
                      </td>

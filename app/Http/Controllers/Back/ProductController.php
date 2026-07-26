@@ -369,6 +369,16 @@ class ProductController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    public function clear_product_variant($id){
+        Product::findOrFail($id)->update(['product_color' => 'none']);
+        $notification = array(
+            'message' => 'Product variant set to none successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
+
     public function delete_product($id){
         $product = Product::findOrFail($id);
         if ($product->product_thumbnail && file_exists($product->product_thumbnail)) {

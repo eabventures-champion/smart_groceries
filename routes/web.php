@@ -245,6 +245,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::post('store-product/new-multi-image', 'store_new_multi_image')->name('store.new.multi_image');
             Route::get('product-inactive/{id}', 'product_inactive')->name('product.inactive');
             Route::get('product-active/{id}', 'product_active')->name('product.active');
+            Route::get('clear-product-variant/{id}', 'clear_product_variant')->name('clear.product.variant');
             Route::get('delete-product/{id}', 'delete_product')->name('delete.product');
 
             // For Product Attributes
