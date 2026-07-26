@@ -30,9 +30,10 @@ class CheckOutController extends Controller
             $orderAmount = $subtotal;
         }
 
-        if ($orderAmount < 50) {
+        $minOrderAmount = \App\Models\SiteSetting::getMinOrderAmount();
+        if ($orderAmount < $minOrderAmount) {
             $notification = array(
-                'message' => 'Orders below GH¢ 50.00 are not eligible for delivery.',
+                'message' => 'Orders below GH¢ ' . number_format($minOrderAmount, 2) . ' are not eligible for delivery.',
                 'alert-type' => 'error'
             );
             return redirect()->back()->with($notification);

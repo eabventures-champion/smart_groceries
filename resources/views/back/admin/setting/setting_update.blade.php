@@ -179,6 +179,16 @@
                            </div>
                         </div>
 
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                               <h6 class="mb-0">Minimum Order Threshold (GH¢)</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                               <input type="number" step="0.01" class="form-control" name="min_order_amount" value="{{ $setting->min_order_amount ?? '50.00' }}" required />
+                               <small class="text-muted">Orders below this subtotal will be ineligible for delivery checkout.</small>
+                            </div>
+                         </div>
+
                         <div class="row">
                            <div class="col-sm-3"></div>
                            <div class="col-sm-9 text-secondary">

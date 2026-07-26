@@ -11,6 +11,19 @@ class SiteSetting extends Model
     protected $guarded = [];
 
     /**
+     * Get the minimum order amount threshold for delivery.
+     *
+     * @return float
+     */
+    public static function getMinOrderAmount()
+    {
+        $setting = self::find(1);
+        return $setting && $setting->min_order_amount !== null 
+            ? (float)$setting->min_order_amount 
+            : 50.00;
+    }
+
+    /**
      * Calculate delivery fee based on order amount and student status.
      *
      * @param float $orderAmount
@@ -24,7 +37,9 @@ class SiteSetting extends Model
             return 0.00;
         }
 
-        if ($orderAmount >= 50 && $orderAmount < 150) {
+        $minOrder = self::getMinOrderAmount();
+
+        if ($orderAmount >= $minOrder && $orderAmount < 150) {
             return $isStudent 
                 ? (float)($setting->student_flat_fee ?? 15.00) 
                 : (float)($setting->non_student_flat_fee ?? 20.00);

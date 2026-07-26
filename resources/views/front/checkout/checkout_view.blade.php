@@ -30,6 +30,24 @@
 
    <form id="checkout-form" method="post" action="{{ route('checkout.store') }}">
       @csrf
+
+      @php
+         $subtotal_val = (float)str_replace(',', '', $cartTotal);
+         $orderAmount_val = Session::has('coupon') ? (float)session()->get('coupon')['total_amount'] : $subtotal_val;
+         $minOrderAmount = \App\Models\SiteSetting::getMinOrderAmount();
+      @endphp
+
+      @if($orderAmount_val < $minOrderAmount)
+         <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center mb-4" role="alert" style="border-radius: 16px; background-color: #fffbeb; border: 1.5px solid #fcd34d; color: #92400e; padding: 16px 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.12);">
+            <i class="fi-rs-info me-3" style="font-size: 26px; color: #d97706;"></i>
+            <div style="flex: 1;">
+               <h5 style="margin: 0 0 3px 0; font-size: 15px; font-weight: 800; color: #92400e;">Minimum Order Threshold Notice</h5>
+               <span style="font-size: 13px; line-height: 1.5;">Orders below <strong>GH¢ {{ number_format($minOrderAmount, 2) }}</strong> are not eligible for delivery. Your current order amount is <strong>GH¢ {{ number_format($orderAmount_val, 2) }}</strong>. Please add items worth at least <strong>GH¢ {{ number_format($minOrderAmount - $orderAmount_val, 2) }}</strong> more to proceed.</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      @endif
+
       <div class="row">
          <!-- Billing Details Card -->
          <div class="col-lg-7 mb-4">
@@ -207,9 +225,15 @@
                   </div>
                </div>
 
-               <button type="submit" class="btn btn-primary" style="background-color: #3bb77e !important; border: none; color: #fff; padding: 16px 45px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 30px; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(59, 183, 126, 0.25); cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(59, 183, 126, 0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 25px rgba(59, 183, 126, 0.25)';">
-                  Proceed <i class="fi-rs-sign-out" style="margin-left: 5px;"></i>
-               </button>
+               @if($orderAmount_val < $minOrderAmount)
+                  <button type="button" class="btn btn-primary" onclick="Swal.fire({ icon: 'warning', title: 'Minimum Order Threshold Required', text: 'Orders below GH¢ {{ number_format($minOrderAmount, 2) }} are not eligible for delivery. Please add GH¢ {{ number_format($minOrderAmount - $orderAmount_val, 2) }} more worth of items to your cart to proceed.', confirmButtonColor: '#3bb77e' });" style="background-color: #94a3b8 !important; border: none; color: #fff; padding: 16px 45px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 30px; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; cursor: pointer;">
+                     Proceed <i class="fi-rs-sign-out" style="margin-left: 5px;"></i>
+                  </button>
+               @else
+                  <button type="submit" class="btn btn-primary" style="background-color: #3bb77e !important; border: none; color: #fff; padding: 16px 45px; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: 30px; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(59, 183, 126, 0.25); cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(59, 183, 126, 0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 25px rgba(59, 183, 126, 0.25)';">
+                     Proceed <i class="fi-rs-sign-out" style="margin-left: 5px;"></i>
+                  </button>
+               @endif
             </div>
          </div>
       </div>
