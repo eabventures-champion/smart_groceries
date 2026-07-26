@@ -588,15 +588,6 @@
         }
     }
 
-    @media (max-width: 767.98px) {
-        #sg-restore-handle,
-        #sg-floating-dock,
-        #sg-floating-drawer {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-        }
-    }
 </style>
 
 <!-- Floating Vertical Tab Dock -->
@@ -896,10 +887,8 @@
                     </h4>
                     <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
                         <span style="font-size: 9px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px;">Share referral link</span>
-                        <div style="display: flex; gap: 6px;">
-                            <input type="text" id="aff-ref-link" readonly value="" class="sg-input" style="padding: 8px; font-size: 10px; font-weight: 500; font-family: monospace; background: #f7fafc; flex: 1;">
-                            <button id="aff-copy-btn" onclick="copyAffRefLink()" class="sg-btn-primary" style="width: auto; padding: 8px 14px;">Copy</button>
-                        </div>
+                        <input type="hidden" id="aff-ref-link" value="">
+                        <button id="aff-copy-btn" onclick="copyAffRefLink()" class="sg-btn-primary" style="width: 100%; padding: 10px 14px;">Copy</button>
                     </div>
                 </div>
 
@@ -1723,10 +1712,22 @@
     }
 
     function copyAffRefLink() {
-        const copyText = document.getElementById("aff-ref-link");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
+        const copyInput = document.getElementById("aff-ref-link");
+        const linkValue = copyInput ? copyInput.value : '';
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(linkValue);
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = linkValue;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            textArea.remove();
+        }
 
         // Update button feedback
         const copyBtn = document.getElementById("aff-copy-btn");

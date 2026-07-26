@@ -634,31 +634,73 @@
                         gap: 6px !important;
                         cursor: pointer !important;
                      }
-                     @media (max-width: 575px) {
-                        .product-controls-row {
-                           gap: 10px;
-                        }
-                        .product-controls-col-left {
-                           gap: 10px;
-                        }
-                        .product-controls-col-right {
-                           gap: 10px;
-                        }
-                        .product-controls-col-left select {
-                           font-size: 13px !important;
-                           height: 40px !important;
-                           padding: 6px 10px !important;
-                        }
-                        .product-controls-col-right .detail-qty {
-                           height: 40px !important;
-                        }
-                        .product-controls-col-right .button-add-to-cart {
-                           height: 40px !important;
-                           line-height: 40px !important;
-                           font-size: 13px !important;
-                        }
-                     }
-                     </style>
+                      .product-controls-col-left select {
+                         appearance: none !important;
+                         -webkit-appearance: none !important;
+                         -moz-appearance: none !important;
+                         background-color: #f8fafc !important;
+                         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23253D4E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+                         background-repeat: no-repeat !important;
+                         background-position: right 14px center !important;
+                         background-size: 14px 14px !important;
+                         border: 1.5px solid #e2e8f0 !important;
+                         border-radius: 10px !important;
+                         padding: 8px 36px 8px 14px !important;
+                         font-family: 'Outfit', 'Inter', sans-serif !important;
+                         font-size: 14px !important;
+                         font-weight: 600 !important;
+                         color: #253D4E !important;
+                         height: 44px !important;
+                         width: 100% !important;
+                         box-sizing: border-box !important;
+                         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02) !important;
+                         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                         cursor: pointer !important;
+                      }
+                      .product-controls-col-left select:hover {
+                         background-color: #ffffff !important;
+                         border-color: #3bb77e !important;
+                         box-shadow: 0 4px 12px rgba(59, 183, 126, 0.12) !important;
+                      }
+                      .product-controls-col-left select:focus {
+                         background-color: #ffffff !important;
+                         border-color: #3bb77e !important;
+                         box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.2) !important;
+                         outline: none !important;
+                      }
+                      .product-controls-col-left select option {
+                         font-family: 'Outfit', 'Inter', sans-serif !important;
+                         font-size: 14px !important;
+                         font-weight: 500 !important;
+                         color: #253D4E !important;
+                         background: #ffffff !important;
+                         padding: 10px !important;
+                      }
+                      @media (max-width: 575px) {
+                         .product-controls-row {
+                            gap: 10px;
+                         }
+                         .product-controls-col-left {
+                            gap: 10px;
+                         }
+                         .product-controls-col-right {
+                            gap: 10px;
+                         }
+                         .product-controls-col-left select {
+                            font-size: 13px !important;
+                            height: 40px !important;
+                            padding: 6px 30px 6px 10px !important;
+                         }
+                         .product-controls-col-right .detail-qty {
+                            height: 40px !important;
+                         }
+                         .product-controls-col-right .button-add-to-cart {
+                            height: 40px !important;
+                            line-height: 40px !important;
+                            font-size: 13px !important;
+                         }
+                      }
+                      </style>
 
                      <div class="product-controls-wrapper">
                         <div class="product-controls-row">
@@ -700,11 +742,11 @@
 
                            <!-- Column 2 (Right): Quantity Change (top) & Add Button (bottom) -->
                            <div class="product-controls-col-right">
-                              <div class="detail-qty border radius" @if($total_stock <= 0) style="opacity: 0.5; pointer-events: none;" @endif>
-                                 <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                 <input type="text" name="quantity" id="dqty" class="qty-val" value="{{ $total_stock > 0 ? 1 : 0 }}" min="{{ $total_stock > 0 ? 1 : 0 }}" max="{{ $total_stock }}" data-stock="{{ $total_stock }}" @if($total_stock <= 0) disabled readonly @endif>
-                                 <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                              </div>
+                               <div class="detail-qty border radius" style="border-radius: 25px; display: flex; align-items: center; justify-content: space-between; border: 1.5px solid #e2e8f0; padding: 3px 6px; background: #fff; height: 44px; width: 100%; margin: 0; box-sizing: border-box; overflow: hidden; @if($total_stock <= 0) opacity: 0.5; pointer-events: none; @endif">
+                                  <a href="#" class="qty-up" style="background-color: #3bb77e !important; color: #ffffff !important; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">+</a>
+                                  <input type="text" name="quantity" id="dqty" class="qty-val" value="{{ $total_stock > 0 ? 1 : 0 }}" min="{{ $total_stock > 0 ? 1 : 0 }}" max="{{ $total_stock }}" data-stock="{{ $total_stock }}" style="width: 28px; text-align: center; border: none; font-weight: 800; color: #253D4E; margin: 0; font-size: 14px; background: transparent; padding: 0;" @if($total_stock <= 0) disabled readonly @endif>
+                                  <a href="#" class="qty-down" style="background-color: #3bb77e !important; color: #ffffff !important; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">-</a>
+                               </div>
 
                               <div class="product-extra-link2">
                                  <input type="hidden" id="dproduct_id" value="{{ $product->id }}">

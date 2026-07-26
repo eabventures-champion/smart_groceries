@@ -46,27 +46,45 @@ class Product extends Model
     }
 
     public static function get_attribute($product_id, $size){
-        $product_attribute = ProductAttribute::where(['product_id' => $product_id, 'size' => $size])->first()->toArray();
-        
-        $product_attribute_stock = $product_attribute['stock'];
+        $trimmed = trim((string)$size);
+        $product_attribute = ProductAttribute::where('product_id', $product_id)
+            ->where(function($q) use ($trimmed, $size) {
+                $q->where('size', $trimmed)->orWhere('size', $size);
+            })->first();
+
+        if (!$product_attribute) {
+            $product_attribute = ProductAttribute::where('product_id', $product_id)->first();
+        }
+
+        if (!$product_attribute) {
+            return array('product_stock' => 0, 'selling_price' => 0, 'final_price' => 0, 'discount' => 0, 'discount_percent' => 0);
+        }
+
+        $attrArray = $product_attribute->toArray();
+        $product_attribute_stock = $attrArray['stock'];
+        $attrPrice = (float)$attrArray['price'];
 
         $productDetails = Product::select('discount_price', 'category_id')->where('id', $product_id)->first();
+        $discount_price = (float)($productDetails->discount_price ?? 0);
 
-        $productDetails = json_decode(json_encode($productDetails), true);
-
-
-        if($productDetails['discount_price'] > 0){
-            $discount_percent = $productDetails['discount_price'];
-            $value = (100 - $productDetails['discount_price'])/100; 
-            $final_price = $value * $product_attribute['price'];
-            $discount = $product_attribute['price'] - $final_price;
+        if($discount_price > 0){
+            $discount_percent = $discount_price;
+            $value = (100 - $discount_price)/100; 
+            $final_price = $value * $attrPrice;
+            $discount = $attrPrice - $final_price;
         }else{
-            $discount_percent = $productDetails['discount_price'];
-            $final_price = $product_attribute['price'];
+            $discount_percent = 0;
+            $final_price = $attrPrice;
             $discount = 0;
         }
 
-        return array('product_stock' => $product_attribute_stock, 'selling_price' => $product_attribute['price'], 'final_price' => $final_price, 'discount' => $discount, 'discount_percent' => $discount_percent);
+        return array(
+            'product_stock' => $product_attribute_stock,
+            'selling_price' => $attrPrice,
+            'final_price' => $final_price,
+            'discount' => $discount,
+            'discount_percent' => $discount_percent
+        );
     }
 
     public function getProductThumbnailAttribute($value)

@@ -42,6 +42,7 @@
                      <th>Name </th>
                      {{-- <th>Category </th> --}}
                      <th>Price </th>
+                     <th>Price attribute</th>
                      {{-- <th>QTY </th> --}}
                      <th>Total stock </th>
                      <th>Status </th>
@@ -54,8 +55,26 @@
                      <td> {{ $key+1 }} </td>
                      <td> <img src="{{ asset($item->product_thumbnail) }}" style="width: 70px; height:40px;" >  </td>
                      <td>
-                        {{ $item->product_name }} <br> 
+                        <span class="fw-bold" style="color: #253D4E;">{{ $item->product_name }}</span> <br> 
                         <span class="badge rounded-pill bg-primary">{{ $item->category?->category_name ?? 'N/A' }}</span>
+                        @php
+                           $valid_variants = [];
+                           if (!empty($item->product_color)) {
+                               $raw_colors = explode(',', $item->product_color);
+                               foreach ($raw_colors as $c) {
+                                   $trimmed_c = trim($c);
+                                   if ($trimmed_c !== '' && strtolower($trimmed_c) !== 'none' && strtolower($trimmed_c) !== 'color or type') {
+                                       $valid_variants[] = ucwords($trimmed_c);
+                                   }
+                               }
+                           }
+                        @endphp
+                        @if(count($valid_variants) > 0)
+                           <br>
+                           <span class="badge rounded-pill bg-success" title="Product Variants" style="font-size: 10px; margin-top: 3px;">
+                              Variant: {{ implode(', ', $valid_variants) }}
+                           </span>
+                        @endif
                      </td>
                      {{-- <td>{{ $item->category->category_name }}</td> --}}
                      <td>
@@ -64,6 +83,26 @@
                            <span class="badge rounded-pill bg-info">No Discount</span>
                            @else
                            <span class="badge rounded-pill bg-danger"> {{ round((float)$item->discount_price) }}% off</span>
+                        @endif
+                     </td>
+                     <td>
+                        @php
+                           $attributes = App\Models\ProductAttribute::where('product_id', $item->id)->get();
+                        @endphp
+                        @if($attributes->count() > 0)
+                           <div style="display: flex; flex-direction: column; gap: 5px; font-size: 13px;">
+                              @foreach($attributes as $attr)
+                                 <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold" style="color: #253D4E;">{{ $attr->size }}:</span>
+                                    <span class="text-success fw-bold">Gh {{ number_format((float)$attr->price, 2) }}</span>
+                                    <span class="badge rounded-pill" style="background-color: #fd7e14; color: #ffffff; font-size: 11px; padding: 4px 8px;" title="Stock">
+                                       {{ $attr->stock }}
+                                    </span>
+                                 </div>
+                              @endforeach
+                           </div>
+                        @else
+                           <span class="text-muted" style="font-size: 12px;">N/A</span>
                         @endif
                      </td>
                      {{-- <td>{{ $item->product_qty }}</td> --}}

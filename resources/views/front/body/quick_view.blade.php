@@ -70,6 +70,53 @@
       white-space: nowrap !important;
    }
 }
+
+/* Modern Appealing Dropdown Select Styling for Quick View Modal */
+#quickViewModal select.form-control {
+   appearance: none !important;
+   -webkit-appearance: none !important;
+   -moz-appearance: none !important;
+   background-color: #f8fafc !important;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23253D4E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+   background-repeat: no-repeat !important;
+   background-position: right 14px center !important;
+   background-size: 14px 14px !important;
+   border: 1.5px solid #e2e8f0 !important;
+   border-radius: 10px !important;
+   padding: 8px 36px 8px 14px !important;
+   font-family: 'Outfit', 'Inter', sans-serif !important;
+   font-size: 14px !important;
+   font-weight: 600 !important;
+   color: #253D4E !important;
+   height: 44px !important;
+   width: 100% !important;
+   box-sizing: border-box !important;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02) !important;
+   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+   cursor: pointer !important;
+}
+
+#quickViewModal select.form-control:hover {
+   background-color: #ffffff !important;
+   border-color: #3bb77e !important;
+   box-shadow: 0 4px 12px rgba(59, 183, 126, 0.12) !important;
+}
+
+#quickViewModal select.form-control:focus {
+   background-color: #ffffff !important;
+   border-color: #3bb77e !important;
+   box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.2) !important;
+   outline: none !important;
+}
+
+#quickViewModal select.form-control option {
+   font-family: 'Outfit', 'Inter', sans-serif !important;
+   font-size: 14px !important;
+   font-weight: 500 !important;
+   color: #253D4E !important;
+   background: #ffffff !important;
+   padding: 10px !important;
+}
 </style>
 <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered" style="max-width: 760px !important; margin: 30px auto; top: auto !important; transform: none !important;">
@@ -136,11 +183,11 @@
                             </div>
 
                             {{-- quantities --}}
-                            <div class="detail-qty border radius" style="border-radius: 8px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #ececec; padding: 0 10px; background: #fff; height: 44px; width: 100%; margin: 0; box-sizing: border-box;">
-                               <a href="#" class="qty-down" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-down"></i></a>
-                               <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1" style="width: 30px; text-align: center; border: none; font-weight: 700; color: #253D4E; margin: 0 5px; font-size: 14px;">
-                               <a href="#" class="qty-up" style="color: #7e7e7e; display: inline-flex; font-size: 14px;"><i class="fi-rs-angle-small-up"></i></a>
-                            </div>
+                             <div class="detail-qty border radius" style="border-radius: 25px; display: flex; align-items: center; justify-content: space-between; border: 1.5px solid #e2e8f0; padding: 4px 10px; background: #fff; height: 44px; width: 100%; max-width: 100%; margin: 0; box-sizing: border-box; overflow: hidden;">
+                                <a href="#" class="qty-up" style="background-color: #3bb77e; color: #ffffff; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.2);">+</a>
+                                <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1" style="width: 28px; text-align: center; border: none; font-weight: 800; color: #253D4E; margin: 0; font-size: 14px; background: transparent; padding: 0;">
+                                <a href="#" class="qty-down" style="background-color: #3bb77e; color: #ffffff; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.2);">-</a>
+                             </div>
                          </div>
 
                          <!-- Price Column (Right) -->

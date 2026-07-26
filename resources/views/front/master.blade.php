@@ -73,6 +73,69 @@
             display: none !important;
          }
 
+         /* Master Horizontal Quantity Control Styling (+ QTY -) */
+         .detail-qty {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            position: relative !important;
+            padding: 4px 10px !important;
+            border-radius: 25px !important;
+            border: 1.5px solid #e2e8f0 !important;
+            background: #ffffff !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 110px !important;
+            height: 44px !important;
+            overflow: hidden !important;
+         }
+
+         .detail-qty > a,
+         .detail-qty > a.qty-up,
+         .detail-qty > a.qty-down,
+         .detail-qty > a:hover,
+         .detail-qty > a:focus,
+         .detail-qty > a:active,
+         .detail-qty > a:visited {
+            position: static !important;
+            top: auto !important;
+            bottom: auto !important;
+            right: auto !important;
+            left: auto !important;
+            transform: none !important;
+            flex-shrink: 0 !important;
+            background-color: #3bb77e !important;
+            color: #ffffff !important;
+            width: 26px !important;
+            height: 26px !important;
+            border-radius: 50% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: 800 !important;
+            font-size: 16px !important;
+            line-height: 1 !important;
+            text-decoration: none !important;
+            box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25) !important;
+         }
+
+         .detail-qty > input.qty-val {
+            position: static !important;
+            width: 28px !important;
+            text-align: center !important;
+            border: none !important;
+            font-weight: 800 !important;
+            color: #253D4E !important;
+            margin: 0 !important;
+            font-size: 14px !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            outline: none !important;
+            padding: 0 !important;
+         }
+
          /* Make product image wrapper overflow visible globally so tooltips aren't clipped */
          .product-cart-wrap .product-img-action-wrap {
             overflow: visible !important;
@@ -616,7 +679,7 @@
              if (data.product_attribute && data.product_attribute.length > 0) {
                  $('select[name="size"]').append('<option selected="" disabled=""> --select size-- </option>');
                  $.each(data.product_attribute, function(key,value){
-                    $('select[name="size"]').append('<option value="'+value.size+' ">'+value.size+'  </option>');
+                     $('select[name="size"]').append('<option value="'+$.trim(value.size)+'">'+$.trim(value.size)+'</option>');
                  });
                  $('#sizeArea').show();
                  $('select[name="size"]').show();
@@ -1295,11 +1358,11 @@
 
                  <td class="price" data-title="Quantity">
                      <div class="detail-extralink">
-                         <div class="detail-qty border radius">
-                          <a type="submit" class="qty-down" id="${value.rowId}" onclick="cartDecrement(this.id)"><i class="fi-rs-angle-small-down"></i></a>
-                          <input type="text" name="quantity" class="qty-val" value="${value.qty}" min="1" readonly>
-                          <a type="submit" class="qty-up" id="${value.rowId}" onclick="cartIncrement(this.id)"><i class="fi-rs-angle-small-up"></i></a>
-                         </div>
+                          <div class="detail-qty border radius" style="border-radius: 20px; display: inline-flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; padding: 3px 6px; background: #fff; height: 38px; min-width: 100px; box-sizing: border-box;">
+                           <a type="submit" class="qty-up" id="${value.rowId}" onclick="cartIncrement(this.id)" style="background-color: #3bb77e; color: #ffffff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">+</a>
+                           <input type="text" name="quantity" class="qty-val" value="${value.qty}" min="1" readonly style="width: 30px; text-align: center; border: none; font-weight: 800; color: #253D4E; margin: 0; font-size: 14px; background: transparent;">
+                           <a type="submit" class="qty-down" id="${value.rowId}" onclick="cartDecrement(this.id)" style="background-color: #3bb77e; color: #ffffff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">-</a>
+                          </div>
                      </div>
                  </td>
 

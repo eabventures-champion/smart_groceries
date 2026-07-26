@@ -86,7 +86,7 @@ $(document).ready(function(){
            type: 'post',
            url: '/get-product-price',
            data: {
-              size: size,
+              size: $.trim(size),
               product_id: product_id
            },
            success: function (resp) {
@@ -143,14 +143,18 @@ $(document).ready(function(){
          type: 'post',
          url: '/get-product-price',
          data: {
-            size: size,
+            size: $.trim(size),
             product_id: product_id
          },
          success: function (resp) {
             if (resp['discount'] > 0) {
-               $(".get_attribute_price_modal").html("<div class='product-price primary-color float-left'><span class='current-price text-brand'>Gh&nbsp;</span><span class='current-price text-brand' id='pprice' data-base-price='" + resp['final_price'] + "'>" + " " + resp['final_price'].toFixed(2) + "</span><span class='old-price font-md ml-20' id='hide_curreny'></span><span class='old-price font-md ml-5' id='oldprice' data-base-price='" + resp['selling_price'] + "'>Gh " + resp['selling_price'].toFixed(2) + "</span></div>");
+               $('#pprice').text(parseFloat(resp['final_price'] || 0).toFixed(2)).attr('data-base-price', resp['final_price']);
+               $('#oldprice').text(parseFloat(resp['selling_price'] || 0).toFixed(2)).attr('data-base-price', resp['selling_price']);
+               $('#hide_curreny').text('Gh');
             } else {
-               $(".get_attribute_price_modal").html("<div class='product-price primary-color float-left'><span class='current-price text-brand'>Gh&nbsp;</span><span class='current-price text-brand' id='pprice' data-base-price='" + resp['selling_price'] + "'>" + " " + resp['selling_price'].toFixed(2) + "</span></div>");
+               $('#pprice').text(parseFloat(resp['selling_price'] || 0).toFixed(2)).attr('data-base-price', resp['selling_price']);
+               $('#oldprice').text('').attr('data-base-price', '');
+               $('#hide_curreny').text('');
             }
 
             $("#modal-qty-stock").html("<div class='d-inline-flex align-items-center' style='margin:0;'><button type='button' class='btn btn-primary position-relative' style='padding: 6px 12px; font-weight:600; font-size: 13px; line-height: 1.2; margin: 0;'>in stock<span class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary' style='background-color: #351313 !important; font-size: .85em;'>" + "" + resp['product_stock'] + "</span></button></div>");

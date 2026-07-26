@@ -38,11 +38,11 @@
                       </div>
                    </div>
                    <div class="detail-extralink mb-10">
-                      <div class="detail-qty border radius">
-                         <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                         <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1">                        
-                         <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                      </div>
+                       <div class="detail-qty border radius" style="border-radius: 20px; display: inline-flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; padding: 4px 8px; background: #fff; height: 44px; min-width: 110px; box-sizing: border-box;">
+                           <a href="#" class="qty-up" style="background-color: #3bb77e; color: #ffffff; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">+</a>
+                           <input type="text" name="qty" id="qty" class="qty-val" value="1" min="1" style="width: 32px; text-align: center; border: none; font-weight: 800; color: #253D4E; margin: 0; font-size: 15px; background: transparent;">
+                           <a href="#" class="qty-down" style="background-color: #3bb77e; color: #ffffff; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">-</a>
+                       </div>
                       <div class="product-extra-link2">
                          <input type="hidden" id="product_id">
                          <button type="submit" class="button button-add-to-cart" onclick="addToCart()"><i class="fi-rs-shopping-cart"></i></button>                     
