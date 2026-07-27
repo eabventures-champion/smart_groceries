@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,11 +41,25 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $loginInput = $this->input('email');
+
+        $user = \App\Models\User::where('email', $loginInput)
+            ->orWhere('username', $loginInput)
+            ->first();
+
+        if (!$user) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'No account found with this username or email.',
+            ]);
+        }
+
+        if (! Auth::attempt(['email' => $user->email, 'password' => $this->input('password')], $this->boolean('remember'))) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'password' => 'The password you entered is incorrect.',
             ]);
         }
 

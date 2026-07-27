@@ -289,7 +289,7 @@
                                  <form id="myForm_type" method="post" action="{{ route('login') }}">
                                     @csrf
                                     <div class="form-group">
-                                       <input type="email" id="email" required="" name="email" placeholder="Username or Email *" class="form-control @error('email') is-invalid @enderror" />
+                                       <input type="text" id="email" required="" name="email" value="{{ old('email') }}" placeholder="Username or Email *" class="form-control @error('email') is-invalid @enderror" />
                                        @error('email')
                                        <span class="text-danger">{{ $message }}</span>
                                        @enderror

@@ -1365,10 +1365,10 @@
 
                  <td class="price" data-title="Quantity">
                      <div class="detail-extralink">
-                          <div class="detail-qty border radius" style="border-radius: 20px; display: inline-flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; padding: 3px 6px; background: #fff; height: 38px; min-width: 100px; box-sizing: border-box;">
-                           <a type="submit" class="qty-up" id="${value.rowId}" onclick="cartIncrement(this.id)" style="background-color: #3bb77e; color: #ffffff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">+</a>
-                           <input type="text" name="quantity" class="qty-val" value="${value.qty}" min="1" readonly style="width: 30px; text-align: center; border: none; font-weight: 800; color: #253D4E; margin: 0; font-size: 14px; background: transparent;">
-                           <a type="submit" class="qty-down" id="${value.rowId}" onclick="cartDecrement(this.id)" style="background-color: #3bb77e; color: #ffffff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; line-height: 1; text-decoration: none; box-shadow: 0 2px 4px rgba(59, 183, 126, 0.25);">-</a>
+                          <div class="detail-qty border radius" style="border-radius: 20px; display: inline-flex; align-items: center; justify-content: space-between; border: none; padding: 4px 8px; background: #3bb77e; height: 38px; min-width: 105px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(59, 183, 126, 0.25);">
+                           <a type="submit" class="qty-up" id="${value.rowId}" onclick="cartIncrement(this.id)" style="background-color: rgba(255, 255, 255, 0.22); color: #ffffff !important; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; line-height: 1; text-decoration: none;">+</a>
+                           <input type="text" name="quantity" class="qty-val" value="${value.qty}" min="1" readonly style="width: 32px; text-align: center; border: none; font-weight: 800; color: #ffffff !important; margin: 0; font-size: 15px; background: transparent;">
+                           <a type="submit" class="qty-down" id="${value.rowId}" onclick="cartDecrement(this.id)" style="background-color: rgba(255, 255, 255, 0.22); color: #ffffff !important; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; line-height: 1; text-decoration: none;">-</a>
                           </div>
                      </div>
                  </td>

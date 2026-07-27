@@ -428,26 +428,26 @@
 
                                    {{--
                               <li>
-                                 <a href="#">Pages <i class="fi-rs-angle-down"></i></a>
-                                 <ul class="sub-menu">
-                                    <li><a href="page-about.html">About Us</a></li>
-                                    <li><a href="page-contact.html">Contact</a></li>
-                                    <li><a href="page-account.html">My Account</a></li>
-                                    <li><a href="page-login.html">Login</a></li>
-                                    <li><a href="page-register.html">Register</a></li>
-                                    <li><a href="page-forgot-password.html">Forgot password</a></li>
-                                    <li><a href="page-reset-password.html">Reset password</a></li>
-                                    <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
-                                    <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
-                                    <li><a href="page-terms.html">Terms of Service</a></li>
-                                    <li><a href="page-404.html">404 Page</a></li>
-                                 </ul>
-                              </li>
-                              --}}
+                                   <li>
+                                      <a href="#">Pages <i class="fi-rs-angle-down"></i></a>
+                                      <ul class="sub-menu">
+                                         <li><a href="page-about.html">About Us</a></li>
+                                         <li><a href="page-contact.html">Contact</a></li>
+                                         <li><a href="page-account.html">My Account</a></li>
+                                          <li><a href="{{ route('login') }}">Login</a></li>
+                                          <li><a href="{{ route('register') }}">Register</a></li>
+                                          <li><a href="{{ route('password.request') }}">Forgot password</a></li>
+                                         <li><a href="page-reset-password.html">Reset password</a></li>
+                                         <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
+                                         <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
+                                         <li><a href="page-terms.html">Terms of Service</a></li>
+                                         <li><a href="page-404.html">404 Page</a></li>
+                                      </ul>
+                                   </li>
 
                                    {{-- <li>
                                  <a href="{{ route('shop.page') }}">Shop</a>
-                              </li> --}}
+                               </li> --}}
                                </ul>
                            </nav>
                        </div>
@@ -771,41 +771,9 @@
                                    @endforeach
                                </ul>
                            </li>
-                           {{--
-                     <li class="menu-item-has-children">
-                        <a href="blog-category-fullwidth.html">Blog</a>
-                        <ul class="dropdown">
-                           <li><a href="blog-category-grid.html">Blog Category Grid</a></li>
-                           <li><a href="blog-category-list.html">Blog Category List</a></li>
-                           <li><a href="blog-category-big.html">Blog Category Big</a></li>
-                           <li><a href="blog-category-fullwidth.html">Blog Category Wide</a></li>
                            <li class="menu-item-has-children">
-                              <a href="#">Single Product Layout</a>
+                              <a href="#">Pages</a>
                               <ul class="dropdown">
-                                 <li><a href="blog-post-left.html">Left Sidebar</a></li>
-                                 <li><a href="blog-post-right.html">Right Sidebar</a></li>
-                                 <li><a href="blog-post-fullwidth.html">No Sidebar</a></li>
-                              </ul>
-                           </li>
-                        </ul>
-                     </li>
-                     --}}
-
-                           {{-- <li class="menu-item-has-children">
-                        <a href="#">Pages</a>
-                        <ul class="dropdown">
-                           <li><a href="page-about.html">About Us</a></li>
-                           <li><a href="page-contact.html">Contact</a></li>
-                           <li><a href="{{ route('dashboard') }}">My Account</a></li>
-                           <li><a href="{{ route('login') }}">Login</a></li>
-                           <li><a href="{{ route('register') }}">Register</a></li>
-                           <li><a href="page-forgot-password.html">Forgot password</a></li>
-                           <li><a href="page-reset-password.html">Reset password</a></li>
-                           <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
-                           <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
-                           <li><a href="page-terms.html">Terms of Service</a></li>
-                           <li><a href="page-404.html">404 Page</a></li>
-                        </ul>
                      </li> --}}
 
                            {{--

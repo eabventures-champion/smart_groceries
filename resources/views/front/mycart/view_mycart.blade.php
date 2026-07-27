@@ -179,29 +179,51 @@ MyCart Page
    
    /* Quantity selector adjustments */
    .shopping-summery .detail-qty {
-      border-radius: 8px !important;
-      border: 1px solid #ececec !important;
-      padding: 8px 12px !important;
-      background: #fff !important;
+      border-radius: 20px !important;
+      border: none !important;
+      padding: 4px 8px !important;
+      background: #3bb77e !important;
       display: inline-flex !important;
       align-items: center !important;
-      max-width: 105px !important;
+      justify-content: space-between !important;
+      height: 38px !important;
+      min-width: 105px !important;
+      box-shadow: 0 4px 12px rgba(59, 183, 126, 0.25) !important;
    }
    .shopping-summery .detail-qty .qty-val {
       border: none !important;
-      font-weight: 700 !important;
-      color: #253D4E !important;
-      width: 35px !important;
+      font-weight: 800 !important;
+      color: #ffffff !important;
+      width: 32px !important;
       text-align: center !important;
       background: transparent !important;
-      font-size: 14px !important;
-      margin: 0 5px !important;
+      font-size: 15px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      outline: none !important;
    }
    .shopping-summery .detail-qty a {
-      color: #7e7e7e !important;
-      font-size: 14px !important;
+      color: #ffffff !important;
+      background-color: rgba(255, 255, 255, 0.22) !important;
+      width: 26px !important;
+      height: 26px !important;
+      border-radius: 50% !important;
       display: inline-flex !important;
-      cursor: pointer;
+      align-items: center !important;
+      justify-content: center !important;
+      font-weight: 800 !important;
+      font-size: 16px !important;
+      line-height: 1 !important;
+      text-decoration: none !important;
+      cursor: pointer !important;
+      transition: background 0.2s ease, transform 0.15s ease !important;
+      box-shadow: none !important;
+   }
+   .shopping-summery .detail-qty a:hover {
+      background-color: rgba(255, 255, 255, 0.38) !important;
+      color: #ffffff !important;
+      transform: scale(1.08) !important;
    }
    
    /* Cart summary totals style overrides */

@@ -49,11 +49,23 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $response = $this->post('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
 
         $this->assertGuest();
+        $response->assertSessionHasErrors(['password' => 'The password you entered is incorrect.']);
+    }
+
+    public function test_users_can_not_authenticate_with_nonexistent_email(): void
+    {
+        $response = $this->post('/login', [
+            'email' => 'nonexistent@example.com',
+            'password' => 'some-password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors(['email' => 'No account found with this username or email.']);
     }
 }
