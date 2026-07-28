@@ -64,24 +64,12 @@
                <tbody>
                   @foreach($affiliates as $key => $item)		
                   @php
-                      $activeCount = 0;
-                      $totalCount = 0;
-                      $totalEarned = 0;
-                      $totalRedrawal = 0;
-                      $displayedBalance = 0;
-                      if ($item->status === 'active') {
-                          $activeCount = \App\Models\User::where('referred_by', $item->id)->where('status', 'active')->count();
-                          $totalCount = \App\Models\User::where('referred_by', $item->id)->count();
-                          
-                          // Calculated dynamically: flat bonus only on first delivered order of active referred users
-                          $flatAmount = \App\Models\SiteSetting::find(1)->referral_flat_amount ?? 2.00;
-                          $referredUserIds = \App\Models\User::where('referred_by', $item->id)->where('status', 'active')->pluck('id');
-                          $qualifyingReferralsCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->where('status', 'delivered')->distinct('user_id')->count('user_id');
-                          
-                          $totalEarned = $qualifyingReferralsCount * $flatAmount;
-                          $totalRedrawal = \App\Models\AffiliatePayout::where('user_id', $item->id)->where('status', 'completed')->sum('amount');
-                          $displayedBalance = max(0, $totalEarned - $totalRedrawal);
-                      }
+                      $activeCount = \App\Models\User::where('referred_by', $item->id)->where('status', 'active')->count();
+                      $totalCount = \App\Models\User::where('referred_by', $item->id)->count();
+                      
+                      $totalEarned = $item->getAffiliateTotalEarned();
+                      $totalRedrawal = $item->getAffiliateTotalRedrawal();
+                      $displayedBalance = $item->getAffiliateCurrentBalance();
                   @endphp
                   <tr data-has-email="{{ !empty($item->email) ? 'true' : 'false' }}" data-has-phone="{{ !empty($item->phone) ? 'true' : 'false' }}">
                      <td> {{ $key+1 }} </td>

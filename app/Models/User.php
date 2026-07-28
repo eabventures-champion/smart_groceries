@@ -93,6 +93,39 @@ class User extends Authenticatable
         return $this->hasMany(AffiliatePayout::class, 'user_id');
     }
 
+    public function getAffiliateTotalEarned(): float
+    {
+        $siteSetting = \App\Models\SiteSetting::find(1);
+        $isPartner = ($this->is_partner || !empty($this->institution) || (!empty($this->resident_type) && str_contains(strtolower($this->resident_type), 'partner')));
+        $flatAmount = $isPartner
+            ? ($siteSetting->partner_referral_amount ?? 3.00)
+            : ($siteSetting->referral_flat_amount ?? 15.00);
+
+        $loggedEarned = (float)\App\Models\AffiliateReferral::where('referrer_id', $this->id)->sum('commission_earned');
+        
+        $referredUserIds = \App\Models\User::where('referred_by', $this->id)->pluck('id');
+        $qualifyingCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->whereIn('status', ['confirmed', 'processing', 'delivering', 'delivered'])->distinct('user_id')->count('user_id');
+
+        $completedPayouts = (float)\App\Models\AffiliatePayout::where('user_id', $this->id)->where('status', 'completed')->sum('amount');
+        $pendingPayouts = (float)\App\Models\AffiliatePayout::where('user_id', $this->id)->where('status', 'pending')->sum('amount');
+        
+        $calculatedEarned = max($loggedEarned, $qualifyingCount * $flatAmount);
+
+        return max($calculatedEarned, (float)$this->referral_balance + $completedPayouts + $pendingPayouts);
+    }
+
+    public function getAffiliateTotalRedrawal(): float
+    {
+        return (float)\App\Models\AffiliatePayout::where('user_id', $this->id)
+            ->where('status', 'completed')
+            ->sum('amount');
+    }
+
+    public function getAffiliateCurrentBalance(): float
+    {
+        return (float)$this->referral_balance;
+    }
+
     // Helper to generate dynamic unique referral code
     public static function generateReferralCode($username)
     {

@@ -588,22 +588,10 @@
                     </thead>
                     <tbody>
                         @forelse(App\Models\User::where('role', 'user')->whereNotNull('referral_code')->get()->map(function($user) {
-                            $user->active_referrals = 0;
-                            $user->total_referrals = 0;
-                            $user->total_earned = 0;
-                            $user->displayed_balance = 0;
-                            if ($user->status === 'active') {
-                                $user->active_referrals = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->count();
-                                $user->total_referrals = App\Models\User::where('referred_by', $user->id)->count();
-                                
-                                $flatAmount = App\Models\SiteSetting::find(1)->referral_flat_amount ?? 2.00;
-                                $referredUserIds = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->pluck('id');
-                                $qualifyingReferralsCount = App\Models\Order::whereIn('user_id', $referredUserIds)->where('status', 'delivered')->distinct('user_id')->count('user_id');
-                                
-                                $user->total_earned = $qualifyingReferralsCount * $flatAmount;
-                                $totalRedrawal = App\Models\AffiliatePayout::where('user_id', $user->id)->where('status', 'completed')->sum('amount');
-                                $user->displayed_balance = max(0, $user->total_earned - $totalRedrawal);
-                            }
+                            $user->active_referrals = App\Models\User::where('referred_by', $user->id)->where('status', 'active')->count();
+                            $user->total_referrals = App\Models\User::where('referred_by', $user->id)->count();
+                            $user->total_earned = $user->getAffiliateTotalEarned();
+                            $user->displayed_balance = $user->getAffiliateCurrentBalance();
                             $user->referrals_count = $user->active_referrals;
                             return $user;
                         })->sortByDesc('referrals_count')->take(5) as $affiliate)

@@ -237,7 +237,7 @@ class FloatingFeatureController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'amount' => 'required|numeric|min:50',
+            'amount' => 'required|numeric|min:1',
             'payment_method' => 'required|string',
         ]);
 
