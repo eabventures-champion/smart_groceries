@@ -28,6 +28,44 @@
       </div>
    </div>
 
+   @php
+      $deliveryInfo = \App\Models\Order::getDeliveryEstimation();
+      $deliveryDaysText = \App\Models\SiteSetting::getDeliveryDaysFormatted();
+      $cutoffTimeText = \App\Models\SiteSetting::getCutoffTimeFormatted();
+   @endphp
+
+   <div class="row mb-4">
+      <div class="col-lg-12">
+         @if($deliveryInfo['is_queued'])
+         <div class="alert border-0 py-3 px-4 d-flex align-items-center" style="border-radius: 16px; background: rgba(243, 156, 18, 0.08); border-left: 5px solid #f39c12 !important; color: #253D4E; margin: 0;">
+            <div style="font-size: 28px; margin-right: 20px; color: #f39c12; display: inline-flex;"><i class="fi-rs-info"></i></div>
+            <div>
+               <h6 class="mb-1 fw-bold" style="color: #253D4E; font-size: 16px;">⚠️ Delivery Schedule Notice (Queued Order)</h6>
+               <p class="mb-0 text-muted" style="font-size: 14px; line-height: 1.5; font-family: 'Inter', sans-serif;">
+                  @if($deliveryInfo['is_delivery_day'])
+                     Today is a delivery day ({{ $deliveryDaysText }}) but it is past the <strong>{{ $cutoffTimeText }}</strong> cutoff time.
+                  @else
+                     Today is not a scheduled delivery day (Delivery days are <strong>{{ $deliveryDaysText }}</strong>).
+                  @endif
+                  Your order will be <strong>queued</strong> and scheduled for delivery on: <strong style="color: #253D4E;">{{ $deliveryInfo['next_delivery_date_formatted'] }}</strong> (in {{ $deliveryInfo['proximity_days'] }} days).
+               </p>
+            </div>
+         </div>
+         @else
+         <div class="alert border-0 py-3 px-4 d-flex align-items-center" style="border-radius: 16px; background: rgba(59, 183, 126, 0.08); border-left: 5px solid #3bb77e !important; color: #253D4E; margin: 0;">
+            <div style="font-size: 28px; margin-right: 20px; color: #3bb77e; display: inline-flex;"><i class="fi-rs-marker"></i></div>
+            <div>
+               <h6 class="mb-1 fw-bold" style="color: #253D4E; font-size: 16px;">🚚 Delivery Schedule Notice</h6>
+               <p class="mb-0 text-muted" style="font-size: 14px; line-height: 1.5; font-family: 'Inter', sans-serif;">
+                  Deliveries are scheduled on <strong>{{ $deliveryDaysText }}</strong> with an <strong>{{ $cutoffTimeText }}</strong> cutoff time.
+                  Your order is estimated to be delivered on: <strong style="color: #3bb77e;">{{ $deliveryInfo['next_delivery_date_formatted'] }}</strong> (in {{ $deliveryInfo['proximity_days'] }} days).
+               </p>
+            </div>
+         </div>
+         @endif
+      </div>
+   </div>
+
    <form id="checkout-form" method="post" action="{{ route('checkout.store') }}">
       @csrf
 
