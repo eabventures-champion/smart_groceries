@@ -255,6 +255,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('delete-product-attribute/{id}', 'delete_product_attribute')->name('delete.product.attribute');
             Route::post('edit-attribute/{id}', 'edit_attritube');
             Route::post('update-single-attribute/{id}', 'update_single_attribute')->name('update.single.attribute');
+            Route::post('update-attributes-order', 'update_attributes_order')->name('update.attributes.order');
             // Route::post('update-attribute-status', 'update_attribute_status');
 
             // For Product Stock

@@ -42,7 +42,7 @@ class Product extends Model
     }
 
     public function attributes(){
-        return $this->hasMany(ProductAttribute::class);
+        return $this->hasMany(ProductAttribute::class)->orderBy('sort_order', 'asc')->orderBy('id', 'asc');
     }
 
     public static function get_attribute($product_id, $size){

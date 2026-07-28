@@ -59,13 +59,18 @@
             <button class="btn btn-sm btn-danger">Cancel</button>
         </form>
 
-        <br><br><h6 class="card-title">Added Product Attributes</h6>
+        <br><br>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="card-title mb-0">Added Product Attributes</h6>
+            <small class="text-muted"><i class="fa fa-info-circle me-1"></i> Drag rows using the <i class="fa-solid fa-grip-vertical text-dark"></i> handle to reorder.</small>
+        </div>
         <form method="post" action="{{ url('admin/edit-attribute/'.$product['id']) }}">
             @csrf
             <div class="table-responsive">
-                <table class="table table-striped table-bordered align-middle" style="width:100%">
+                <table class="table table-striped table-bordered align-middle" id="attributes-table" style="width:100%">
                     <thead>
                         <tr>
+                            <th style="width: 40px;" class="text-center"><i class="fa-solid fa-grip-vertical" title="Drag to reorder"></i></th>
                             <th>Size</th>
                             <th>SKU</th>
                             <th>Price (GH¢)</th>
@@ -75,8 +80,13 @@
                     </thead>
                     <tbody>
                         @foreach($product['attributes'] as $attribute)
-                        <tr>
+                        <tr class="attribute-row" data-id="{{ $attribute['id'] }}" draggable="true" style="cursor: move;">
                             <input style="display: none;" type="text" name="attribute_id[]" value="{{ $attribute['id'] }}">
+                            <td class="text-center bg-light">
+                                <span class="drag-handle" style="cursor: grab; font-size: 18px; color: #6c757d;" title="Click & Drag to reorder">
+                                    <i class="fa-solid fa-grip-vertical"></i>
+                                </span>
+                            </td>
                             <td>
                                 <input type="text" name="size[]" value="{{ $attribute['size'] }}" required class="form-control form-control-sm" style="width: 130px;">
                             </td>
@@ -155,6 +165,76 @@
             </div>
         </div>
         @endforeach
+
+        <style>
+            .attribute-row.dragging {
+                opacity: 0.5;
+                background-color: #fff3cd !important;
+                border: 2px dashed #ffc107 !important;
+            }
+            .attribute-row {
+                transition: background-color 0.15s ease;
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tbody = document.querySelector('#attributes-table tbody');
+                if (!tbody) return;
+
+                let dragRow = null;
+
+                tbody.querySelectorAll('.attribute-row').forEach(row => {
+                    row.addEventListener('dragstart', function (e) {
+                        dragRow = this;
+                        this.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+
+                    row.addEventListener('dragover', function (e) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        if (this !== dragRow) {
+                            const bounding = this.getBoundingClientRect();
+                            const offset = bounding.y + (bounding.height / 2);
+                            if (e.clientY > offset) {
+                                this.after(dragRow);
+                            } else {
+                                this.before(dragRow);
+                            }
+                        }
+                    });
+
+                    row.addEventListener('dragend', function () {
+                        this.classList.remove('dragging');
+                        dragRow = null;
+                        saveNewAttributeOrder();
+                    });
+                });
+
+                function saveNewAttributeOrder() {
+                    const attributeIds = Array.from(tbody.querySelectorAll('.attribute-row')).map(row => row.getAttribute('data-id'));
+                    
+                    fetch('{{ route("update.attributes.order") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ attribute_ids: attributeIds })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success(data.message);
+                            }
+                        }
+                    })
+                    .catch(err => console.error(err));
+                }
+            });
+        </script>
 
 
 

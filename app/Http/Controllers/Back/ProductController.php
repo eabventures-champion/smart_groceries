@@ -409,7 +409,11 @@ class ProductController extends Controller
     }
 
     public function add_edit_attributes(Request $request, $id){
-        $product = Product::select('id', 'product_name', 'product_code', 'product_color', 'product_thumbnail', 'selling_price')->with('attributes')->find($id);
+        $product = Product::select('id', 'product_name', 'product_code', 'product_color', 'product_thumbnail', 'selling_price')
+            ->with(['attributes' => function($q){
+                $q->orderBy('sort_order', 'asc')->orderBy('id', 'asc');
+            }])
+            ->find($id);
 
         if($request->isMethod('post')){
             $data = $request->all();
@@ -521,6 +525,7 @@ class ProductController extends Controller
                         if (isset($data['sku']) && is_array($data['sku']) && isset($data['sku'][$key])) {
                             $updateData['sku'] = $data['sku'][$key];
                         }
+                        $updateData['sort_order'] = $key + 1;
 
                         if (!empty($updateData)) {
                             ProductAttribute::where('id', $attributeId)->update($updateData);
@@ -568,6 +573,19 @@ class ProductController extends Controller
         );
 
         return redirect()->back()->with($notification);
+    }
+
+    public function update_attributes_order(Request $request){
+        if($request->has('attribute_ids') && is_array($request->attribute_ids)){
+            foreach($request->attribute_ids as $index => $id){
+                ProductAttribute::where('id', $id)->update(['sort_order' => $index + 1]);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Attribute display order updated successfully!'
+            ]);
+        }
+        return response()->json(['status' => 'error', 'message' => 'Invalid data provided.'], 400);
     }
 
     /**
