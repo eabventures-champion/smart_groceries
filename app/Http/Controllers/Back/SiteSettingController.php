@@ -21,6 +21,9 @@ class SiteSettingController extends Controller
         $setting_id = $request->id; 
         $setting = SiteSetting::findOrFail($setting_id);
 
+        $deliveryDays = $request->has('delivery_days') ? implode(',', (array)$request->delivery_days) : ($setting->delivery_days ?? '1,4,6');
+        $deliveryCutoffTime = $request->delivery_cutoff_time ?? ($setting->delivery_cutoff_time ?? '11:00');
+
         if ($request->file('logo')) {
 
         $image = $request->file('logo');
@@ -42,6 +45,7 @@ class SiteSettingController extends Controller
             'referral_commission_type' => $request->referral_commission_type,
             'referral_flat_amount' => $request->referral_flat_amount,
             'referral_percentage' => $request->referral_percentage,
+            'partner_referral_amount' => $request->partner_referral_amount ?? ($setting->partner_referral_amount ?? 3.00),
             'student_flat_fee' => $request->student_flat_fee,
             'student_percent_fee' => $request->student_percent_fee,
             'non_student_flat_fee' => $request->non_student_flat_fee,
@@ -50,6 +54,8 @@ class SiteSettingController extends Controller
             'recognition_platinum_min' => $request->recognition_platinum_min ?? ($setting->recognition_platinum_min ?? 500.00),
             'recognition_gold_min' => $request->recognition_gold_min ?? ($setting->recognition_gold_min ?? 300.00),
             'recognition_silver_min' => $request->recognition_silver_min ?? ($setting->recognition_silver_min ?? 100.00),
+            'delivery_days' => $deliveryDays,
+            'delivery_cutoff_time' => $deliveryCutoffTime,
         ]);
 
         $notification = array(
@@ -73,6 +79,7 @@ class SiteSettingController extends Controller
             'referral_commission_type' => $request->referral_commission_type,
             'referral_flat_amount' => $request->referral_flat_amount,
             'referral_percentage' => $request->referral_percentage,
+            'partner_referral_amount' => $request->partner_referral_amount ?? ($setting->partner_referral_amount ?? 3.00),
             'student_flat_fee' => $request->student_flat_fee,
             'student_percent_fee' => $request->student_percent_fee,
             'non_student_flat_fee' => $request->non_student_flat_fee,
@@ -81,6 +88,8 @@ class SiteSettingController extends Controller
             'recognition_platinum_min' => $request->recognition_platinum_min ?? ($setting->recognition_platinum_min ?? 500.00),
             'recognition_gold_min' => $request->recognition_gold_min ?? ($setting->recognition_gold_min ?? 300.00),
             'recognition_silver_min' => $request->recognition_silver_min ?? ($setting->recognition_silver_min ?? 100.00),
+            'delivery_days' => $deliveryDays,
+            'delivery_cutoff_time' => $deliveryCutoffTime,
         ]);
 
        $notification = array(

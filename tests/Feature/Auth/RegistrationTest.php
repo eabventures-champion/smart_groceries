@@ -25,13 +25,31 @@ class RegistrationTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'status_identity' => 'non-student',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
-        // The app sends a confirmation email instead of auto-logging in,
-        // so the user should be redirected back to the register page.
         $this->assertGuest();
         $response->assertRedirect(route('register'));
+    }
+
+    public function test_partners_can_register(): void
+    {
+        Mail::fake();
+
+        $response = $this->post('/register', [
+            'name' => 'Partner Institution',
+            'email' => 'partner@institution.com',
+            'status_identity' => 'partner',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $this->assertDatabaseHas('users', [
+            'email' => 'partner@institution.com',
+            'status_identity' => 'partner',
+        ]);
     }
 }

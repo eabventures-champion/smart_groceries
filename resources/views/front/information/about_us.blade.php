@@ -44,7 +44,7 @@
                                 <img src="assets/imgs/theme/icons/icon-2.svg" alt="" />
                                 <h5 class="mb-4">Scheduled Deliveries</h5>
                                 <p>
-                                    We deliver on Mondays, Thursdays, and Saturdays, ensuring fresh groceries right at your doorstep.
+                                    We deliver on {{ \App\Models\SiteSetting::getDeliveryDaysFormatted() }}, ensuring fresh groceries right at your doorstep.
                                 </p>
                                 {{-- <a href="#">Read more</a> --}}
                             </div>

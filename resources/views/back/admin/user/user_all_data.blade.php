@@ -42,6 +42,19 @@
                         <a href="{{ route('admin.client.detail', $item->id) }}" style="font-weight: 600; color: #212529; text-decoration: none;" class="hover-primary">
                            {{ $item->name }} 
                         </a> 
+                        @if($item->status_identity === 'partner')
+                        <div>
+                           <span class="badge bg-primary text-white mt-1" style="font-size: 11px; font-weight: 500;">
+                              <i class="fa fa-handshake me-1"></i> Partner
+                           </span>
+                        </div>
+                        @elseif($item->status_identity === 'student')
+                        <div>
+                           <span class="badge bg-success text-white mt-1" style="font-size: 11px; font-weight: 500;">
+                              <i class="fa fa-user-graduate me-1"></i> Student
+                           </span>
+                        </div>
+                        @endif
                      </td>
                      <td> 
                         <div>{{ $item->email }}</div>

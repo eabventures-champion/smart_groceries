@@ -55,8 +55,9 @@ class RegisterUserNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        $prefix = (isset($this->user->status_identity) && $this->user->status_identity === 'partner') ? 'Partner - ' : 'Client - ';
         return [
-            'message' => 'Client - '.$this->user->name .' (' .$this->user->email . ')'
+            'message' => $prefix . $this->user->name . ' (' . $this->user->email . ')'
         ];
     }
 }

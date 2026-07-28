@@ -140,6 +140,16 @@
                            </div>
                         </div>
 
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Partner Referral Amount (GH¢)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="partner_referral_amount" value="{{ $setting->partner_referral_amount ?? '3.00' }}" />
+                              <small class="text-muted">Amount earned by partner institutions when a referred user places their first order.</small>
+                           </div>
+                        </div>
+
                         <hr>
                         <h5 class="mb-3 text-primary">Delivery Fee Settings</h5>
 
@@ -186,6 +196,61 @@
                             <div class="col-sm-9 text-secondary">
                                <input type="number" step="0.01" class="form-control" name="min_order_amount" value="{{ $setting->min_order_amount ?? '50.00' }}" required />
                                <small class="text-muted">Orders below this subtotal will be ineligible for delivery checkout.</small>
+                            </div>
+                         </div>
+
+                         <hr>
+                         <h5 class="mb-3 text-warning">Delivery Schedule & Cutoff Settings</h5>
+
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                               <h6 class="mb-0">Active Delivery Days</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                               @php
+                                  $activeDays = explode(',', $setting->delivery_days ?? '1,4,6');
+                               @endphp
+                               <div class="d-flex flex-wrap gap-3">
+                                  <div class="form-check">
+                                     <input class="form-check-input" type="checkbox" name="delivery_days[]" value="1" id="day_mon" {{ in_array('1', $activeDays) ? 'checked' : '' }}>
+                                     <label class="form-check-label" for="day_mon">Monday</label>
+                                  </div>
+                                  <div class="form-check">
+                                     <input class="form-check-input" type="checkbox" name="delivery_days[]" value="2" id="day_tue" {{ in_array('2', $activeDays) ? 'checked' : '' }}>
+                                     <label class="form-check-label" for="day_tue">Tuesday</label>
+                                  </div>
+                                  <div class="form-check">
+                                     <input class="form-check-input" type="checkbox" name="delivery_days[]" value="3" id="day_wed" {{ in_array('3', $activeDays) ? 'checked' : '' }}>
+                                     <label class="form-check-label" for="day_wed">Wednesday</label>
+                                  </div>
+                                  <div class="form-check">
+                                     <input class="form-check-input" type="checkbox" name="delivery_days[]" value="4" id="day_thu" {{ in_array('4', $activeDays) ? 'checked' : '' }}>
+                                     <label class="form-check-label" for="day_thu">Thursday</label>
+                                  </div>
+                                  <div class="form-check">
+                                     <input class="form-check-input" type="checkbox" name="delivery_days[]" value="5" id="day_fri" {{ in_array('5', $activeDays) ? 'checked' : '' }}>
+                                     <label class="form-check-label" for="day_fri">Friday</label>
+                                  </div>
+                                  <div class="form-check">
+                                     <input class="form-check-input" type="checkbox" name="delivery_days[]" value="6" id="day_sat" {{ in_array('6', $activeDays) ? 'checked' : '' }}>
+                                     <label class="form-check-label" for="day_sat">Saturday</label>
+                                  </div>
+                                  <div class="form-check">
+                                     <input class="form-check-input" type="checkbox" name="delivery_days[]" value="7" id="day_sun" {{ in_array('7', $activeDays) ? 'checked' : '' }}>
+                                     <label class="form-check-label" for="day_sun">Sunday</label>
+                                  </div>
+                               </div>
+                               <small class="text-muted d-block mt-1">Select the days when deliveries are scheduled (default: Mondays, Thursdays, Saturdays).</small>
+                            </div>
+                         </div>
+
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                               <h6 class="mb-0">Cutoff Time</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                               <input type="time" class="form-control" name="delivery_cutoff_time" value="{{ $setting->delivery_cutoff_time ?? '11:00' }}" required />
+                               <small class="text-muted">On delivery days, orders placed after this time will be queued for the next delivery day.</small>
                             </div>
                          </div>
 

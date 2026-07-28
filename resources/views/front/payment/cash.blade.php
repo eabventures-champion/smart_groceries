@@ -31,7 +31,11 @@
             <div>
                <h6 class="mb-1 fw-bold" style="color: #253D4E; font-size: 16px;">⚠️ Order Will Be Queued</h6>
                <p class="mb-0 text-muted" style="font-size: 14px; line-height: 1.5; font-family: 'Inter', sans-serif;">
-                  Today is a delivery day (Mondays, Thursdays, Saturdays) but it is past the <strong>11:00 AM</strong> cutoff time.
+                  @if($deliveryInfo['is_delivery_day'])
+                     Today is a delivery day ({{ \App\Models\SiteSetting::getDeliveryDaysFormatted() }}) but it is past the <strong>{{ \App\Models\SiteSetting::getCutoffTimeFormatted() }}</strong> cutoff time.
+                  @else
+                     Today is not a delivery day (Delivery days are {{ \App\Models\SiteSetting::getDeliveryDaysFormatted() }}).
+                  @endif
                   Your order will be queued and scheduled for the next delivery date: <strong style="color: #253D4E;">{{ $deliveryInfo['next_delivery_date_formatted'] }}</strong> (in {{ $deliveryInfo['proximity_days'] }} days).
                </p>
             </div>
@@ -237,9 +241,9 @@
                         <div style="text-align: left; font-family: 'Inter', sans-serif; font-size: 14px; color: #555; line-height: 1.6;">
                             <p class="mb-3">Please note our delivery schedule conditions before completing your payment:</p>
                             <ul style="list-style-type: none; padding-left: 0; margin-bottom: 15px;">
-                                <li style="margin-bottom: 8px;">📅 <strong>Delivery Days:</strong> Mondays, Thursdays, and Saturdays.</li>
-                                <li style="margin-bottom: 8px;">🕒 <strong>Cutoff Hour:</strong> On delivery days, orders must be placed <strong>before 11:00 AM</strong> to be delivered same-day.</li>
-                                <li style="margin-bottom: 8px;">📥 <strong>Queued Orders:</strong> Orders placed after 11:00 AM on delivery days (or on non-delivery days) will be queued for the next delivery day.</li>
+                                <li style="margin-bottom: 8px;">📅 <strong>Delivery Days:</strong> {{ \App\Models\SiteSetting::getDeliveryDaysFormatted() }}.</li>
+                                <li style="margin-bottom: 8px;">🕒 <strong>Cutoff Hour:</strong> On delivery days, orders must be placed <strong>before {{ \App\Models\SiteSetting::getCutoffTimeFormatted() }}</strong> to be delivered same-day.</li>
+                                <li style="margin-bottom: 8px;">📥 <strong>Queued Orders:</strong> Orders placed after {{ \App\Models\SiteSetting::getCutoffTimeFormatted() }} on delivery days (or on non-delivery days) will be queued for the next delivery day.</li>
                             </ul>
                             <hr style="border-color: #ececec; margin: 15px 0;">
                             <div style="background-color: #f7f8f9; padding: 12px; border-radius: 6px; border-left: 4px solid #3bb77e; margin-bottom: 15px;">
@@ -247,7 +251,7 @@
                                 <span style="color: #3bb77e; font-weight: 700; font-size: 15px;">{{ $deliveryInfo['next_delivery_date_formatted'] }}</span> 
                                 (in {{ $deliveryInfo['proximity_days'] }} days)
                                 @if($deliveryInfo['is_queued'])
-                                    <br><span style="color: #d9534f; font-size: 12px; font-weight: bold;">(Queued due to cutoff time limit)</span>
+                                    <br><span style="color: #d9534f; font-size: 12px; font-weight: bold;">(Queued order)</span>
                                 @endif
                             </div>
                             <hr style="border-color: #ececec; margin: 15px 0;">
@@ -276,7 +280,7 @@
                     }
                 });
             } else {
-                if (confirm("Please note: Delivery days are Mondays, Thursdays, Saturdays. Orders after 11am are queued. Estimated delivery is: {{ $deliveryInfo['next_delivery_date_formatted'] }}. Proceed to payment?")) {
+                if (confirm("Please note: Delivery days are {{ \App\Models\SiteSetting::getDeliveryDaysFormatted() }}. Orders after {{ \App\Models\SiteSetting::getCutoffTimeFormatted() }} are queued. Estimated delivery is: {{ $deliveryInfo['next_delivery_date_formatted'] }}. Proceed to payment?")) {
                     $('form').off('submit').submit();
                 }
             }

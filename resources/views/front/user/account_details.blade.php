@@ -36,9 +36,15 @@
                            <div class="account-avatar-info">
                               <h5 class="account-avatar-name">{{ $userData->name }}</h5>
                               <span class="account-avatar-email">{{ $userData->email }}</span>
-                              <span class="account-member-badge">
-                                 <i class="fi-rs-check-circle" style="margin-right: 4px;"></i> Verified Member
-                              </span>
+                               @if($userData->status_identity === 'partner')
+                               <span class="account-member-badge" style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #fff; border: none; font-weight: 700; padding: 5px 14px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+                                  <i class="fa-solid fa-handshake" style="margin-right: 4px;"></i> Verified Partner Institution
+                               </span>
+                               @else
+                               <span class="account-member-badge">
+                                  <i class="fi-rs-check-circle" style="margin-right: 4px;"></i> Verified Member
+                               </span>
+                               @endif
                            </div>
                         </div>
                      </div>

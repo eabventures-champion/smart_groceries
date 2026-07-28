@@ -58,7 +58,9 @@
                            
                            <!-- Status Badge -->
                            <div class="mb-2">
-                              @if($isStudent)
+                              @if($user->status_identity === 'partner')
+                                 <span class="badge bg-primary p-2" style="font-size: 13px;"><i class="fa fa-handshake"></i> Partner Institution</span>
+                              @elseif($isStudent)
                                  @if($isCompleted)
                                     <span class="badge bg-info p-2" style="font-size: 13px;"><i class="fa fa-graduation-cap"></i> Alumni</span>
                                  @else

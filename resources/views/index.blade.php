@@ -59,6 +59,13 @@
    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
 }
 
+.student-dashboard-hero.partner {
+   background: linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #0284c7 100%);
+   color: white;
+   box-shadow: 0 12px 35px rgba(15, 23, 42, 0.35);
+   border: 1.5px solid rgba(245, 158, 11, 0.4);
+}
+
 .student-dashboard-hero::before {
    content: '';
    position: absolute;
@@ -401,7 +408,8 @@
                            $isExisting = $user->isExistingStudent();
                            $isCompleted = $user->isCompletedStudent();
                            $studentStatus = $user->student_status;
-                           $heroClass = $isCompleted ? 'completed' : 'existing';
+                           $isPartner = ($user->status_identity === 'partner');
+                           $heroClass = $isPartner ? 'partner' : ($isCompleted ? 'completed' : 'existing');
 
                            // Calculate progress
                            if ($user->year_of_admission && $user->year_of_completion) {
@@ -420,7 +428,9 @@
                               <div class="d-flex align-items-center justify-content-between flex-wrap" style="gap:16px;">
                                  <div>
                                     <div class="hero-greeting">
-                                       @if($user->status_identity === 'non-student')
+                                       @if($isPartner)
+                                          Welcome back, Partner
+                                       @elseif($user->status_identity === 'non-student')
                                           Welcome back
                                        @elseif($isCompleted)
                                           Welcome back, Alumni
@@ -430,7 +440,12 @@
                                     </div>
                                     <div class="hero-name">{{ $user->name }}</div>
 
-                                    @if($user->student_id)
+                                    @if($isPartner)
+                                       <div class="student-id-badge" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); color: #fef08a;">
+                                          <span class="id-icon">👑</span>
+                                          PARTNER ACCREDITED
+                                       </div>
+                                    @elseif($user->student_id)
                                        <div class="student-id-badge">
                                           <span class="id-icon">🪪</span>
                                           {{ $user->student_id }}
@@ -438,7 +453,11 @@
                                     @endif
 
                                     <div style="margin-top: 10px;">
-                                       @if($isCompleted)
+                                       @if($isPartner)
+                                          <span class="status-pill partner-pill" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.4); font-weight: 700; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); font-size: 13px; padding: 7px 18px;">
+                                             <i class="fa-solid fa-handshake" style="margin-right: 6px;"></i> Verified Partner Institution
+                                          </span>
+                                       @elseif($isCompleted)
                                           <span class="status-pill">🎓 Alumni &mdash; Completed</span>
                                        @elseif($isExisting)
                                           <span class="status-pill">🎓 Active Student</span>
@@ -450,10 +469,47 @@
 
                                  <div class="dashboard-avatar">
                                     <img class="rounded-circle p-1" style="border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.15);" src="{{ (!empty($user->photo)) ? url('front/assets/imgs/users/'.$user->photo) : url('front/assets/imgs/users/no_image.jpg') }}" alt="{{ $user->name }}">
+                                    @if($isPartner)
+                                    <span style="position: absolute; bottom: -2px; right: -2px; background: #f59e0b; color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);" title="Partner Account">
+                                       <i class="fa-solid fa-crown"></i>
+                                    </span>
+                                    @endif
                                  </div>
                               </div>
                            </div>
                         </div>
+
+                        {{-- ═══ PARTNER OVERVIEW CARD ═══ --}}
+                        @if($isPartner)
+                        <div class="premium-dashboard-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-left: 5px solid #0284c7;">
+                           <div class="premium-card-title" style="color: #0284c7;">
+                              <i class="fa-solid fa-handshake" style="color: #0284c7; font-size: 18px;"></i> Partner Account Overview
+                           </div>
+                           <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 14px; border: 1px solid #bae6fd;">
+                              <span style="font-size: 28px;">🤝</span>
+                              <div>
+                                 <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #0284c7; font-weight: 800;">Account Status</div>
+                                 <div style="font-size: 16px; font-weight: 800; color: #0f172a;">Official Institutional Partner</div>
+                              </div>
+                              <div style="margin-left: auto;">
+                                 <span class="badge bg-success text-white px-3 py-2" style="font-size: 12px; font-weight: 700; border-radius: 20px;">
+                                    <i class="fa-solid fa-circle-check me-1"></i> Active Partner
+                                 </span>
+                              </div>
+                           </div>
+                           @if($user->referral_code)
+                           <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
+                              <div>
+                                 <div style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700;">Partner Code</div>
+                                 <div style="font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800; color: #0284c7;">{{ $user->referral_code }}</div>
+                              </div>
+                              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1" style="font-size: 12px; font-weight: 600; background: #e0f2fe; color: #0369a1;">
+                                 Premium Partner Tier
+                              </span>
+                           </div>
+                           @endif
+                        </div>
+                        @endif
 
                         {{-- ═══ ACADEMIC INFO CARD ═══ --}}
                         @if($user->year_of_admission && $user->year_of_completion)

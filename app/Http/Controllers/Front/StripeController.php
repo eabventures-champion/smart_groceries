@@ -91,29 +91,39 @@ class StripeController extends Controller
                 $admin->notify(new \App\Notifications\AdminNewOrderNotification($invoice));
             }
 
-            // Process affiliate referral commission if set to percentage
+            // Process affiliate / partner referral commission on purchase
             $setting = \App\Models\SiteSetting::find(1);
-            if ($setting && $setting->referral_commission_type === 'percentage') {
-                $userId = Auth::id();
-                if ($userId) {
-                    $orderUser = User::find($userId);
-                    if ($orderUser && $orderUser->referred_by) {
-                        // Check if they already have any logged referral commission
+            $userId = Auth::id();
+            if ($userId && $setting) {
+                $orderUser = User::find($userId);
+                if ($orderUser && $orderUser->referred_by) {
+                    $referrer = User::find($orderUser->referred_by);
+                    if ($referrer) {
                         $alreadyEarned = \App\Models\AffiliateReferral::where('referred_id', $orderUser->id)->exists();
+                        
                         if (!$alreadyEarned) {
-                            $percentage = $setting->referral_percentage ?? 10.00;
-                            $commission = ($total_amount * $percentage) / 100;
+                            if ($referrer->status_identity === 'partner') {
+                                // Partners earn dynamic partner referral amount (default GHc 3.00) upon customer's first purchase
+                                $commission = $setting->partner_referral_amount ?? 3.00;
 
-                            // Create the referral commission record
-                            \App\Models\AffiliateReferral::create([
-                                'referrer_id' => $orderUser->referred_by,
-                                'referred_id' => $orderUser->id,
-                                'commission_earned' => $commission
-                            ]);
+                                \App\Models\AffiliateReferral::create([
+                                    'referrer_id' => $referrer->id,
+                                    'referred_id' => $orderUser->id,
+                                    'commission_earned' => $commission
+                                ]);
 
-                            // Add commission to referrer's balance
-                            $referrer = User::find($orderUser->referred_by);
-                            if ($referrer) {
+                                $referrer->referral_balance += $commission;
+                                $referrer->save();
+                            } elseif ($setting->referral_commission_type === 'percentage') {
+                                $percentage = $setting->referral_percentage ?? 10.00;
+                                $commission = ($total_amount * $percentage) / 100;
+
+                                \App\Models\AffiliateReferral::create([
+                                    'referrer_id' => $referrer->id,
+                                    'referred_id' => $orderUser->id,
+                                    'commission_earned' => $commission
+                                ]);
+
                                 $referrer->referral_balance += $commission;
                                 $referrer->save();
                             }

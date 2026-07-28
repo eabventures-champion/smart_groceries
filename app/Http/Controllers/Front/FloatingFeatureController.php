@@ -174,12 +174,17 @@ class FloatingFeatureController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Calculate dynamic earnings based on first delivered order
-        $flatAmount = \App\Models\SiteSetting::find(1)->referral_flat_amount ?? 2.00;
+        // Calculate dynamic earnings
+        $siteSetting = \App\Models\SiteSetting::find(1);
+        $flatAmount = ($user->status_identity === 'partner')
+            ? ($siteSetting->partner_referral_amount ?? 3.00)
+            : ($siteSetting->referral_flat_amount ?? 15.00);
+
+        $loggedEarned = AffiliateReferral::where('referrer_id', $user->id)->sum('commission_earned');
         $referredUserIds = User::where('referred_by', $user->id)->where('status', 'active')->pluck('id');
-        $qualifyingReferralsCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->where('status', 'delivered')->distinct('user_id')->count('user_id');
+        $qualifyingReferralsCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->distinct('user_id')->count('user_id');
         
-        $totalEarned = $qualifyingReferralsCount * $flatAmount;
+        $totalEarned = max((float)$loggedEarned, $qualifyingReferralsCount * $flatAmount);
         $payoutsSum = AffiliatePayout::where('user_id', $user->id)->where('status', 'completed')->sum('amount');
         $currentBalance = max(0, $totalEarned - $payoutsSum);
 

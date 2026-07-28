@@ -148,6 +148,7 @@
                                              <option value="" disabled {{ old('status_identity') === null ? 'selected' : '' }}>-- Status Identity --</option>
                                              <option value="student" {{ old('status_identity') == 'student' ? 'selected' : '' }}>student</option>
                                              <option value="non-student" {{ old('status_identity') == 'non-student' ? 'selected' : '' }}>non-student</option>
+                                             <option value="partner" {{ old('status_identity') == 'partner' ? 'selected' : '' }}>partner</option>
                                           </select>
                                           @error('status_identity')
                                           <span class="text-danger">{{ $message }}</span>

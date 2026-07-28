@@ -602,7 +602,7 @@
             </li>
             <li> <a href="authentication-signup-with-header-footer.html" target="_blank"><i class="bx bx-right-arrow-alt"></i>Sign Up with Header & Footer</a>
             </li>
-            <li> <a href="authentication-forgot-password.html" target="_blank"><i class="bx bx-right-arrow-alt"></i>Forgot Password</a>
+            <li> <a href="{{ route('password.request') }}" target="_blank"><i class="bx bx-right-arrow-alt"></i>Forgot Password</a>
             </li>
             <li> <a href="authentication-reset-password.html" target="_blank"><i class="bx bx-right-arrow-alt"></i>Reset Password</a>
             </li>

@@ -252,7 +252,7 @@
                      <input type="checkbox" checked>
                      <span class="sg-remember-text">Remember me</span>
                   </label>
-                  <a href="javascript:;" class="sg-forgot">Forgot password?</a>
+                  <a href="{{ route('password.request') }}" class="sg-forgot">Forgot password?</a>
                </div>
 
                <!-- Submit -->

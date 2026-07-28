@@ -12,8 +12,7 @@ class Order extends Model
 
     /**
      * Estimate delivery day and proximity.
-     * Delivery days are Mondays, Thursdays, Saturdays.
-     * Cutoff time on delivery days is 11:00 AM.
+     * Dynamic delivery days and cutoff time configured in SiteSetting.
      */
     public static function getDeliveryEstimation($time = null)
     {
@@ -27,27 +26,30 @@ class Order extends Model
         $hour = (int)$time->format('G'); // 0-23
         $minute = (int)$time->format('i');
 
+        $deliveryDays = \App\Models\SiteSetting::getDeliveryDays();
+        list($cutoffHour, $cutoffMinute) = \App\Models\SiteSetting::getDeliveryCutoffTime();
+
         $isQueued = false;
         $deliveryDate = null;
         
         // Check if today is a delivery day
-        $isDeliveryDay = in_array($dayOfWeek, [1, 4, 6]); // Mon, Thu, Sat
+        $isDeliveryDay = in_array($dayOfWeek, $deliveryDays);
         
         if ($isDeliveryDay) {
-            // If it's a delivery day, is it before 11:00 AM?
-            if ($hour < 11 || ($hour == 11 && $minute == 0)) {
+            // If it's a delivery day, is it before cutoff time?
+            if ($hour < $cutoffHour || ($hour == $cutoffHour && $minute <= $cutoffMinute)) {
                 // Can be delivered today
                 $deliveryDate = $time->copy();
                 $isQueued = false;
             } else {
-                // Past 11am on a delivery day. Queue for the NEXT delivery day.
+                // Past cutoff time on a delivery day. Queue for the NEXT delivery day.
                 $isQueued = true;
-                $deliveryDate = self::findNextDeliveryDay($time);
+                $deliveryDate = self::findNextDeliveryDay($time, $deliveryDays);
             }
         } else {
             // Not a delivery day. Scheduled for the next delivery day.
-            $deliveryDate = self::findNextDeliveryDay($time);
-            $isQueued = false;
+            $deliveryDate = self::findNextDeliveryDay($time, $deliveryDays);
+            $isQueued = true;
         }
 
         // Proximity calculation: number of days from $time's date to $deliveryDate's date
@@ -56,7 +58,7 @@ class Order extends Model
 
         return [
             'is_delivery_day' => $isDeliveryDay,
-            'is_past_cutoff' => $isDeliveryDay && ($hour > 11 || ($hour == 11 && $minute > 0)),
+            'is_past_cutoff' => $isDeliveryDay && ($hour > $cutoffHour || ($hour == $cutoffHour && $minute > $cutoffMinute)),
             'next_delivery_date' => $deliveryDate->format('Y-m-d'),
             'next_delivery_date_formatted' => $deliveryDate->format('l, d F Y'),
             'proximity_days' => $proximity,
@@ -64,13 +66,16 @@ class Order extends Model
         ];
     }
 
-    private static function findNextDeliveryDay($time)
+    public static function findNextDeliveryDay($time, $deliveryDays = null)
     {
+        if (!$deliveryDays) {
+            $deliveryDays = \App\Models\SiteSetting::getDeliveryDays();
+        }
         // Start checking from the next day
         $temp = $time->copy()->addDay();
         while (true) {
             $dayOfWeek = (int)$temp->format('N');
-            if (in_array($dayOfWeek, [1, 4, 6])) { // Monday, Thursday, Saturday
+            if (in_array($dayOfWeek, $deliveryDays)) {
                 return $temp;
             }
             $temp->addDay();

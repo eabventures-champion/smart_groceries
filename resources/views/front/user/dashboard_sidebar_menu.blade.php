@@ -15,6 +15,13 @@ $returnOrdersCount = \App\Models\Order::where('user_id', $userId)->where('return
          </div>
          <h6 class="sidebar-user-name">{{ $user->name }}</h6>
          <span class="sidebar-user-email">{{ $user->email }}</span>
+         @if($user->status_identity === 'partner')
+         <div class="mt-2">
+            <span class="badge" style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #fff; font-size: 10px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);">
+               <i class="fa-solid fa-handshake me-1"></i> Partner Institution
+            </span>
+         </div>
+         @endif
       </div>
 
       <!-- Navigation -->

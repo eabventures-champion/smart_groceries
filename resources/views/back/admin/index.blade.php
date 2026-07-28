@@ -19,6 +19,30 @@
         animation: pulse-alarming 1.6s infinite ease-in-out;
         border: 2px solid #ffffff !important;
     }
+    @keyframes pulse-alarming-danger {
+        0% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            transform: scale(1);
+        }
+        50% {
+            box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            transform: scale(1.03);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            transform: scale(1);
+        }
+    }
+    .alarming-card-danger {
+        animation: pulse-alarming-danger 1.6s infinite ease-in-out;
+        border: 2px solid #ffffff !important;
+    }
+    @media (min-width: 1200px) {
+        .row-cols-xl-5 > * {
+            flex: 0 0 auto;
+            width: 20%;
+        }
+    }
 </style>
 
 @php
@@ -35,6 +59,7 @@
     $queued_count = App\Models\Order::where('status', 'queued')->count();
     $vendor_count = App\Models\User::where('status', 'active')->where('role','vendor')->count();
     $customer_count = App\Models\User::where('status', 'active')->where('role','user')->count();
+    $partner_count = App\Models\User::where('status_identity', 'partner')->count();
 
     $total_orders_count = App\Models\Order::count();
     $total_delivered_count = App\Models\Order::where('status', 'delivered')->count();
@@ -68,12 +93,28 @@
          <div class="ms-2">
             <h6 class="mb-1 text-dark" style="font-weight: 700; font-size: 15px;">Reminder: You have {{ $queued_count }} Queued {{ Str::plural('Order', $queued_count) }}</h6>
             <div class="text-dark" style="font-size: 13px; font-weight: 500; opacity: 0.9;">
-               These orders were placed past the 11:00 AM cutoff time on delivery days and are scheduled for the next delivery day.
+               These orders were placed past the {{ \App\Models\SiteSetting::getCutoffTimeFormatted() }} cutoff time on delivery days (or on non-delivery days) and are scheduled for the next delivery day.
                <a href="{{ route('admin.queued.order') }}" class="text-dark alert-link text-decoration-underline" style="font-weight: 700; margin-left: 5px;">View and manage queued orders here →</a>
             </div>
          </div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+   </div>
+   @endif
+
+   @if($pending_count > 0)
+   <div class="alert alert-danger border-0 bg-danger alert-dismissible fade show py-3 mb-4" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);">
+      <div class="d-flex align-items-center text-white">
+         <div class="font-35 text-white" style="font-size: 28px; line-height: 1;"><i class='bx bx-envelope me-2' style='color: #ffffff;'></i></div>
+         <div class="ms-2">
+            <h6 class="mb-1 text-white" style="font-weight: 700; font-size: 15px;">Reminder: You have {{ $pending_count }} Pending {{ Str::plural('Order', $pending_count) }}</h6>
+            <div class="text-white" style="font-size: 13px; font-weight: 500; opacity: 0.9;">
+               These orders were placed before the {{ \App\Models\SiteSetting::getCutoffTimeFormatted() }} cutoff time on delivery days and require confirmation.
+               <a href="{{ route('pending.order') }}" class="text-white alert-link text-decoration-underline" style="font-weight: 700; margin-left: 5px;">View and manage pending orders here →</a>
+            </div>
+         </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
    </div>
    @endif
 
@@ -92,7 +133,43 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
    </div>
    @endif
-   <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5">
+      <div class="col" style="cursor: pointer;" onclick="window.location.href='{{ route('admin.queued.order') }}'">
+         <div class="card radius-10 @if($queued_count > 0) alarming-card @endif" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none;">
+            <div class="card-body">
+               <div class="d-flex align-items-center">
+                  <h5 class="mb-0 text-white">{{ $queued_count }}</h5>
+                  <div class="ms-auto">
+                     <i class='bx bx-time-five fs-3 text-white'></i>
+                  </div>
+               </div>
+               <div class="progress my-3 bg-light-transparent" style="height:3px;">
+                  <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+               </div>
+               <div class="d-flex align-items-center text-white">
+                  <p class="mb-0">Queued Orders</p>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col" style="cursor: pointer;" onclick="window.location.href='{{ route('pending.order') }}'">
+         <div class="card radius-10 bg-gradient-ibiza @if($pending_count > 0) alarming-card-danger @endif">
+            <div class="card-body">
+               <div class="d-flex align-items-center">
+                  <h5 class="mb-0 text-white">{{ $pending_count }}</h5>
+                  <div class="ms-auto">
+                     <i class='bx bx-envelope fs-3 text-white'></i>
+                  </div>
+               </div>
+               <div class="progress my-3 bg-light-transparent" style="height:3px;">
+                  <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+               </div>
+               <div class="d-flex align-items-center text-white">
+                  <p class="mb-0">Pending Orders</p>
+               </div>
+            </div>
+         </div>
+      </div>
       <div class="col">
          <div class="card radius-10 bg-gradient-deepblue">
             <div class="card-body">
@@ -150,44 +227,6 @@
             </div>
          </div>
       </div>
-      <div class="col" style="cursor: pointer;" onclick="window.location.href='{{ route('pending.order') }}'">
-         <div class="card radius-10 bg-gradient-ibiza">
-            <div class="card-body">
-               <div class="d-flex align-items-center">
-                  <h5 class="mb-0 text-white">{{ $pending_count }}</h5>
-                  <div class="ms-auto">
-                     <i class='bx bx-envelope fs-3 text-white'></i>
-                  </div>
-               </div>
-               <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                  <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-               </div>
-               <div class="d-flex align-items-center text-white">
-                  <p class="mb-0">Pending Orders</p>
-               </div>
-            </div>
-         </div>
-      </div>
-      @if($queued_count > 0)
-      <div class="col" style="cursor: pointer;" onclick="window.location.href='{{ route('admin.queued.order') }}'">
-         <div class="card radius-10 alarming-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none;">
-            <div class="card-body">
-               <div class="d-flex align-items-center">
-                  <h5 class="mb-0 text-white">{{ $queued_count }}</h5>
-                  <div class="ms-auto">
-                     <i class='bx bx-time-five fs-3 text-white'></i>
-                  </div>
-               </div>
-               <div class="progress my-3 bg-light-transparent" style="height:3px;">
-                  <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-               </div>
-               <div class="d-flex align-items-center text-white">
-                  <p class="mb-0">Queued Orders</p>
-               </div>
-            </div>
-         </div>
-      </div>
-      @endif
       {{-- <div class="col">
          <div class="card radius-10 bg-gradient-ibiza">
             <div class="card-body">
@@ -221,6 +260,24 @@
                </div>
                <div class="d-flex align-items-center text-white">
                   <p class="mb-0">Total Users</p>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col" style="cursor: pointer;" onclick="window.location.href='{{ route('all.users') }}'">
+         <div class="card radius-10" style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); border: none;">
+            <div class="card-body">
+               <div class="d-flex align-items-center">
+                  <h5 class="mb-0 text-white">{{ $partner_count }}</h5>
+                  <div class="ms-auto">
+                     <i class='bx bx-user-check fs-3 text-white'></i>
+                  </div>
+               </div>
+               <div class="progress my-3 bg-light-transparent" style="height:3px;">
+                  <div class="progress-bar bg-white" role="progressbar" style="width: 55%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+               </div>
+               <div class="d-flex align-items-center text-white">
+                  <p class="mb-0">Total Partners</p>
                </div>
             </div>
          </div>

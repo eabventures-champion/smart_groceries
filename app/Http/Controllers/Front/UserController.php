@@ -26,9 +26,9 @@ class UserController extends Controller
         $user->refreshStudentId();
 
         // Get order stats for dashboard
-        $totalOrders = Order::where('user_id', $id)->count();
-        $pendingOrders = Order::where('user_id', $id)->where('status', 'pending')->count();
-        $completedOrders = Order::where('user_id', $id)->where('status', 'delivered')->count();
+        $totalOrders = Order::where('user_id', $id)->where('email', $user->email)->count();
+        $pendingOrders = Order::where('user_id', $id)->where('email', $user->email)->where('status', 'pending')->count();
+        $completedOrders = Order::where('user_id', $id)->where('email', $user->email)->where('status', 'delivered')->count();
 
         // Fetch halls if needed for the setup prompt
         $halls = [];
@@ -217,8 +217,11 @@ class UserController extends Controller
     // Users Dashboard details
 
     public function user_order_page(){
-        $id = Auth::user()->id;
-        $orders = Order::where('user_id', $id)->orderBy('id','DESC')->get();
+        $user = Auth::user();
+        $orders = Order::where('user_id', $user->id)
+            ->where('email', $user->email)
+            ->orderBy('id','DESC')
+            ->get();
 
         return view('front.user.user_order_page', compact('orders'));
     }

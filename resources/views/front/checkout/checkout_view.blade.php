@@ -427,23 +427,39 @@
                          return false;
                      }
 
-                     // Check delivery days (Mondays = 1, Thursdays = 4, Saturdays = 6) and 11:00 AM cutoff
+                     @php
+                        $activeDeliveryDaysJs = json_encode(\App\Models\SiteSetting::getDeliveryDays());
+                        list($cHour, $cMin) = \App\Models\SiteSetting::getDeliveryCutoffTime();
+                        $cutoffFormatted = \App\Models\SiteSetting::getCutoffTimeFormatted();
+                        $deliveryDaysText = \App\Models\SiteSetting::getDeliveryDaysFormatted();
+                     @endphp
+                     var activeDeliveryDays = {{ $activeDeliveryDaysJs }};
+                     var cutoffHour = {{ $cHour }};
+                     var cutoffMinute = {{ $cMin }};
+
                      var now = new Date();
-                     var day = now.getDay(); 
+                     var day = now.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+                     var carbonDay = (day === 0) ? 7 : day; // 1 = Mon, ..., 7 = Sun
                      var hour = now.getHours();
                      var minutes = now.getMinutes();
 
-                     var isDeliveryDay = (day === 1 || day === 4 || day === 6);
-                     var isPastCutoff = isDeliveryDay && (hour > 11 || (hour === 11 && minutes > 0));
+                     var isDeliveryDay = activeDeliveryDays.includes(carbonDay);
+                     var isPastCutoff = isDeliveryDay && (hour > cutoffHour || (hour === cutoffHour && minutes > cutoffMinute));
+                     var isNotDeliveryDay = !isDeliveryDay;
 
-                     if (isPastCutoff) {
-                         var nextDays = { 1: "Thursday", 4: "Saturday", 6: "Monday" };
-                         var nextDayName = nextDays[day];
+                     if (isPastCutoff || isNotDeliveryDay) {
+                         var messageHtml = isPastCutoff 
+                             ? 'Today is a delivery day but it is past <strong style="color: #d9534f;">{{ $cutoffFormatted }}</strong>.<br>Orders placed now will be <strong>queued</strong> for the next delivery day.'
+                             : 'Today is not a delivery day (Delivery days are {{ $deliveryDaysText }}).<br>Orders placed now will be <strong>queued</strong> for the next delivery day.';
+
+                         var messageText = isPastCutoff
+                             ? 'Today is a delivery day but it is past {{ $cutoffFormatted }}. Your order will be queued for the next delivery day.'
+                             : 'Today is not a delivery day (Delivery days are {{ $deliveryDaysText }}). Your order will be queued for the next delivery day.';
 
                          if (typeof Swal !== 'undefined') {
                              Swal.fire({
                                  title: '<span style="color: #d9534f; font-family: \'Outfit\', sans-serif; font-weight: 600;">Delivery Schedule Notice</span>',
-                                 html: '<div style="font-family: \'Inter\', sans-serif; font-size: 15px; color: #555; line-height: 1.6;">Today is a delivery day but it is past <strong style="color: #d9534f;">11:00 AM</strong>.<br>Orders placed now will be <strong>queued</strong> and delivered on <strong>' + nextDayName + '</strong>.<br><br>Do you wish to proceed?</div>',
+                                 html: '<div style="font-family: \'Inter\', sans-serif; font-size: 15px; color: #555; line-height: 1.6;">' + messageHtml + '<br><br>Do you wish to proceed?</div>',
                                  icon: 'warning',
                                  showCancelButton: true,
                                  confirmButtonColor: '#3085d6',
@@ -456,7 +472,7 @@
                                  }
                              });
                          } else {
-                             if (confirm("Today is a delivery day but it is past 11:00 AM. Your order will be queued for the next delivery day. Do you want to proceed?")) {
+                             if (confirm(messageText + " Do you want to proceed?")) {
                                  form.submit();
                              }
                          }
