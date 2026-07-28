@@ -98,14 +98,16 @@ class User extends Authenticatable
         $siteSetting = \App\Models\SiteSetting::find(1);
         $isPartner = ($this->is_partner || $this->status_identity === 'partner');
         
-        $loggedEarned = (float)\App\Models\AffiliateReferral::where('referrer_id', $this->id)->sum('commission_earned');
         $referredUserIds = \App\Models\User::where('referred_by', $this->id)->pluck('id');
-        $ordersCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->distinct('user_id')->count('user_id');
-        $qualifyingCount = $ordersCount;
+        $qualifyingCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->distinct('user_id')->count('user_id');
+
+        if ($qualifyingCount == 0) {
+            return 0.00;
+        }
 
         if ($isPartner) {
             $partnerAmount = (float)($siteSetting->partner_referral_amount ?? 3.00);
-            $calculatedEarned = max($loggedEarned, $qualifyingCount * $partnerAmount);
+            return $qualifyingCount * $partnerAmount;
         } else {
             $t1 = (float)($siteSetting->referral_tier1_amount ?? 3.00);
             $t2 = (float)($siteSetting->referral_tier2_amount ?? 4.00);
@@ -122,10 +124,8 @@ class User extends Authenticatable
                 }
             }
 
-            $calculatedEarned = max($loggedEarned, $tieredEarned);
+            return $tieredEarned;
         }
-
-        return $calculatedEarned;
     }
 
     public function getAffiliateTotalRedrawal(): float
