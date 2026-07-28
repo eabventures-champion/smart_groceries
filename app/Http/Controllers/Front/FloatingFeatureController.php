@@ -151,6 +151,15 @@ class FloatingFeatureController extends Controller
      */
     public function getAffiliateStats()
     {
+        $siteSetting = \App\Models\SiteSetting::find(1);
+        if ($siteSetting && !$siteSetting->enable_affiliate_program) {
+            return response()->json([
+                'authenticated' => false,
+                'disabled' => true,
+                'message' => 'Affiliate program is currently disabled.'
+            ]);
+        }
+
         if (!Auth::check()) {
             return response()->json([
                 'authenticated' => false,
@@ -174,19 +183,9 @@ class FloatingFeatureController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Calculate dynamic earnings
-        $siteSetting = \App\Models\SiteSetting::find(1);
-        $flatAmount = ($user->status_identity === 'partner')
-            ? ($siteSetting->partner_referral_amount ?? 3.00)
-            : ($siteSetting->referral_flat_amount ?? 15.00);
-
-        $loggedEarned = AffiliateReferral::where('referrer_id', $user->id)->sum('commission_earned');
-        $referredUserIds = User::where('referred_by', $user->id)->where('status', 'active')->pluck('id');
-        $qualifyingReferralsCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->distinct('user_id')->count('user_id');
-        
-        $totalEarned = max((float)$loggedEarned, $qualifyingReferralsCount * $flatAmount);
-        $payoutsSum = AffiliatePayout::where('user_id', $user->id)->where('status', 'completed')->sum('amount');
-        $currentBalance = max(0, $totalEarned - $payoutsSum);
+        // Calculate dynamic earnings using User model methods (Tiered cumulative commissions)
+        $totalEarned = $user->getAffiliateTotalEarned();
+        $currentBalance = $user->getAffiliateCurrentBalance();
 
         // Sync with the database
         if ($user->referral_balance != $currentBalance) {
@@ -237,13 +236,16 @@ class FloatingFeatureController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:50',
             'payment_method' => 'required|string',
+        ], [
+            'amount.min' => 'Minimum cashout request amount is GH¢ 50.00.'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
+                'message' => $validator->errors()->first(),
                 'errors' => $validator->errors()->all()
             ], 422);
         }
@@ -251,10 +253,19 @@ class FloatingFeatureController extends Controller
         $user = Auth::user();
         $amount = (float) $request->amount;
 
-        if ($user->referral_balance < $amount) {
+        if ($amount < 50) {
             return response()->json([
                 'success' => false,
-                'message' => 'Insufficient affiliate balance. Minimum balance required is Gh ' . number_format($amount, 2)
+                'message' => 'Minimum cashout request amount is GH¢ 50.00.'
+            ], 422);
+        }
+
+        $currentBalance = $user->getAffiliateCurrentBalance();
+
+        if ($currentBalance < $amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient affiliate balance. Available balance is GH¢ ' . number_format($currentBalance, 2)
             ], 422);
         }
 

@@ -108,7 +108,7 @@
                   </div>
                   <div class="col-md-6 mb-3">
                      <label style="font-weight: 600; color: #253D4E; font-size: 13px; margin-bottom: 8px; display: block;">Phone Number</label>
-                     <input required type="text" name="delivery_phone" value="{{ Auth::user()->phone }}" class="form-control" placeholder="e.g. 0553989190" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
+                     <input required type="text" name="delivery_phone" value="{{ Auth::user()->phone }}" class="form-control" placeholder="e.g. 0243036092" pattern="[0-9]{10}" maxlength="10" minlength="10" inputmode="numeric" title="Phone number must be exactly 10 digits (e.g. 0243036092)" style="border-radius: 10px; border: 1px solid #ececec; padding: 12px 15px; font-size: 14px; color: #253D4E;">
                   </div>
                   @if(empty(Auth::user()->institution))
                   <div class="col-md-6 mb-3">
@@ -372,7 +372,10 @@
                          customEmail: true
                      },
                      delivery_phone: {
-                         required: true
+                         required: true,
+                         digits: true,
+                         minlength: 10,
+                         maxlength: 10
                      },
                      delivery_address: {
                          required: true
@@ -399,7 +402,10 @@
                          customEmail: "Please enter a valid email address (e.g. name@domain.com)"
                      },
                      delivery_phone: {
-                         required: "Please enter your phone number"
+                         required: "Please enter your phone number",
+                         digits: "Phone number must contain only numbers",
+                         minlength: "Phone number must be exactly 10 digits (e.g. 0243036092)",
+                         maxlength: "Phone number must be exactly 10 digits (e.g. 0243036092)"
                      },
                      delivery_address: {
                          required: "Please enter your address"

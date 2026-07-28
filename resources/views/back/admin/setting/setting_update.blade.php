@@ -108,35 +108,90 @@
                            </div>
                         </div>
                         <hr>
-                        <h5 class="mb-3 text-success">Affiliate Referral Settings</h5>
+                        <h5 class="mb-3 text-success">Affiliate Referral & Registration Settings</h5>
                         
                         <div class="row mb-3">
                            <div class="col-sm-3">
-                              <h6 class="mb-0">Commission Type</h6>
+                              <h6 class="mb-0">Enable Affiliate / Referral Program</h6>
                            </div>
                            <div class="col-sm-9 text-secondary">
-                              <select name="referral_commission_type" class="form-select">
-                                 <option value="flat" {{ ($setting->referral_commission_type ?? 'flat') == 'flat' ? 'selected' : '' }}>Flat sign-up bonus</option>
-                                 <option value="percentage" {{ ($setting->referral_commission_type ?? 'flat') == 'percentage' ? 'selected' : '' }}>Percentage of first order</option>
+                              <select name="enable_affiliate_program" class="form-select mb-2">
+                                 <option value="1" {{ ($setting->enable_affiliate_program ?? 1) == 1 ? 'selected' : '' }}>Enabled (Show Affiliate Program feature on SG Panel)</option>
+                                 <option value="0" {{ ($setting->enable_affiliate_program ?? 1) == 0 ? 'selected' : '' }}>Disabled (Hide Affiliate Program feature from SG Panel & Front-end)</option>
                               </select>
+                              <small class="text-muted">Master control to enable or disable the entire Affiliate / Referral program across Smart Groceries.</small>
                            </div>
                         </div>
 
                         <div class="row mb-3">
                            <div class="col-sm-3">
-                              <h6 class="mb-0">Flat Amount (GH¢)</h6>
+                              <h6 class="mb-0">Registration Status Identity Field</h6>
                            </div>
                            <div class="col-sm-9 text-secondary">
-                              <input type="number" step="0.01" class="form-control" name="referral_flat_amount" value="{{ $setting->referral_flat_amount ?? '15.00' }}" />
+                              <select name="show_status_identity" class="form-select mb-2">
+                                 <option value="1" {{ ($setting->show_status_identity ?? 1) == 1 ? 'selected' : '' }}>Enabled (Show Status Identity field on Registration)</option>
+                                 <option value="0" {{ ($setting->show_status_identity ?? 1) == 0 ? 'selected' : '' }}>Disabled (Hide Status Identity field on Registration)</option>
+                              </select>
+                              <small class="text-muted">Global control to show or hide the Status Identity section on the registration form.</small>
                            </div>
                         </div>
 
                         <div class="row mb-3">
                            <div class="col-sm-3">
-                              <h6 class="mb-0">Percentage (%)</h6>
+                              <h6 class="mb-0">Allowed Status Identity Options</h6>
                            </div>
                            <div class="col-sm-9 text-secondary">
-                              <input type="number" step="0.01" class="form-control" name="referral_percentage" value="{{ $setting->referral_percentage ?? '10.00' }}" />
+                              <div class="d-flex align-items-center flex-wrap gap-4 pt-1">
+                                 <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="show_status_student" id="show_status_student" value="1" {{ ($setting->show_status_student ?? 1) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-dark" for="show_status_student">
+                                       <i class="fa fa-user-graduate me-1 text-success"></i> student
+                                    </label>
+                                 </div>
+                                 <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="show_status_non_student" id="show_status_non_student" value="1" {{ ($setting->show_status_non_student ?? 0) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-dark" for="show_status_non_student">
+                                       <i class="fa fa-user me-1 text-secondary"></i> non-student
+                                    </label>
+                                 </div>
+                                 <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="show_status_partner" id="show_status_partner" value="1" {{ ($setting->show_status_partner ?? 1) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-dark" for="show_status_partner">
+                                       <i class="fa fa-handshake me-1 text-primary"></i> partner
+                                    </label>
+                                 </div>
+                              </div>
+                              <small class="text-muted d-block mt-2">Check each option you want to show in the dropdown list on the registration page.</small>
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Student Tier 1 (1–50 Referrals) (GH¢)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="referral_tier1_amount" value="{{ $setting->referral_tier1_amount ?? '3.00' }}" />
+                              <small class="text-muted">Commission earned per referral for the 1st through 50th successful customer (default: GH¢ 3.00).</small>
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Student Tier 2 (51–100 Referrals) (GH¢)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="referral_tier2_amount" value="{{ $setting->referral_tier2_amount ?? '4.00' }}" />
+                              <small class="text-muted">Commission earned per referral for the 51st through 100th successful customer (default: GH¢ 4.00).</small>
+                           </div>
+                        </div>
+
+                        <div class="row mb-3">
+                           <div class="col-sm-3">
+                              <h6 class="mb-0">Student Tier 3 (101+ Referrals) (GH¢)</h6>
+                           </div>
+                           <div class="col-sm-9 text-secondary">
+                              <input type="number" step="0.01" class="form-control" name="referral_tier3_amount" value="{{ $setting->referral_tier3_amount ?? '5.00' }}" />
+                              <small class="text-muted">Commission earned per referral for the 101st successful customer and above (default: GH¢ 5.00).</small>
                            </div>
                         </div>
 
@@ -146,7 +201,7 @@
                            </div>
                            <div class="col-sm-9 text-secondary">
                               <input type="number" step="0.01" class="form-control" name="partner_referral_amount" value="{{ $setting->partner_referral_amount ?? '3.00' }}" />
-                              <small class="text-muted">Amount earned by partner institutions when a referred user places their first order.</small>
+                              <small class="text-muted">Amount earned by partner institutions when a referred user places their first order (unmodified: GH¢ 3.00).</small>
                            </div>
                         </div>
 

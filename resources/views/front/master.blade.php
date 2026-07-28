@@ -1810,7 +1810,7 @@
 
                             <div class="form-group mb-0">
                                <label class="form-label-sm" style="font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Phone Number *</label>
-                               <input type="text" name="phone" id="modal_phone" value="{{ $user->phone }}" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" placeholder="e.g. 0243036092" required>
+                               <input type="text" name="phone" id="modal_phone" value="{{ $user->phone }}" class="form-control" style="height: 48px; border-radius: 10px; font-size: 14px;" placeholder="e.g. 0243036092" required pattern="[0-9]{10}" maxlength="10" minlength="10" inputmode="numeric" title="Phone number must be exactly 10 digits (e.g. 0243036092)">
                                <div id="modal_phone_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
                                   This phone number is already registered by another user.
                                </div>
@@ -1880,6 +1880,13 @@
                   function checkPhoneUnique() {
                      var phoneVal = phoneInput.value.trim();
                      if (phoneVal.length > 0) {
+                        if (!/^\d{10}$/.test(phoneVal)) {
+                           phoneInput.style.borderColor = '#d9534f';
+                           feedback.textContent = 'Phone number must be exactly 10 digits (e.g. 0243036092).';
+                           feedback.style.display = 'block';
+                           submitBtn.disabled = true;
+                           return;
+                        }
                         fetch("{{ url('/check-phone-unique') }}?phone=" + encodeURIComponent(phoneVal))
                            .then(response => response.json())
                            .then(data => {
@@ -1889,6 +1896,7 @@
                                  submitBtn.disabled = false;
                               } else {
                                  phoneInput.style.borderColor = '#d9534f';
+                                 feedback.textContent = 'This phone number is already registered by another user.';
                                  feedback.style.display = 'block';
                                  submitBtn.disabled = true;
                               }

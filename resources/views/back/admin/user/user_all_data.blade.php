@@ -36,25 +36,32 @@
                </thead>
                <tbody>
                   @foreach($users as $key => $item)		
+                  @php
+                      $instName = !empty($item->institution) ? $item->institution : (($item->status_identity === 'partner' || $item->is_partner) ? $item->name : null);
+                  @endphp
                   <tr>
                      <td> {{ $key+1 }} </td>
                      <td> 
                         <a href="{{ route('admin.client.detail', $item->id) }}" style="font-weight: 600; color: #212529; text-decoration: none;" class="hover-primary">
                            {{ $item->name }} 
                         </a> 
-                        @if($item->status_identity === 'partner')
-                        <div>
-                           <span class="badge bg-primary text-white mt-1" style="font-size: 11px; font-weight: 500;">
-                              <i class="fa fa-handshake me-1"></i> Partner
-                           </span>
+                        <div class="d-flex flex-wrap gap-1 mt-1 align-items-center">
+                           @if($item->status_identity === 'partner')
+                              <span class="badge bg-primary text-white" style="font-size: 11px; font-weight: 500;">
+                                 <i class="fa fa-handshake me-1"></i> Partner
+                              </span>
+                           @elseif($item->status_identity === 'student')
+                              <span class="badge bg-success text-white" style="font-size: 11px; font-weight: 500;">
+                                 <i class="fa fa-user-graduate me-1"></i> Student
+                              </span>
+                           @endif
+
+                           @if($instName)
+                              <span class="badge bg-info text-dark" style="font-size: 11px; font-weight: 500;">
+                                 <i class="fa fa-university me-1"></i> {{ $instName }}
+                              </span>
+                           @endif
                         </div>
-                        @elseif($item->status_identity === 'student')
-                        <div>
-                           <span class="badge bg-success text-white mt-1" style="font-size: 11px; font-weight: 500;">
-                              <i class="fa fa-user-graduate me-1"></i> Student
-                           </span>
-                        </div>
-                        @endif
                      </td>
                      <td> 
                         <div>{{ $item->email }}</div>

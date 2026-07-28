@@ -93,6 +93,14 @@
                               <i class="fa fa-phone" style="font-size: 9px;"></i> {{ $item->phone }}
                            </span>
                            @endif
+                           @php
+                               $affInstName = !empty($item->institution) ? $item->institution : (($item->status_identity === 'partner' || $item->is_partner) ? $item->name : null);
+                           @endphp
+                           @if($affInstName)
+                           <span class="badge bg-info text-dark border border-info" style="font-size: 10px; font-weight: 600; text-transform: none; display: inline-flex; align-items: center; gap: 4px;">
+                              <i class="fa fa-university" style="font-size: 9px;"></i> {{ $affInstName }}
+                           </span>
+                           @endif
                         </div>
                      </td>
                      <td> 

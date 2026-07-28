@@ -250,14 +250,20 @@ $categories = \Illuminate\Support\Facades\Cache::remember('home_categories_all',
                          </div>
                          <span class="sg-promo-arrow">→</span>
                      </div>
+                     @php
+                         $siteSetting = \App\Models\SiteSetting::find(1);
+                         $enableAffiliate = $siteSetting ? (bool)($siteSetting->enable_affiliate_program ?? true) : true;
+                     @endphp
+                     @if($enableAffiliate)
                      <div class="sg-promo-card" onclick="toggleSgDrawer('affiliate')">
                          <div class="sg-promo-icon">🎁</div>
                          <div class="sg-promo-info">
                              <h5>Affiliate Program</h5>
-                             <p>Share your link & earn Gh {{ number_format($setting->referral_flat_amount ?? 15.00, 2) }} cash for each sign-up.</p>
+                             <p>Share your link & earn cash commissions on friends' first orders.</p>
                          </div>
                          <span class="sg-promo-arrow">→</span>
                      </div>
+                     @endif
                      <div class="sg-promo-card" onclick="toggleSgDrawer('request')">
                          <div class="sg-promo-icon">✍️</div>
                          <div class="sg-promo-info">

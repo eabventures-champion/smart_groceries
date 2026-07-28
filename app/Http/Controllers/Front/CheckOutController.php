@@ -39,10 +39,19 @@ class CheckOutController extends Controller
             return redirect()->back()->with($notification);
         }
 
+        $phoneClean = trim($request->delivery_phone);
+        if (!preg_match('/^[0-9]{10}$/', $phoneClean)) {
+            $notification = array(
+                'message' => 'The phone number must be exactly 10 digits (e.g. 0243036092).',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification)->withInput();
+        }
+
         $data = array();
         $data['delivery_name'] = $request->delivery_name;
         $data['delivery_email'] = $request->delivery_email;
-        $data['delivery_phone'] = $request->delivery_phone;
+        $data['delivery_phone'] = $phoneClean;
 
         $region_id = $request->region_id;
         $district_id = $request->district_id;

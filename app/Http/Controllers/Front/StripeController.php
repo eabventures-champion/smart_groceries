@@ -91,45 +91,11 @@ class StripeController extends Controller
                 $admin->notify(new \App\Notifications\AdminNewOrderNotification($invoice));
             }
 
-            // Process affiliate / partner referral commission on purchase
-            $setting = \App\Models\SiteSetting::find(1);
+            // Process affiliate / partner referral commission on purchase (First purchase ONLY)
             $userId = Auth::id();
-            if ($userId && $setting) {
+            if ($userId) {
                 $orderUser = User::find($userId);
-                if ($orderUser && $orderUser->referred_by) {
-                    $referrer = User::find($orderUser->referred_by);
-                    if ($referrer) {
-                        $alreadyEarned = \App\Models\AffiliateReferral::where('referred_id', $orderUser->id)->exists();
-                        
-                        if (!$alreadyEarned) {
-                            if ($referrer->status_identity === 'partner') {
-                                // Partners earn dynamic partner referral amount (default GHc 3.00) upon customer's first purchase
-                                $commission = $setting->partner_referral_amount ?? 3.00;
-
-                                \App\Models\AffiliateReferral::create([
-                                    'referrer_id' => $referrer->id,
-                                    'referred_id' => $orderUser->id,
-                                    'commission_earned' => $commission
-                                ]);
-
-                                $referrer->referral_balance += $commission;
-                                $referrer->save();
-                            } elseif ($setting->referral_commission_type === 'percentage') {
-                                $percentage = $setting->referral_percentage ?? 10.00;
-                                $commission = ($total_amount * $percentage) / 100;
-
-                                \App\Models\AffiliateReferral::create([
-                                    'referrer_id' => $referrer->id,
-                                    'referred_id' => $orderUser->id,
-                                    'commission_earned' => $commission
-                                ]);
-
-                                $referrer->referral_balance += $commission;
-                                $referrer->save();
-                            }
-                        }
-                    }
-                }
+                \App\Models\SiteSetting::processReferralCommissionOnFirstPurchase($orderUser, $total_amount);
             }
 
             $user_email = $paymentDetails['data']['metadata']['email'];

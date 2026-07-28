@@ -1,3 +1,7 @@
+@php
+    $siteSetting = \App\Models\SiteSetting::find(1);
+    $enableAffiliate = $siteSetting ? (bool)($siteSetting->enable_affiliate_program ?? true) : true;
+@endphp
 <!-- Static Vertical Floating SG Panel -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
@@ -614,6 +618,7 @@
             <span class="sg-tooltip">Blog & News</span>
         </button>
 
+        @if($enableAffiliate)
         <!-- Tab 3: Affiliate -->
         <button onclick="toggleSgDrawer('affiliate')" class="sg-dock-btn" title="Affiliate Programme">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
@@ -621,6 +626,7 @@
             </svg>
             <span class="sg-tooltip">Affiliate Programme</span>
         </button>
+        @endif
 
         <!-- Tab 4: Request Item -->
         <button onclick="toggleSgDrawer('request')" class="sg-dock-btn" title="Request an Item">
@@ -839,11 +845,18 @@
                 <p style="font-size: 11px; color: #a0aec0; margin-top: 8px; font-weight: 500;">Connecting to affiliate portal...</p>
             </div>
 
+            <!-- Disabled State -->
+            <div id="affiliate-disabled" style="display: none; text-align: center; padding: 40px 15px; flex-direction: column; align-items: center; gap: 12px;">
+                <div style="font-size: 44px; margin: 0;">🔒</div>
+                <h3 style="margin: 0; font-size: 14px; font-weight: 800; color: #2d3748;">Program Currently Disabled</h3>
+                <p style="margin: 0; font-size: 11px; color: #718096; line-height: 1.5; padding: 0 10px;">The Smart Groceries referral program is currently disabled by administrator.</p>
+            </div>
+
             <!-- Guest (Unauth) -->
             <div id="affiliate-guest" style="display: none; text-align: center; padding: 30px 10px; flex-direction: column; align-items: center; gap: 12px;">
                 <div style="font-size: 44px; margin: 0;">🎁</div>
                 <h3 style="margin: 0; font-size: 14px; font-weight: 800; color: #2d3748;">Earn Referrals Cash!</h3>
-                <p style="margin: 0; font-size: 11px; color: #718096; line-height: 1.5; padding: 0 10px;">Help friends shop smart. You earn Gh {{ number_format($setting->referral_flat_amount ?? 15.00, 2) }} cash directly in your wallet for every successful sign-up referral!</p>
+                <p style="margin: 0; font-size: 11px; color: #718096; line-height: 1.5; padding: 0 10px;">Help friends shop smart. You earn cash commissions directly in your wallet when your referred friends complete their first purchase!</p>
                 <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 14px;">
                     <a href="/login" class="sg-btn-primary" style="text-decoration: none;">Log In to Account</a>
                     <a href="/register" class="sg-btn-outline" style="text-decoration: none;">Create Student Account</a>
@@ -858,66 +871,66 @@
                         <span style="font-size: 9px; font-weight: 700; color: #718096; text-transform: uppercase; border-bottom: 1px dashed #a0aec0; padding-bottom: 1px;">Referred</span>
                         <div id="aff-stat-count" style="font-size: 15px; font-weight: 900; color: #2d3748; margin-top: 4px;">0</div>
                     </div>
-                    <div style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 12px; padding: 10px;">
-                        <span style="font-size: 9px; font-weight: 700; color: #166534; text-transform: uppercase;">Balance</span>
-                        <div style="font-size: 12px; font-weight: 900; color: #166534; margin-top: 4px;">Gh <span id="aff-stat-balance">0.00</span></div>
+                    <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px;">
+                        <span style="font-size: 9px; font-weight: 700; color: #718096; text-transform: uppercase;">Earned</span>
+                        <div style="font-size: 15px; font-weight: 900; color: #2e8b5e; margin-top: 4px;">Gh <span id="aff-stat-earned">0.00</span></div>
                     </div>
-                    <div style="background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 12px; padding: 10px;">
-                        <span style="font-size: 9px; font-weight: 700; color: #0f766e; text-transform: uppercase;">Total Paid</span>
-                        <div style="font-size: 12px; font-weight: 900; color: #0f766e; margin-top: 4px;">Gh <span id="aff-stat-total">0.00</span></div>
+                    <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px;">
+                        <span style="font-size: 9px; font-weight: 700; color: #718096; text-transform: uppercase;">Wallet</span>
+                        <div style="font-size: 15px; font-weight: 900; color: #3182ce; margin-top: 4px;">Gh <span id="aff-stat-balance">0.00</span></div>
                     </div>
                 </div>
 
-                <!-- Referred Friends List (Collapsible) -->
-                <div id="referred-friends-section" style="display: none; background: #ffffff; border: 1px solid #edf2f7; border-radius: 12px; padding: 12px; flex-direction: column; gap: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; padding-bottom: 6px;">
-                        <h4 style="margin: 0; font-size: 10px; font-weight: 900; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px;">Referred Friends Details</h4>
-                        <button onclick="toggleReferredFriendsSection()" style="background: none; border: none; color: #a0aec0; cursor: pointer; font-size: 16px; font-weight: 700; padding: 0; line-height: 1;">&times;</button>
+                <!-- Referred Friends Collapsible List -->
+                <div id="referred-friends-collapsible" style="display: none; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #edf2f7;">
+                        <h5 style="margin: 0; font-size: 11px; font-weight: 800; color: #2d3748;">Referred Friends</h5>
+                        <button type="button" onclick="toggleReferredFriendsSection()" style="background: none; border: none; font-size: 10px; color: #a0aec0; cursor: pointer; padding: 0;">✕ Close</button>
                     </div>
-                    <div id="referred-friends-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto; padding-right: 4px;" class="sg-scrollbar">
+                    <div id="referred-friends-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto;" class="sg-scrollbar">
                         <!-- Loaded dynamically -->
                     </div>
                 </div>
 
-                <!-- Referral code display -->
-                <div class="sg-card" style="display: flex; flex-direction: column; gap: 10px;">
-                    <h4 style="margin: 0; font-size: 12px; font-weight: 800; color: #2d3748; display: flex; align-items: center; gap: 6px;">
-                        <span>Your Referral Code:</span>
-                        <span id="aff-ref-code" style="background: #ebf8ff; border: 1px solid #bee3f8; color: #2b6cb0; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">SG-XXXX</span>
-                    </h4>
-                    <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
-                        <span style="font-size: 9px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px;">Share referral link</span>
-                        <input type="hidden" id="aff-ref-link" value="">
-                        <button id="aff-copy-btn" onclick="copyAffRefLink()" class="sg-btn-primary" style="width: 100%; padding: 10px 14px;">Copy</button>
+                <!-- Unique Referral Link Box -->
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px;">
+                    <label style="font-size: 10px; font-weight: 800; color: #166534; display: block; margin-bottom: 6px; text-transform: uppercase;">Your Unique Referral Link</label>
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" id="aff-referral-link" readonly style="flex: 1; font-size: 11px; padding: 6px 8px; border: 1px solid #cbd5e0; border-radius: 6px; background: #fff; color: #2d3748;" value="Generating..." />
+                        <button onclick="copyAffiliateLink()" style="background: #3BB77E; color: #fff; border: none; border-radius: 6px; padding: 0 10px; font-size: 11px; font-weight: 700; cursor: pointer;">Copy</button>
                     </div>
+                    <small id="aff-copy-msg" style="color: #166534; font-size: 10px; display: none; margin-top: 4px; font-weight: 600;">Copied link to clipboard!</small>
                 </div>
 
-                <!-- Withdrawal Request Form -->
-                <div class="sg-card" style="background: #fcfcfd; display: flex; flex-direction: column; gap: 12px;">
-                    <h4 style="margin: 0; font-size: 12px; font-weight: 800; color: #2d3748;">Withdraw Earnings</h4>
+                <!-- Referral Code Box -->
+                <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <span style="font-size: 10px; color: #718096; font-weight: 600;">Referral Code</span>
+                        <h4 id="aff-referral-code" style="margin: 2px 0 0 0; font-size: 14px; font-weight: 800; color: #2d3748; font-family: monospace;">---</h4>
+                    </div>
+                    <button onclick="copyAffiliateCode()" style="background: #edf2f7; color: #4a5568; border: 1px solid #cbd5e0; border-radius: 6px; padding: 6px 10px; font-size: 10px; font-weight: 700; cursor: pointer;">Copy Code</button>
+                </div>
+
+                <!-- Request Payout Form -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px;">
+                    <h5 style="margin: 0 0 10px 0; font-size: 12px; font-weight: 800; color: #2d3748;">Withdraw Earnings</h5>
                     <form id="affiliate-payout-form" style="display: flex; flex-direction: column; gap: 12px; margin: 0;">
                         @csrf
-                        <div style="display: flex; gap: 10px;">
-                            <div style="flex: 1;">
-                                <label class="sg-form-label" style="font-size: 9px; margin-bottom: 4px;">Amount (Gh)</label>
-                                <input type="number" name="amount" id="payout-amount" required min="50" step="any" placeholder="Gh 50" class="sg-input" style="padding: 8px;">
-                            </div>
-                            <div style="flex: 1;">
-                                <label class="sg-form-label" style="font-size: 9px; margin-bottom: 4px;">MoMo / Payout</label>
-                                <select name="payment_method" required class="sg-select" style="padding: 8px;">
-                                    <option value="Mobile Money (MoMo)">Mobile Money</option>
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                    <option value="PayPal">PayPal</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Payment Method / MoMo Details</label>
+                            <input type="text" name="payment_method" placeholder="e.g. MTN MoMo 0541234567 (Name)" required style="width: 100%; font-size: 11px; padding: 6px 8px; border: 1px solid #cbd5e0; border-radius: 6px;" />
                         </div>
-                        <button type="submit" class="sg-btn-primary" style="padding: 8px 14px;">Request Cashout</button>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Amount (GHc)</label>
+                            <input type="number" step="0.01" min="50" name="amount" placeholder="Min GHc 50.00" required style="width: 100%; font-size: 11px; padding: 6px 8px; border: 1px solid #cbd5e0; border-radius: 6px;" />
+                        </div>
+                        <button type="submit" class="sg-btn-primary" style="width: 100%; padding: 8px; font-size: 11px;">Request Withdrawal</button>
                     </form>
                 </div>
 
-                <!-- Transaction logs list -->
-                <div>
-                    <h4 style="margin: 0 0 8px 0; font-size: 11px; font-weight: 900; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px;">Payout History</h4>
+                <!-- Payout Requests History -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px;">
+                    <h5 style="margin: 0 0 8px 0; font-size: 11px; font-weight: 800; color: #2d3748;">Recent Payout Requests</h5>
                     <div id="affiliate-payouts-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 120px; overflow-y: auto; padding-right: 4px;" class="sg-scrollbar">
                         <!-- Loaded dynamically -->
                     </div>
@@ -1649,7 +1662,9 @@
         $('#affiliate-loader').css('display', 'block');
         $('#affiliate-guest').css('display', 'none');
         $('#affiliate-member').css('display', 'none');
-        $('#referred-friends-section').css('display', 'none'); // Close list on reload
+        $('#affiliate-disabled').css('display', 'none');
+        $('#referred-friends-section').css('display', 'none');
+        $('#referred-friends-collapsible').css('display', 'none');
 
         $.ajax({
             url: '/floating-panel/affiliate-stats',
@@ -1657,14 +1672,19 @@
             dataType: 'json',
             success: function(response) {
                 $('#affiliate-loader').css('display', 'none');
-                if (!response.authenticated) {
+                if (response.disabled) {
+                    $('#affiliate-disabled').css('display', 'flex');
+                } else if (!response.authenticated) {
                     $('#affiliate-guest').css('display', 'flex');
                 } else {
                     // Load stats
                     $('#aff-stat-count').text(response.referral_count);
                     $('#aff-stat-balance').text(response.referral_balance);
+                    $('#aff-stat-earned').text(response.total_earned);
                     $('#aff-stat-total').text(response.total_earned);
+                    $('#aff-referral-code').text(response.referral_code);
                     $('#aff-ref-code').text(response.referral_code);
+                    $('#aff-referral-link').val(response.referral_link);
                     $('#aff-ref-link').val(response.referral_link);
                     
                     // Cache referred users
@@ -1672,14 +1692,19 @@
 
                     // Load payouts
                     let payoutsHtml = '';
-                    if (response.payouts.length > 0) {
+                    if (response.payouts && response.payouts.length > 0) {
                         $.each(response.payouts, function(i, payout) {
                             const date = new Date(payout.created_at).toLocaleDateString('en-US', {
                                 month: 'short', day: 'numeric', year: '2-digit'
                             });
                             let statusClass = 'sg-badge-info';
-                            if (payout.status === 'completed') statusClass = 'sg-badge-success';
-                            else if (payout.status === 'pending') statusClass = 'sg-badge-warning';
+                            if (payout.status === 'completed' || payout.status === 'approved' || payout.status === 'accepted') {
+                                statusClass = 'sg-badge-success';
+                            } else if (payout.status === 'pending') {
+                                statusClass = 'sg-badge-warning';
+                            } else if (payout.status === 'rejected' || payout.status === 'declined') {
+                                statusClass = 'sg-badge-danger';
+                            }
                             
                             const receiptButton = `<a href="/affiliate/payout/receipt/${payout.id}" target="_blank" style="color: #718096; background: #f7f8f9; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#dcfce7'; this.style.color='#166534';" onmouseout="this.style.background='#f7f8f9'; this.style.color='#718096';" title="Print Receipt"><i class="fa-solid fa-print" style="font-size: 10px;"></i></a>`;
                             
@@ -1711,10 +1736,17 @@
         });
     }
 
-    function copyAffRefLink() {
-        const copyInput = document.getElementById("aff-ref-link");
-        const linkValue = copyInput ? copyInput.value : '';
+    function copyAffiliateLink() { copyAffRefLink(); }
+    function copyAffiliateCode() {
+        const codeText = $('#aff-referral-code').text() || $('#aff-ref-code').text();
+        if (navigator.clipboard) { navigator.clipboard.writeText(codeText); }
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Referral code copied!', showConfirmButton: false, timer: 2000 });
+        }
+    }
 
+    function copyAffRefLink() {
+        const linkValue = $('#aff-referral-link').val() || $('#aff-ref-link').val() || '';
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(linkValue);
         } else {
@@ -1729,21 +1761,7 @@
             textArea.remove();
         }
 
-        // Update button feedback
-        const copyBtn = document.getElementById("aff-copy-btn");
-        if (copyBtn) {
-            const originalText = copyBtn.innerText;
-            copyBtn.innerText = "Copied!";
-            copyBtn.style.backgroundColor = "#2fa56f"; // Soft feedback green
-            copyBtn.style.borderColor = "#2fa56f";
-            setTimeout(() => {
-                copyBtn.innerText = originalText;
-                copyBtn.style.backgroundColor = "";
-                copyBtn.style.borderColor = "";
-            }, 2000);
-        }
-
-        // Show SweetAlert2 toast if available
+        $('#aff-copy-msg').fadeIn().delay(2000).fadeOut();
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 toast: true,

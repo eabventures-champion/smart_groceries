@@ -128,4 +128,72 @@ class SiteSetting extends Model
         list($hour, $minute) = self::getDeliveryCutoffTime();
         return \Carbon\Carbon::createFromTime($hour, $minute)->format('g:i A');
     }
+
+    /**
+     * Process affiliate referral commission for a user's first purchase.
+     * Commission is paid ONLY on the user's first purchase.
+     *
+     * @param \App\Models\User $orderUser
+     * @param float $totalOrderAmount
+     * @return float|null
+     */
+    public static function processReferralCommissionOnFirstPurchase($orderUser, $totalOrderAmount = 0.00)
+    {
+        $setting = self::find(1);
+        if ($setting && !$setting->enable_affiliate_program) {
+            return null;
+        }
+
+        if (!$orderUser || !$orderUser->referred_by) {
+            return null;
+        }
+
+        $referrer = User::find($orderUser->referred_by);
+        if (!$referrer) {
+            return null;
+        }
+
+        // Commission is paid ONLY on the user's first purchase
+        $alreadyEarned = \App\Models\AffiliateReferral::where('referred_id', $orderUser->id)->exists();
+        if ($alreadyEarned) {
+            return null;
+        }
+
+        $setting = self::find(1);
+        $isPartner = ($referrer->is_partner || $referrer->status_identity === 'partner');
+
+        if ($isPartner) {
+            // Partners earn dynamic partner referral amount (default GHc 3.00) upon customer's first purchase
+            $commission = (float)($setting->partner_referral_amount ?? 3.00);
+        } else {
+            // Cumulative Tiered commission structure for students/users
+            $previousCount = \App\Models\AffiliateReferral::where('referrer_id', $referrer->id)->count();
+            $referralIndex = $previousCount + 1;
+
+            $t1 = (float)($setting->referral_tier1_amount ?? 3.00); // 1-50
+            $t2 = (float)($setting->referral_tier2_amount ?? 4.00); // 51-100
+            $t3 = (float)($setting->referral_tier3_amount ?? 5.00); // 101+
+
+            if ($referralIndex <= 50) {
+                $commission = $t1;
+            } elseif ($referralIndex <= 100) {
+                $commission = $t2;
+            } else {
+                $commission = $t3;
+            }
+        }
+
+        // Create log entry in AffiliateReferral table
+        \App\Models\AffiliateReferral::create([
+            'referrer_id' => $referrer->id,
+            'referred_id' => $orderUser->id,
+            'commission_earned' => $commission
+        ]);
+
+        // Credit to referrer's balance
+        $referrer->referral_balance += $commission;
+        $referrer->save();
+
+        return $commission;
+    }
 }

@@ -40,10 +40,17 @@ class RegisteredUserController extends Controller
     {
         $new_user = User::where('role','admin')->get();
 
+        $siteSetting = \App\Models\SiteSetting::find(1);
+        $allowedStatusIdentities = [];
+        if ($siteSetting && ($siteSetting->show_status_student ?? true)) $allowedStatusIdentities[] = 'student';
+        if ($siteSetting && ($siteSetting->show_status_non_student ?? false)) $allowedStatusIdentities[] = 'non-student';
+        if ($siteSetting && ($siteSetting->show_status_partner ?? true)) $allowedStatusIdentities[] = 'partner';
+        if (empty($allowedStatusIdentities)) $allowedStatusIdentities = ['student', 'non-student', 'partner'];
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'status_identity' => ['required', 'string', 'in:student,non-student,partner'],
+            'status_identity' => ['required', 'string', 'in:' . implode(',', $allowedStatusIdentities)],
             'institution' => ['required_if:status_identity,student', 'nullable', 'string', 'max:255'],
             'resident_type' => ['required_if:status_identity,student', 'nullable', 'string', 'in:resident,non-resident'],
             'year_of_admission' => ['required_if:status_identity,student', 'nullable', 'integer', 'min:2000', 'max:' . (date('Y') + 1)],
@@ -78,28 +85,7 @@ class RegisteredUserController extends Controller
         ]);
 
         if ($referrer) {
-            // Partners earn commission upon the customer's first purchase rather than at registration time
-            if ($referrer->status_identity !== 'partner') {
-                $setting = \App\Models\SiteSetting::find(1);
-                $commissionType = $setting->referral_commission_type ?? 'flat';
-
-                if ($commissionType === 'flat') {
-                    $flatAmount = $setting->referral_flat_amount ?? 15.00;
-
-                    // Log the referral
-                    \App\Models\AffiliateReferral::create([
-                        'referrer_id' => $referrer->id,
-                        'referred_id' => $user->id,
-                        'commission_earned' => $flatAmount
-                    ]);
-
-                    // Add referral fee to referrer's balance
-                    $referrer->referral_balance += $flatAmount;
-                    $referrer->save();
-                }
-            }
-
-            // Clear session key
+            // Referral commissions are earned upon the customer's first purchase via cumulative tiers
             session()->forget('referrer_code');
         }
 

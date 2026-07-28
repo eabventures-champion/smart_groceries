@@ -142,18 +142,36 @@
                                           </div>
                                        </div>
 
+                                       @php
+                                          $siteSetting = \App\Models\SiteSetting::find(1);
+                                          $showStatusIdentity = $siteSetting ? (bool)$siteSetting->show_status_identity : true;
+                                          $showStudent = $siteSetting ? (bool)($siteSetting->show_status_student ?? true) : true;
+                                          $showNonStudent = $siteSetting ? (bool)($siteSetting->show_status_non_student ?? false) : false;
+                                          $showPartner = $siteSetting ? (bool)($siteSetting->show_status_partner ?? true) : true;
+                                       @endphp
+
                                        <!-- Status Identity -->
-                                       <div class="form-group">
-                                          <select name="status_identity" id="status_identity" class="form-control status-identity-select @error('status_identity') is-invalid @enderror" required>
-                                             <option value="" disabled {{ old('status_identity') === null ? 'selected' : '' }}>-- Status Identity --</option>
-                                             <option value="student" {{ old('status_identity') == 'student' ? 'selected' : '' }}>student</option>
-                                             <option value="non-student" {{ old('status_identity') == 'non-student' ? 'selected' : '' }}>non-student</option>
-                                             <option value="partner" {{ old('status_identity') == 'partner' ? 'selected' : '' }}>partner</option>
-                                          </select>
-                                          @error('status_identity')
-                                          <span class="text-danger">{{ $message }}</span>
-                                          @enderror
-                                       </div>
+                                       @if(!$showStatusIdentity)
+                                          <input type="hidden" name="status_identity" id="status_identity" value="student">
+                                       @else
+                                          <div class="form-group">
+                                             <select name="status_identity" id="status_identity" class="form-control status-identity-select @error('status_identity') is-invalid @enderror" required>
+                                                <option value="" disabled {{ old('status_identity') === null ? 'selected' : '' }}>-- Status Identity --</option>
+                                                @if($showStudent)
+                                                   <option value="student" {{ old('status_identity') == 'student' ? 'selected' : '' }}>student</option>
+                                                @endif
+                                                @if($showNonStudent)
+                                                   <option value="non-student" {{ old('status_identity') == 'non-student' ? 'selected' : '' }}>non-student</option>
+                                                @endif
+                                                @if($showPartner)
+                                                   <option value="partner" {{ old('status_identity') == 'partner' ? 'selected' : '' }}>partner</option>
+                                                @endif
+                                             </select>
+                                             @error('status_identity')
+                                             <span class="text-danger">{{ $message }}</span>
+                                             @enderror
+                                          </div>
+                                       @endif
 
                                        <!-- Student Options Container -->
                                        <div id="student-options-container">

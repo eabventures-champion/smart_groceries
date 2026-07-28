@@ -74,7 +74,19 @@ class AdminController extends Controller
         $data->username = $request->username;
         $data->name = $request->name;
         $data->email = $request->email;
-        $data->phone = $request->phone;
+        if ($request->has('phone') && !empty($request->phone)) {
+            $phoneClean = trim($request->phone);
+            if (!preg_match('/^[0-9]{10}$/', $phoneClean)) {
+                $notification = array(
+                    'message' => 'The phone number must be exactly 10 digits (e.g. 0243036092).',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification)->withInput();
+            }
+            $data->phone = $phoneClean;
+        } else {
+            $data->phone = $request->phone;
+        }
         $data->address = $request->address;
 
         if($request->file('photo')){

@@ -66,8 +66,6 @@
                                  @else
                                     <span class="badge bg-success p-2" style="font-size: 13px;"><i class="fa fa-user-graduate"></i> Active Student</span>
                                  @endif
-                              @else
-                                 <span class="badge bg-secondary p-2" style="font-size: 13px;"><i class="fa fa-user"></i> Non-Student Member</span>
                               @endif
                            </div>
 

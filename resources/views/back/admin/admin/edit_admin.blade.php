@@ -55,7 +55,7 @@
                               <h6 class="mb-0">Phone </h6>
                            </div>
                            <div class="col-sm-9 text-secondary">
-                              <input type="text" name="phone" class="form-control" value="{{ $user->phone }}" />
+                              <input type="text" name="phone" class="form-control" value="{{ $user->phone }}" placeholder="e.g. 0243036092" pattern="[0-9]{10}" maxlength="10" minlength="10" inputmode="numeric" title="Phone number must be exactly 10 digits (e.g. 0243036092)" />
                            </div>
                         </div>
                         <div class="row mb-3">

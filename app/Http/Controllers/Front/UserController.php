@@ -73,7 +73,16 @@ class UserController extends Controller
         $id = Auth::user()->id;
 
         if ($request->has('phone') && !empty($request->phone)) {
-            $existingUser = User::where('phone', $request->phone)->where('id', '!=', $id)->first();
+            $phoneClean = trim($request->phone);
+            if (!preg_match('/^[0-9]{10}$/', $phoneClean)) {
+                $notification = array(
+                    'message' => 'The phone number must be exactly 10 digits (e.g. 0243036092).',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification)->withInput();
+            }
+
+            $existingUser = User::where('phone', $phoneClean)->where('id', '!=', $id)->first();
             if ($existingUser) {
                 $notification = array(
                     'message' => 'This phone number is already registered by another user.',
@@ -130,15 +139,27 @@ class UserController extends Controller
     }
 
     public function check_phone_unique(Request $request) {
-        $phone = $request->phone;
+        $phone = trim($request->phone);
         $id = Auth::check() ? Auth::user()->id : null;
         
+        if (!preg_match('/^[0-9]{10}$/', $phone)) {
+            return response()->json([
+                'valid' => false,
+                'unique' => false,
+                'message' => 'Phone number must be exactly 10 digits (e.g. 0243036092).'
+            ]);
+        }
+
         $exists = User::where('phone', $phone);
         if ($id) {
             $exists->where('id', '!=', $id);
         }
         $exists = $exists->exists();
-        return response()->json(['unique' => !$exists]);
+        return response()->json([
+            'valid' => true,
+            'unique' => !$exists,
+            'message' => $exists ? 'This phone number is already registered by another user.' : ''
+        ]);
     }
 
     public function update_chat_analytics(Request $request) {

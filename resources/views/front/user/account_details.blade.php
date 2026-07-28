@@ -80,16 +80,16 @@
                                     <input required class="account-input" name="email" type="email" value="{{ $userData->email }}" placeholder="Enter email" />
                                  </div>
                               </div>
-                              <div class="form-group col-md-6">
-                                 <label class="account-label">Phone Number <span class="account-required">*</span></label>
-                                 <div class="account-input-wrap">
-                                    <span class="account-input-icon"><i class="fi-rs-phone-call"></i></span>
-                                    <input required class="account-input" id="account_phone" name="phone" type="text" value="{{ $userData->phone }}" placeholder="Enter phone number" />
-                                 </div>
-                                 <div id="account_phone_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
-                                    This phone number is already registered by another user.
-                                 </div>
-                              </div>
+                               <div class="form-group col-md-6">
+                                  <label class="account-label">Phone Number <span class="account-required">*</span></label>
+                                  <div class="account-input-wrap">
+                                     <span class="account-input-icon"><i class="fi-rs-phone-call"></i></span>
+                                     <input required class="account-input" id="account_phone" name="phone" type="text" value="{{ $userData->phone }}" placeholder="e.g. 0243036092" pattern="[0-9]{10}" maxlength="10" minlength="10" inputmode="numeric" title="Phone number must be exactly 10 digits (e.g. 0243036092)" />
+                                  </div>
+                                  <div id="account_phone_feedback" style="display: none; color: #d9534f; font-size: 12px; margin-top: 5px; font-weight: 500;">
+                                     This phone number is already registered by another user.
+                                  </div>
+                               </div>
                            </div>
 
                             @if($userData->status_identity === 'student')
@@ -483,6 +483,12 @@
        function checkPhoneUnique() {
            var phoneVal = phoneInput.val().trim();
            if (phoneVal.length > 0) {
+               if (!/^\d{10}$/.test(phoneVal)) {
+                   phoneInput.css('border-color', '#d9534f');
+                   feedback.text('Phone number must be exactly 10 digits (e.g. 0243036092).').show();
+                   submitBtn.prop('disabled', true);
+                   return;
+               }
                $.ajax({
                    url: "{{ url('/check-phone-unique') }}",
                    data: { phone: phoneVal },
@@ -494,7 +500,7 @@
                            submitBtn.prop('disabled', false);
                        } else {
                            phoneInput.css('border-color', '#d9534f');
-                           feedback.show();
+                           feedback.text('This phone number is already registered by another user.').show();
                            submitBtn.prop('disabled', true);
                        }
                    }
