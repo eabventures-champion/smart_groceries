@@ -100,13 +100,12 @@ class User extends Authenticatable
         
         $loggedEarned = (float)\App\Models\AffiliateReferral::where('referrer_id', $this->id)->sum('commission_earned');
         $referredUserIds = \App\Models\User::where('referred_by', $this->id)->pluck('id');
-        $referralCount = count($referredUserIds);
         $ordersCount = \App\Models\Order::whereIn('user_id', $referredUserIds)->distinct('user_id')->count('user_id');
-        $qualifyingCount = max($referralCount, $ordersCount);
+        $qualifyingCount = $ordersCount;
 
         if ($isPartner) {
-            $flatAmount = (float)($siteSetting->partner_referral_amount ?? 3.00);
-            $calculatedEarned = max($loggedEarned, $qualifyingCount * $flatAmount);
+            $partnerAmount = (float)($siteSetting->partner_referral_amount ?? 3.00);
+            $calculatedEarned = max($loggedEarned, $qualifyingCount * $partnerAmount);
         } else {
             $t1 = (float)($siteSetting->referral_tier1_amount ?? 3.00);
             $t2 = (float)($siteSetting->referral_tier2_amount ?? 4.00);
