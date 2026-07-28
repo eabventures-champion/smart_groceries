@@ -504,24 +504,70 @@ class ProductController extends Controller
 
     public function edit_attritube(Request $request){
             $data = $request->all();
-            // echo "<pre>"; print_r($data); die;
-            foreach($data['attribute_id'] as $key => $attribute){
-                if(!empty($attribute)){
-                    ProductAttribute::where([
-                        'id' => $data['attribute_id'][$key]
-                    ])->update([
-                        'price' => $data['price'][$key],
-                        'stock' => $data['stock'][$key]
-                    ]);
+            if (isset($data['attribute_id']) && is_array($data['attribute_id'])) {
+                foreach($data['attribute_id'] as $key => $attributeId){
+                    if(!empty($attributeId)){
+                        $updateData = [];
+
+                        if (isset($data['price']) && is_array($data['price']) && isset($data['price'][$key])) {
+                            $updateData['price'] = $data['price'][$key];
+                        }
+                        if (isset($data['stock']) && is_array($data['stock']) && isset($data['stock'][$key])) {
+                            $updateData['stock'] = $data['stock'][$key];
+                        }
+                        if (isset($data['size']) && is_array($data['size']) && isset($data['size'][$key])) {
+                            $updateData['size'] = $data['size'][$key];
+                        }
+                        if (isset($data['sku']) && is_array($data['sku']) && isset($data['sku'][$key])) {
+                            $updateData['sku'] = $data['sku'][$key];
+                        }
+
+                        if (!empty($updateData)) {
+                            ProductAttribute::where('id', $attributeId)->update($updateData);
+                        }
+                    }
                 }
             }
             
             $notification = array(
-                'message' => 'Product Attribute has been updated successfully!',
+                'message' => 'Product Attributes updated successfully!',
                 'alert-type' => 'success'
             );
 
             return redirect()->back()->with($notification);
+    }
+
+    public function update_single_attribute(Request $request, $id){
+        $attribute = ProductAttribute::findOrFail($id);
+
+        if ($request->has('size') && $request->size != $attribute->size) {
+            $size_count = ProductAttribute::where('product_id', $attribute->product_id)
+                ->where('size', $request->size)
+                ->where('id', '!=', $id)
+                ->count();
+            if ($size_count > 0) {
+                $notification = array(
+                    'message' => 'Size already exists for this product! Please choose another Size.',
+                    'alert-type' => 'error'
+                );
+                return back()->with($notification);
+            }
+        }
+
+        $attribute->update([
+            'size' => $request->size ?? $attribute->size,
+            'sku' => $request->sku ?? $attribute->sku,
+            'price' => $request->price ?? $attribute->price,
+            'stock' => $request->stock ?? $attribute->stock,
+            'status' => $request->has('status') ? (int)$request->status : $attribute->status,
+        ]);
+
+        $notification = array(
+            'message' => 'Product Attribute updated successfully!',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
     }
 
     /**
