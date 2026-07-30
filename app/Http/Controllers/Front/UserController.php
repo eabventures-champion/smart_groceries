@@ -354,8 +354,13 @@ class UserController extends Controller
         // Decrement product inventory quantities
         $productItems = OrderItem::where('order_id', $order_id)->get();
         foreach($productItems as $item){
-            Product::where('id', $item->product_id)
-                ->update(['product_qty' => DB::raw('product_qty-'.$item->qty) ]);
+            $product = Product::find($item->product_id);
+            if ($product) {
+                $currentQty = (int) preg_replace('/[^0-9]/', '', (string)$product->product_qty);
+                $itemQty = (int) preg_replace('/[^0-9]/', '', (string)$item->qty);
+                $newQty = max(0, $currentQty - ($itemQty > 0 ? $itemQty : 1));
+                $product->update(['product_qty' => $newQty]);
+            }
         }
 
         // Update order status
