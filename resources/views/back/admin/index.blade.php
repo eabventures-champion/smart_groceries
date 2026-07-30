@@ -66,10 +66,73 @@
     $total_experts_count = App\Models\Expert::count();
     $pending_payouts_count = App\Models\AffiliatePayout::where('status', 'pending')->count();
     $pending_complaints_count = App\Models\Complaint::where('status', 'pending')->count();
+    $pending_item_requests_count = \App\Models\ItemRequest::where('status', 'submitted')->count();
+    $latest_submitted_request = \App\Models\ItemRequest::where('status', 'submitted')->latest()->first();
 @endphp
 
 <!--start page wrapper -->
 <div class="page-content">
+   @if($pending_item_requests_count > 0)
+   <style>
+       @keyframes alarm-ring {
+           0% { transform: rotate(0deg) scale(1); }
+           10% { transform: rotate(15deg) scale(1.15); }
+           20% { transform: rotate(-15deg) scale(1.15); }
+           30% { transform: rotate(12deg) scale(1.15); }
+           40% { transform: rotate(-12deg) scale(1.15); }
+           50% { transform: rotate(0deg) scale(1); }
+           100% { transform: rotate(0deg) scale(1); }
+       }
+       @keyframes alarm-glow {
+           0% { box-shadow: 0 0 12px rgba(220, 38, 38, 0.7), 0 0 25px rgba(239, 68, 68, 0.4); transform: scale(1); }
+           50% { box-shadow: 0 0 30px rgba(220, 38, 38, 1), 0 0 45px rgba(239, 68, 68, 0.8); transform: scale(1.01); }
+           100% { box-shadow: 0 0 12px rgba(220, 38, 38, 0.7), 0 0 25px rgba(239, 68, 68, 0.4); transform: scale(1); }
+       }
+       .animated-alarm-banner {
+           animation: alarm-glow 1.4s infinite ease-in-out;
+           background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+           border: 2px solid #f87171 !important;
+       }
+       .animated-alarm-bell {
+           display: inline-block;
+           animation: alarm-ring 1.1s infinite ease-in-out;
+       }
+   </style>
+
+   <div class="alert animated-alarm-banner text-white border-0 alert-dismissible fade show py-3 mb-4" style="border-radius: 12px;">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 text-white">
+         <div class="d-flex align-items-center">
+            <div class="font-35 text-white me-3" style="font-size: 34px; line-height: 1;">
+               <span class="animated-alarm-bell">🚨</span>
+            </div>
+            <div>
+               <h5 class="mb-1 text-white fw-bold" style="font-size: 16px; letter-spacing: 0.3px;">
+                  SG PANEL ALARM: {{ $pending_item_requests_count }} New Custom Item {{ Str::plural('Request', $pending_item_requests_count) }} Submitted!
+               </h5>
+               <div class="text-white" style="font-size: 13.5px; opacity: 0.95;">
+                  @if($latest_submitted_request)
+                     <strong>{{ $latest_submitted_request->user ? $latest_submitted_request->user->name : 'Guest User' }}</strong> requested:
+                     <span class="badge bg-warning text-dark px-2 py-1 mx-1" style="font-size: 12px; font-weight: 700;">
+                        {{ $latest_submitted_request->product_name }} (Qty: {{ $latest_submitted_request->quantity }})
+                     </span>
+                     @if($latest_submitted_request->special_note)
+                        <em>"{{ Str::limit($latest_submitted_request->special_note, 60) }}"</em>
+                     @endif
+                  @else
+                     Users have requested items from the Floating SG Panel that need sourcing or response.
+                  @endif
+               </div>
+            </div>
+         </div>
+         <div>
+            <a href="{{ route('admin.lifestyle.requests') }}" class="btn btn-light btn-sm font-weight-bold px-3 py-2 text-danger fw-bold" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 13px;">
+               <i class="fa fa-bell me-1"></i> Respond to Request Now →
+            </a>
+         </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+   </div>
+   @endif
    @if($pending_complaints_count > 0)
    <div class="alert alert-danger border-0 bg-danger alert-dismissible fade show py-3 mb-4" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);">
       <div class="d-flex align-items-center text-white">
@@ -278,6 +341,24 @@
                </div>
                <div class="d-flex align-items-center text-white">
                   <p class="mb-0">Total Partners</p>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col" style="cursor: pointer;" onclick="window.location.href='{{ route('admin.lifestyle.requests') }}'">
+         <div class="card radius-10 @if($pending_item_requests_count > 0) alarming-card-danger @endif" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border: none;">
+            <div class="card-body">
+               <div class="d-flex align-items-center">
+                  <h5 class="mb-0 text-white">{{ $pending_item_requests_count }}</h5>
+                  <div class="ms-auto">
+                     <i class='bx bx-bell-plus fs-3 text-white @if($pending_item_requests_count > 0) animated-alarm-bell @endif'></i>
+                  </div>
+               </div>
+               <div class="progress my-3 bg-light-transparent" style="height:3px;">
+                  <div class="progress-bar bg-white" role="progressbar" style="width: 100%"></div>
+               </div>
+               <div class="d-flex align-items-center text-white">
+                  <p class="mb-0">Item Requests (SG Panel)</p>
                </div>
             </div>
          </div>

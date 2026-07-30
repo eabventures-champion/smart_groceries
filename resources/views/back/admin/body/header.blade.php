@@ -53,28 +53,54 @@
                      </div>
                   </div>
                </li> --}}
-                    @php
-                    $ncount = Auth::user()->unreadNotifications()->count()
-                    @endphp
+               @php
+                  $ncount = Auth::user()->unreadNotifications()->count();
+                  $pending_item_requests_count = \App\Models\ItemRequest::where('status', 'submitted')->count();
+               @endphp
+               @if($pending_item_requests_count > 0)
+               <style>
+                  @keyframes alarm-bell-swing {
+                      0% { transform: rotate(0deg); }
+                      15% { transform: rotate(22deg); }
+                      30% { transform: rotate(-22deg); }
+                      45% { transform: rotate(16deg); }
+                      60% { transform: rotate(-16deg); }
+                      75% { transform: rotate(0deg); }
+                      100% { transform: rotate(0deg); }
+                  }
+                  .header-alarm-bell {
+                      display: inline-block;
+                      animation: alarm-bell-swing 1.2s infinite ease-in-out;
+                      color: #dc2626 !important;
+                  }
+               </style>
+               @endif
                <li class="nav-item dropdown dropdown-large">
-                 <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
-                    <span class="alert-count" id="notification-count">
-                    {{ $ncount }}
-                    </span><i class='bx bx-bell'></i>
-                 </a>
+                  <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+                     <span class="alert-count @if($pending_item_requests_count > 0) bg-danger @endif" id="notification-count">
+                     {{ $ncount }}
+                     </span><i class='bx bx-bell @if($pending_item_requests_count > 0) header-alarm-bell @endif'></i>
+                  </a>
 
-                 @php
-                  $user = Auth::user();
-                 @endphp
+                  @php
+                   $user = Auth::user();
+                  @endphp
 
-                 <div class="dropdown-menu dropdown-menu-end">
-                    <a href="javascript:;">
-                       <div class="msg-header">
-                          <p class="msg-header-title">Notifications</p>
-                          {{-- <p class="msg-header-clear ms-auto" onclick="markAllNotificationRead('{{ $user->notification }}')">Mark all as read</p> --}}
-                       </div>
-                    </a>
-                    <div class="header-notifications-list">
+                  <div class="dropdown-menu dropdown-menu-end">
+                     <a href="javascript:;">
+                        <div class="msg-header">
+                           <p class="msg-header-title">Notifications</p>
+                        </div>
+                     </a>
+                     @if($pending_item_requests_count > 0)
+                     <a href="{{ route('admin.lifestyle.requests') }}" style="text-decoration: none;">
+                        <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: #ffffff; padding: 10px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f87171;">
+                           <span>🚨 <strong>{{ $pending_item_requests_count }}</strong> New Custom Item {{ Str::plural('Request', $pending_item_requests_count) }} (SG Panel)</span>
+                           <span class="badge bg-white text-danger fw-bold" style="font-size: 11px;">View →</span>
+                        </div>
+                     </a>
+                     @endif
+                     <div class="header-notifications-list">
                        
                         @php
                         $user = Auth::user();
