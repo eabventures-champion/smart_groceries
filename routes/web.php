@@ -379,8 +379,6 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::get('/client/impersonate/{id}', 'impersonate_user')->name('admin.client.impersonate');
         });
 
-        Route::get('/impersonate/leave', [\App\Http\Controllers\Back\ActiveUserController::class, 'stop_impersonate'])->name('admin.impersonate.leave');
-
         Route::controller(ReviewController::class)->group(function(){
             Route::get('pending/review' , 'pending_review')->name('pending.review');
             Route::get('review/approve/{id}' , 'review_approve')->name('review.approve');
@@ -568,6 +566,7 @@ Route::get('/error-419', function () {
 
 Route::middleware(['auth'])->group(function() {
     Route::get('/affiliate/payout/receipt/{id}', [App\Http\Controllers\Back\ActiveUserController::class, 'payout_receipt'])->name('affiliate.payout.receipt');
+    Route::get('/admin/impersonate/leave', [App\Http\Controllers\Back\ActiveUserController::class, 'stop_impersonate'])->name('admin.impersonate.leave');
 });
 
 
