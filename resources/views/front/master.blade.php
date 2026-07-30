@@ -532,6 +532,7 @@
        </style>
    </head>
    <body>
+      @include('front.body.impersonate_banner')
       {{-- @include('front.body.loader') --}}
       @include('front.body.quick_view')
       @include('front.body.header')

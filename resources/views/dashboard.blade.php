@@ -23,6 +23,7 @@
       </style>
    </head>
    <body>
+      @include('front.body.impersonate_banner')
       @include('front.body.header')
       <main class="main pages">
          @yield('content')

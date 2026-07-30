@@ -372,11 +372,14 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             Route::post('/payout/approve/{id}', 'approve_payout')->name('admin.payout.approve');
             Route::post('/payout/reject/{id}', 'reject_payout')->name('admin.payout.reject');
 
-            // User Account Status Management
+            // User Account Status & Impersonation Management
             Route::post('/client/suspend/{id}', 'suspend_user')->name('admin.client.suspend');
             Route::post('/client/disable/{id}', 'disable_user')->name('admin.client.disable');
             Route::post('/client/reactivate/{id}', 'reactivate_user')->name('admin.client.reactivate');
+            Route::get('/client/impersonate/{id}', 'impersonate_user')->name('admin.client.impersonate');
         });
+
+        Route::get('/impersonate/leave', [\App\Http\Controllers\Back\ActiveUserController::class, 'stop_impersonate'])->name('admin.impersonate.leave');
 
         Route::controller(ReviewController::class)->group(function(){
             Route::get('pending/review' , 'pending_review')->name('pending.review');

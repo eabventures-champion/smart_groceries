@@ -86,6 +86,10 @@
                            <a href="{{ route('admin.client.detail', $item->id) }}" class="btn btn-sm btn-primary" style="background-color: #3bb77e; border-color: #3bb77e; color: white;">
                               <i class="fa fa-eye"></i> View Detail
                            </a>
+                           {{-- Impersonate Button --}}
+                           <a href="{{ route('admin.client.impersonate', $item->id) }}" class="btn btn-sm btn-info text-white" title="Log in as user to view dashboard & debug errors">
+                              <i class="fa fa-user-secret"></i> Impersonate
+                           </a>
                            {{-- Suspend Button --}}
                            <form action="{{ route('admin.client.suspend', $item->id) }}" method="POST" class="d-inline account-action-form" data-action="suspend" data-username="{{ $item->name }}">
                               @csrf

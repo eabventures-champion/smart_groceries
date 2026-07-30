@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Back;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ActiveUserController extends Controller
 {
@@ -218,5 +219,53 @@ class ActiveUserController extends Controller
 
     public function admin_live_chat(){
         return view('back.admin.support_chat');
+    }
+
+    public function impersonate_user($id){
+        $admin = Auth::user();
+        if (!$admin || $admin->role !== 'admin') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $targetUser = User::findOrFail($id);
+
+        if ($targetUser->role !== 'user') {
+            $notification = array(
+                'message' => 'You can only impersonate user accounts.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        // Store original admin user ID in session
+        session(['impersonator_id' => $admin->id]);
+
+        // Login as target user
+        Auth::loginUsingId($targetUser->id);
+
+        $notification = array(
+            'message' => 'Now impersonating user: ' . $targetUser->name,
+            'alert-type' => 'info'
+        );
+
+        return redirect()->route('dashboard')->with($notification);
+    }
+
+    public function stop_impersonate(){
+        if (session()->has('impersonator_id')) {
+            $adminId = session('impersonator_id');
+            session()->forget('impersonator_id');
+
+            Auth::loginUsingId($adminId);
+
+            $notification = array(
+                'message' => 'Returned to Admin session successfully.',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->route('all.users')->with($notification);
+        }
+
+        return redirect()->route('dashboard');
     }
 }
