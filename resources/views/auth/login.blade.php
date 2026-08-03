@@ -288,6 +288,11 @@
                                  </div>
                                  <form id="myForm_type" method="post" action="{{ route('login') }}">
                                     @csrf
+                                    @if (session('error'))
+                                       <div class="alert alert-danger mb-20" style="border-radius: 12px; padding: 12px 16px; font-size: 13.5px;">
+                                          <i class="fi-rs-info mr-5"></i> {{ session('error') }}
+                                       </div>
+                                    @endif
                                     <div class="form-group">
                                        <input type="text" id="email" required="" name="email" value="{{ old('email') }}" placeholder="Username or Email *" class="form-control @error('email') is-invalid @enderror" />
                                        @error('email')

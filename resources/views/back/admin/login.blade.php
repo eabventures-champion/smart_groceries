@@ -200,8 +200,36 @@
          .sg-home-link:hover { color: #3BB77E; }
          .sg-home-link i { font-size: 16px; }
 
-         /* Validation error */
-         .sg-error { color: #e74c3c; font-size: 12px; margin-top: 6px; }
+         /* Validation error & Alert styling */
+         .sg-error {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+         }
+         .sg-alert-danger {
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            border-radius: 12px;
+            color: #ff6b6b;
+            padding: 12px 16px;
+            font-size: 13.5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+         }
+         .sg-alert-danger i { font-size: 20px; flex-shrink: 0; }
+         .sg-input.is-invalid {
+            border-color: #ff6b6b !important;
+            background: rgba(231, 76, 60, 0.12) !important;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
+         }
 
          /* Responsive */
          @media (max-width: 480px) {
@@ -210,6 +238,8 @@
             .sg-brand-title { font-size: 20px; }
          }
       </style>
+      <!-- Toastr CSS -->
+      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
    </head>
    <body class="sg-login-body">
       <!-- Background Circles -->
@@ -230,20 +260,33 @@
             <div class="sg-card-title">Welcome Back</div>
             <div class="sg-card-subtitle">Sign in to your admin dashboard</div>
 
+            @if (session('error'))
+               <div class="sg-alert-danger">
+                  <i class="bx bx-error-circle"></i>
+                  <div>{{ session('error') }}</div>
+               </div>
+            @endif
+
             <form method="POST" action="{{ route('login') }}">
                @csrf
 
                <!-- Email -->
                <div class="sg-input-group">
                   <i class="bx bx-envelope sg-input-icon"></i>
-                  <input type="email" name="email" class="sg-input" id="email" placeholder="Email Address" required>
+                  <input type="text" name="email" class="sg-input @error('email') is-invalid @enderror" id="email" placeholder="Email Address or Username" value="{{ old('email') }}" autocomplete="username" required>
+                  @error('email')
+                     <div class="sg-error"><i class="bx bx-error-circle"></i> {{ $message }}</div>
+                  @enderror
                </div>
 
                <!-- Password -->
                <div class="sg-input-group" id="show_hide_password">
                   <i class="bx bx-lock-alt sg-input-icon"></i>
-                  <input type="password" name="password" class="sg-input" id="password" placeholder="Password" style="padding-right: 44px;" required>
+                  <input type="password" name="password" class="sg-input @error('password') is-invalid @enderror" id="password" placeholder="Password" style="padding-right: 44px;" autocomplete="current-password" required>
                   <a href="javascript:;" class="sg-input-icon-right"><i class="bx bx-hide"></i></a>
+                  @error('password')
+                     <div class="sg-error"><i class="bx bx-error-circle"></i> {{ $message }}</div>
+                  @enderror
                </div>
 
                <!-- Options -->
@@ -296,5 +339,18 @@
       </script>
       <!--app JS-->
       <script src="{{ asset('back/assets/js/app.js') }}"></script>
+      <!-- Toastr JS -->
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      <script>
+         @if(Session::has('message'))
+         var type = "{{ Session::get('alert-type','info') }}";
+         switch(type){
+            case 'info': toastr.info(" {{ Session::get('message') }} "); break;
+            case 'success': toastr.success(" {{ Session::get('message') }} "); break;
+            case 'warning': toastr.warning(" {{ Session::get('message') }} "); break;
+            case 'error': toastr.error(" {{ Session::get('message') }} "); break;
+         }
+         @endif
+      </script>
    </body>
 </html>

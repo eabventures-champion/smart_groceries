@@ -867,9 +867,11 @@
             <div id="affiliate-member" style="display: none; flex-direction: column; gap: 16px;">
                 <!-- Stats Dashboard Grid -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
-                    <div onclick="toggleReferredFriendsSection()" style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#edf2f7'; this.style.borderColor='#cbd5e0';" onmouseout="this.style.background='#f7fafc'; this.style.borderColor='#e2e8f0';">
-                        <span style="font-size: 9px; font-weight: 700; color: #718096; text-transform: uppercase; border-bottom: 1px dashed #a0aec0; padding-bottom: 1px;">Referred</span>
-                        <div id="aff-stat-count" style="font-size: 15px; font-weight: 900; color: #2d3748; margin-top: 4px;">0</div>
+                    <div id="referred-card-trigger" onclick="toggleReferredFriendsSection()" style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s; position: relative;" onmouseover="if($('#referred-friends-collapsible').css('display')==='none'){this.style.background='#edf2f7'; this.style.borderColor='#3BB77E';}" onmouseout="if($('#referred-friends-collapsible').css('display')==='none'){this.style.background='#f7fafc'; this.style.borderColor='#e2e8f0';}">
+                        <span style="font-size: 9px; font-weight: 800; color: #3BB77E; text-transform: uppercase; border-bottom: 1px dashed #3BB77E; padding-bottom: 1px; display: inline-flex; align-items: center; gap: 3px;">
+                            Referred <i class="fi-rs-eye" style="font-size: 8px;"></i>
+                        </span>
+                        <div id="aff-stat-count" style="font-size: 15px; font-weight: 900; color: #2d3748; margin-top: 4px;">0/0</div>
                     </div>
                     <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px;">
                         <span style="font-size: 9px; font-weight: 700; color: #718096; text-transform: uppercase;">Earned</span>
@@ -881,13 +883,27 @@
                     </div>
                 </div>
 
-                <!-- Referred Friends Collapsible List -->
-                <div id="referred-friends-collapsible" style="display: none; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #edf2f7;">
-                        <h5 style="margin: 0; font-size: 11px; font-weight: 800; color: #2d3748;">Referred Friends</h5>
-                        <button type="button" onclick="toggleReferredFriendsSection()" style="background: none; border: none; font-size: 10px; color: #a0aec0; cursor: pointer; padding: 0;">✕ Close</button>
+                <!-- Referred Friends Premium Collapsible List -->
+                <div id="referred-friends-collapsible" style="display: none; background: #ffffff; border: 1.5px solid #3BB77E; border-radius: 16px; padding: 14px; box-shadow: 0 10px 25px rgba(59, 183, 126, 0.15); margin-top: 4px; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #edf2f7;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 26px; height: 26px; border-radius: 50%; background: #dcfce7; color: #166534; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">
+                                <i class="fi-rs-users"></i>
+                            </div>
+                            <div>
+                                <h5 style="margin: 0; font-size: 12px; font-weight: 800; color: #1a202c; line-height: 1.1;">Referred Network</h5>
+                                <span style="font-size: 9px; color: #64748b; font-weight: 600;">Friends who registered with your link</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span id="referred-badge-summary" style="font-size: 9px; font-weight: 800; background: #3BB77E; color: #ffffff; padding: 3px 8px; border-radius: 12px;">0 Referred</span>
+                            <button type="button" onclick="toggleReferredFriendsSection()" style="background: #f1f5f9; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Close">✕</button>
+                        </div>
                     </div>
-                    <div id="referred-friends-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto;" class="sg-scrollbar">
+
+                    <div id="referred-stats-summary"></div>
+
+                    <div id="referred-friends-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 2px;" class="sg-scrollbar">
                         <!-- Loaded dynamically -->
                     </div>
                 </div>
@@ -1615,46 +1631,92 @@
     let cachedReferredUsers = [];
 
     function toggleReferredFriendsSection() {
-        const section = $('#referred-friends-section');
-        if (section.css('display') === 'none') {
+        const collapsible = $('#referred-friends-collapsible');
+        const triggerCard = $('#referred-card-trigger');
+        if (collapsible.css('display') === 'none') {
             renderReferredUsersList();
-            section.css('display', 'flex');
+            collapsible.slideDown(220);
+            triggerCard.css({
+                'background': '#f0fdf4',
+                'border-color': '#3BB77E',
+                'box-shadow': '0 0 0 2px rgba(59, 183, 126, 0.25)'
+            });
         } else {
-            section.css('display', 'none');
+            collapsible.slideUp(180);
+            triggerCard.css({
+                'background': '#f7fafc',
+                'border-color': '#e2e8f0',
+                'box-shadow': 'none'
+            });
         }
     }
 
     function renderReferredUsersList() {
         let html = '';
         if (cachedReferredUsers && cachedReferredUsers.length > 0) {
+            let activeCount = 0;
+            let orderedCount = 0;
+
             $.each(cachedReferredUsers, function(i, friend) {
+                if (friend.status === 'active') activeCount++;
+                if (friend.has_ordered) orderedCount++;
+
+                const initial = friend.name ? friend.name.trim().charAt(0).toUpperCase() : 'U';
+
                 const statusBadge = friend.status === 'active' 
-                    ? `<span style="font-size: 8px; font-weight: 700; background-color: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;">Active</span>`
-                    : `<span style="font-size: 8px; font-weight: 700; background-color: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px;">Inactive</span>`;
+                    ? `<span style="font-size: 9.5px; font-weight: 700; background-color: #dcfce7; color: #15803d; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px;"><i class="fi-rs-check" style="font-size: 8px;"></i> Active</span>`
+                    : `<span style="font-size: 9.5px; font-weight: 700; background-color: #fee2e2; color: #b91c1c; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px;"><i class="fi-rs-cross" style="font-size: 8px;"></i> Inactive</span>`;
                 
                 const orderedBadge = friend.has_ordered
-                    ? `<span style="font-size: 8px; font-weight: 700; background-color: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; margin-left: 4px; display: inline-block;">Ordered Successfully</span>`
-                    : '';
-                
+                    ? `<span style="font-size: 9.5px; font-weight: 700; background-color: #e0f2fe; color: #0369a1; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px;"><i class="fi-rs-shopping-bag" style="font-size: 8px;"></i> Commission Earned</span>`
+                    : `<span style="font-size: 9.5px; font-weight: 700; background-color: #fef3c7; color: #b45309; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px;"><i class="fi-rs-clock" style="font-size: 8px;"></i> Awaiting First Order</span>`;
+
                 html += `
-                    <div style="display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <span style="font-size: 11px; font-weight: 800; color: #2d3748;">${friend.name}</span>
-                                ${orderedBadge}
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #3BB77E 0%, #27ae60 100%); color: #ffffff; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(59, 183, 126, 0.25); flex-shrink: 0;">
+                                    ${initial}
+                                </div>
+                                <div style="overflow: hidden;">
+                                    <div style="font-size: 12px; font-weight: 800; color: #1a202c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${friend.name}</div>
+                                    <div style="font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${friend.email}</div>
+                                </div>
                             </div>
-                            ${statusBadge}
+                            <div style="flex-shrink: 0;">
+                                ${statusBadge}
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 9px; color: #718096; font-weight: 600;">
-                            <span>${friend.email}</span>
-                            <span>Joined: ${friend.joined}</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 6px; border-top: 1px dashed #edf2f7; margin-top: 4px;">
+                            <div>${orderedBadge}</div>
+                            <div style="font-size: 9.5px; color: #94a3b8; font-weight: 600;">
+                                <i class="fi-rs-calendar" style="font-size: 8px; margin-right: 2px;"></i> ${friend.joined}
+                            </div>
                         </div>
                     </div>
                 `;
             });
+
             $('#referred-friends-list').html(html);
+            $('#referred-badge-summary').text(cachedReferredUsers.length + ' Referred');
+            $('#referred-stats-summary').html(`
+                <div style="display: flex; justify-content: space-between; gap: 8px; background: #f8fafc; border-radius: 8px; padding: 6px 10px; margin-bottom: 10px; font-size: 10px; font-weight: 700; color: #475569;">
+                    <div><span style="color: #166534;">●</span> ${activeCount} Active Member(s)</div>
+                    <div><span style="color: #0369a1;">●</span> ${orderedCount} First Order(s)</div>
+                </div>
+            `);
         } else {
-            $('#referred-friends-list').html('<p style="font-size: 10px; color: #a0aec0; text-align: center; padding: 12px 0;">No referred users found.</p>');
+            $('#referred-friends-list').html(`
+                <div style="text-align: center; padding: 20px 10px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e0;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0; color: #94a3b8; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 16px;">
+                        <i class="fi-rs-user"></i>
+                    </div>
+                    <p style="font-size: 11px; font-weight: 700; color: #64748b; margin: 0;">No Referred Friends Yet</p>
+                    <p style="font-size: 10px; color: #94a3b8; margin: 4px 0 0 0;">Share your referral link to earn commissions!</p>
+                </div>
+            `);
+            $('#referred-badge-summary').text('0 Referred');
+            $('#referred-stats-summary').html('');
         }
     }
 

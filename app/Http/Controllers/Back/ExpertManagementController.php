@@ -366,6 +366,40 @@ class ExpertManagementController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    public function itemRequestDelete($id)
+    {
+        ItemRequest::findOrFail($id)->delete();
+
+        $notification = [
+            'message' => 'Item request deleted successfully.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
+    public function itemRequestBulkDelete(Request $request)
+    {
+        $ids = $request->ids;
+        if (empty($ids) || !is_array($ids)) {
+            $notification = [
+                'message' => 'No item requests selected for deletion.',
+                'alert-type' => 'warning'
+            ];
+            return redirect()->back()->with($notification);
+        }
+
+        ItemRequest::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        $notification = [
+            'message' => $count . ' item request(s) deleted successfully.',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
     // ==================== BLOG POSTS CRUD ====================
 
     public function blogsList()

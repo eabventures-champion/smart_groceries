@@ -467,6 +467,8 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Back')->group(function(
             // Custom Item Requests
             Route::get('lifestyle/requests', 'itemRequestsList')->name('admin.lifestyle.requests');
             Route::post('lifestyle/requests/respond', 'itemRequestRespond')->name('admin.lifestyle.requests.respond');
+            Route::get('lifestyle/requests/delete/{id}', 'itemRequestDelete')->name('admin.lifestyle.requests.delete');
+            Route::post('lifestyle/requests/bulk-delete', 'itemRequestBulkDelete')->name('admin.lifestyle.requests.bulk_delete');
 
             // Blog Posts
             Route::get('lifestyle/blogs', 'blogsList')->name('admin.lifestyle.blogs');

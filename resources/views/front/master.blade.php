@@ -529,6 +529,38 @@
             font-size: 11.5px !important;
             margin-left: 4px !important;
          }
+
+         /* Desktop View: Reduce height and width of product cards, and reduce product image size */
+         @media (min-width: 992px) {
+            .product-cart-wrap {
+               max-width: 175px !important;
+               margin-left: auto !important;
+               margin-right: auto !important;
+            }
+            .product-cart-wrap .product-img-action-wrap {
+               padding: 6px !important;
+               max-height: 135px !important;
+            }
+            .product-cart-wrap .product-img-action-wrap .product-img {
+               height: 120px !important;
+               max-height: 120px !important;
+            }
+            .product-cart-wrap .product-img-action-wrap .product-img a {
+               height: 100% !important;
+               display: flex !important;
+               align-items: center !important;
+               justify-content: center !important;
+            }
+            .product-cart-wrap .product-img-action-wrap .product-img a img {
+               height: 120px !important;
+               max-height: 120px !important;
+               width: 100% !important;
+               object-fit: contain !important;
+            }
+            .product-cart-wrap .product-content-wrap {
+               padding: 4px 8px 8px 8px !important;
+            }
+         }
        </style>
    </head>
    <body>
